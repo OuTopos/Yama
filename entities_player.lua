@@ -51,10 +51,10 @@ function entities_player.new(x, y)
 	local particle = {}
 	particle.trail = love.graphics.newParticleSystem(treeimage, 1000)
 	particle.trail:setEmissionRate(100)
-	particle.trail:setSpeed(0, 0)
+	particle.trail:setSpeed(0, 25)
 	particle.trail:setGravity(0)
 	particle.trail:setSizes(1, 1)
-	particle.trail:setColors(153, 255, 255, 51, 58, 128, 255, 0)
+	particle.trail:setColors(200, 170, 50, 51, 255, 204, 0, 0)
 	particle.trail:setPosition(0, 0)
 	particle.trail:setLifetime(1)
 	particle.trail:setParticleLife(0.5)
@@ -74,11 +74,11 @@ function entities_player.new(x, y)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = physics.newObject(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(14), self)
-	anchor.fixture:setUserData(self)
-	anchor.body:setLinearDamping( 8 )
-	anchor.body:setFixedRotation( true )
-	anchor.fixture:setRestitution( 0.4 )
+	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(14), 5)
+	anchor:setUserData(self)
+	anchor:setRestitution( 0.4 )
+	anchor:getBody():setLinearDamping( 8 )
+	anchor:getBody():setFixedRotation( true )
 
 
 	function self.update(dt)
@@ -112,15 +112,15 @@ function entities_player.new(x, y)
 			fx = -5000
 		end
 
-		anchor.body:applyForce( fx, fy )
+		anchor:getBody():applyForce( fx, fy )
 	end
 
 	function self.updatePosition(xn, yn)
 		--hitbox.body:setX(anchor.body:getX())
 		--hitbox.body:setY(anchor.body:getY())
 		
-		x = anchor.body:getX()
-		y = anchor.body:getY()
+		x = anchor:getBody():getX()
+		y = anchor:getBody():getY()
 		--x = anchor.body:getX() - 16
 		--y = anchor.body:getY() - 16
 
@@ -186,32 +186,35 @@ function entities_player.new(x, y)
 	triggers.data = {}
 	function triggers.add(entity)
 		table.insert(triggers.data, entity)
-		table.sort(triggers.data, triggers.sort)
+		print("Trigger now added, legnth is: "..#triggers.data)
 	end
 
 	function triggers.remove(entity)
 		for i=1, #triggers.data do
 			if triggers.data[i] == entity then
-				print("removing")
-				table.remove(triggers.data[i])
+				print("removing "..#triggers.data)
+				triggers.data[i].active = false
+				table.remove(triggers.data, i)
+				print("gone! "..#triggers.data)
 			end
 		end
 	end
 
 	function self.triggersupdate()
+		--print("updating")
 		table.sort(triggers.data, triggers.sort)
+
 		if triggers.data[1] then
-			triggers.data[1].setActive(true)
+			triggers.data[1].active = true
+			for i=2, #triggers.data do
+				triggers.data[i].active = false
+			end
 		end
 	end
 
 	function triggers.sort(a, b)
-		a.setActive(false)
-		b.setActive(false)
-		local aDistance = getDistance(anchor.body:getX(), anchor.body:getY(), a.getTriggerX(), a.getTriggerY())
-		local bDistance = getDistance(anchor.body:getX(), anchor.body:getY(), b.getTriggerX(), b.getTriggerY())
-		
-		if aDistance > bDistance then
+		--print("a = "..getDistance(a:getX(), a:getY(), x, y))
+		if getDistance(a:getX(), a:getY(), x, y) < getDistance(b:getX(), b:getY(), x, y) then
 			return true
 		end
 
@@ -220,60 +223,32 @@ function entities_player.new(x, y)
 
 	-- CONTACT
 	function self.beginContact(a, b, contact)
-		print("beginContact")
-		--print(contact:getSeparation( ))
+		--print("beginContact for player")
 		if b:isSensor() then
 			if b:getUserData() then
 				local entity = b:getUserData()
---getPositions
-				if entity.type == "tree" then
-					--distance = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
 
-					--if distance =
+				if entity.isTree then
+					--print("adding entity to triggers")
+					--local d, x1, y1, x2, y2 = love.physics.getDistance(b, anchor.fixture)
+					d = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
+					--print(d)
 					triggers.add(entity)
 				end
-
 			end
 		end
-
 	end
 
 	function self.endContact(a, b, contact)
-		print("END")
+		--print("END")
 		--print(contact:getSeparation( ))
 		if b:isSensor() then
 			if b:getUserData() then
 				local entity = b:getUserData()
---getPositions
-				if entity.type == "tree" then
-					--distance = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
 
-					--if distance =
+				if entity.isTree then
 					triggers.remove(entity)
 				end
-
-			end
-		end
-
-	end
-
-	function self.preSolve(a, b, contact)
-		print("presolve")
-		if b:isSensor() then
-			if b:getUserData() then
-				local entity = b:getUserData()
---getPositions
-				if entity.type == "tree" then
-					--local distance = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
-					--print(distance)
-					--if not triggers.active then
-					--	triggers.active = entity
-					--end 
-
-
-					--triggers.add(entity, distance)
-				end
-
 			end
 		end
 	end
@@ -282,8 +257,8 @@ function entities_player.new(x, y)
 		-- Draw
 		--sprites.draw(bodySprite)
 
-		love.graphics.draw(selector, math.floor(x/32+0.5)*32-19, math.floor(y/32+0.5)*32-19)
-		love.graphics.draw(grid_marker, math.floor(x/32+0.5)*32-16, math.floor(y/32+0.5)*32-16)
+		--love.graphics.draw(selector, math.floor(x/32+0.5)*32-19, math.floor(y/32+0.5)*32-19)
+		--love.graphics.draw(grid_marker, math.floor(x/32+0.5)*32-16, math.floor(y/32+0.5)*32-16)
 		love.graphics.setColorMode("modulate")
 		--love.graphics.setBlendMode("additive")
 		
@@ -292,11 +267,11 @@ function entities_player.new(x, y)
 		love.graphics.setColor(255, 255, 255, 255);
 		--love.graphics.setColorMode("modulate")
 		love.graphics.setBlendMode("alpha")
-		love.graphics.draw(treeimage, x, y, r, sx, sy, ox, oy)
-	end
+		--love.graphics.draw(treeimage, x, y, r, sx, sy, ox, oy)
 
-	function self.destroy()
-	--	physics.destroy()
+		if hud.enabled then
+			physics.draw(anchor, {0, 255, 0, 102})
+		end
 	end
 
 	-- Basic functions
@@ -334,6 +309,9 @@ function entities_player.new(x, y)
 	end
 	function self.getHeight()
 		return height * sy
+	end
+	function self.destroy()
+		anchor:getBody():destroy()
 	end
 
 	return self

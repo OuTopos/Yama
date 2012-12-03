@@ -1,6 +1,6 @@
-entities_ball = {}
+entities_projectile = {}
 
-function entities_ball.new(x, y)
+function entities_projectile.new(x, y)
 	local self = {}
 
 	-- Common variables
@@ -14,8 +14,10 @@ function entities_ball.new(x, y)
 
 	-- Anchor variables
 	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(10))
-	anchor:getBody():setLinearDamping(0)
 	anchor:setRestitution(1)
+	anchor:setUserData(self)
+	anchor:getBody():setLinearDamping(0)
+	anchor:getBody():setBullet(true)
 
 	-- Standard functions
 	function self.update(dt)
@@ -23,10 +25,26 @@ function entities_ball.new(x, y)
 	end
 
 	function self.draw()
+		love.graphics.setColor(255, 0, 0, 255)
 		love.graphics.draw(sprite, x, y, r, sx, sy, ox, oy)
-		
-		if hud.enabled then
-			physics.draw(anchor)
+		love.graphics.setColor(255, 255, 255, 255)
+	end
+
+	-- Projectile functions
+
+	function self.shoot(angle, velocity)
+		print("Shooting")
+		local x = math.cos(angle) * velocity
+		local y = math.sin(angle) * velocity
+		anchor:getBody():setLinearVelocity(x, y)
+	end
+
+	-- Contact functions
+	function self.beginContact(a, b, contact)
+		if b:getUserData() then
+			if b:getUserData().monster then
+				--entities.destroy(self)
+			end
 		end
 	end
 

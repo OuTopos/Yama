@@ -1,6 +1,5 @@
 physics = {}
 physics.enabled = true
-physics.objects = {}
 physics.worlds = {}
 
 
@@ -12,7 +11,7 @@ function physics.setWorld(world, xg, yg, meter, sleep)
 
 	if not physics.worlds[world] then
 		physics.worlds[world] = love.physics.newWorld(xg, yg, sleep or false)
-		physics.worlds[world]:setCallbacks(physics.beginContact, physics.endContact, physics.preSolve, physics.postSolve)
+		physics.worlds[world]:setCallbacks(physics.beginContact, physics.endContact, nil, nil)
 	end
 	physics.world = physics.worlds[world]
 
@@ -22,28 +21,35 @@ function physics.setWorld(world, xg, yg, meter, sleep)
 	--physics.world:setCallbacks(physics.beginContact, physics.endContact)
 end
 
-function physics.newObject(body, shape, entity, sensor)
-	local object = {body = body, shape = shape}
-	object.fixture = love.physics.newFixture(object.body, object.shape, 5)
+--function physics.newFixture(body, shape, density)
+	--local object = {body = body, shape = shape}
+
+	--fixture = love.physics.newFixture(body, shape, density or 5)
 	--local userdata = {}
 	--userdata.entity = entity
 	--userdata.type = type
-	object.fixture:setUserData(entity)
-	if sensor then
-		object.fixture:setSensor(true)
-	end
-	table.insert(physics.objects, object)
-	return object
-end
+	--fixture:setUserData(entity)
+	--if sensor then
+	--	fixture:setSensor(true)
+	--end
+	--table.insert(physics.fixtures, fixture)
+	--return love.physics.newFixture(body, shape, density or 5)
+--end
 
-function physics.destroy()
-	print("DESTROY WORLD NOOOO!")
-	if physics.world then
-		physics.world:destroy()
-		physics.world = nil
-	end
-	physics.objects = {}
-end
+--function physics.destroy(fixture)
+--	for i=1, #physics.fixtures do
+--		if physics.fixtures[i] == fixture then
+--			fixture:destroy()
+--			table.remove(physics.fixtures, i)
+--		end
+--	end
+	--print("DESTROY WORLD NOOOO!")
+	--if physics.world then
+	--	physics.world:destroy()
+	--	physics.world = nil
+	--end
+	--physics.fixtures = {}
+--end
 
 
 function physics.update(dt)
@@ -54,34 +60,66 @@ function physics.update(dt)
 	end
 end
 
-function physics.draw()
-	for i = 1, #physics.objects do
-		if physics.objects[i].body:getType() == "static" then
-			if physics.objects[i].fixture:isSensor() then
+function physics.draw(fixture, color)
+	--if fixture:getBody():getType() == "static" then
+	--	if fixture:isSensor() then
+	--		love.graphics.setColor(255, 0, 255, 102)
+	--	elseif fixture:getUserData() then
+	--		love.graphics.setColor(255, 255, 0, 102)
+	--	else
+	--		love.graphics.setColor(255, 0, 0, 102)
+	--	end
+	--elseif fixture:getBody():getType() == "dynamic" then
+	--	if fixture:isSensor() then
+	--		love.graphics.setColor(0, 255, 255, 102)
+	--	elseif fixture:getUserData() then
+	--		love.graphics.setColor(0, 255, 0, 102)
+	--	else
+	--		love.graphics.setColor(0, 0, 255, 102)
+	--	end
+	--end
+	color = color or {255, 0, 0, 102}
+	love.graphics.setColor(color)
+	if fixture:getShape():getType() == "circle" then
+		love.graphics.circle("fill", fixture:getBody():getX(), fixture:getBody():getY(), fixture:getShape():getRadius())
+	elseif fixture:getShape():getType() == "polygon" then
+		love.graphics.polygon("fill", fixture:getBody():getWorldPoints(fixture:getShape():getPoints()))
+	elseif fixture:getShape():getType() == "edge" then
+		love.graphics.line(fixture:getBody():getWorldPoints(fixture:getShape():getPoints()))
+	elseif fixture:getShape():getType() == "chain" then
+		love.graphics.line(fixture:getBody():getWorldPoints(fixture:getShape():getPoints()))
+	end
+	love.graphics.setColor(255, 255, 255, 255)
+end
+
+function physics.drawold()
+	for i = 1, #physics.fixtures do
+		if physics.fixtures[i]:getBody():getType() == "static" then
+			if physics.fixtures[i]:isSensor() then
 				love.graphics.setColor(255, 0, 255, 102)
-			elseif physics.objects[i].fixture:getUserData() then
+			elseif physics.fixtures[i]:getUserData() then
 				love.graphics.setColor(255, 255, 0, 102)
 			else
 				love.graphics.setColor(255, 0, 0, 102)
 			end
-		elseif physics.objects[i].body:getType() == "dynamic" then
-			if physics.objects[i].fixture:isSensor() then
+		elseif physics.fixtures[i]:getBody():getType() == "dynamic" then
+			if physics.fixtures[i]:isSensor() then
 				love.graphics.setColor(0, 255, 255, 102)
-			elseif physics.objects[i].fixture:getUserData() then
+			elseif physics.fixtures[i]:getUserData() then
 				love.graphics.setColor(0, 255, 0, 102)
 			else
 				love.graphics.setColor(0, 0, 255, 102)
 			end
 		end
 
-		if physics.objects[i].shape:getType() == "circle" then
-			love.graphics.circle("fill", physics.objects[i].body:getX(), physics.objects[i].body:getY(), physics.objects[i].shape:getRadius())
-		elseif physics.objects[i].shape:getType() == "polygon" then
-			love.graphics.polygon("fill", physics.objects[i].body:getWorldPoints(physics.objects[i].shape:getPoints()))
-		elseif physics.objects[i].shape:getType() == "edge" then
-			love.graphics.line(physics.objects[i].body:getWorldPoints(physics.objects[i].shape:getPoints()))
-		elseif physics.objects[i].shape:getType() == "chain" then
-			love.graphics.line(physics.objects[i].body:getWorldPoints(physics.objects[i].shape:getPoints()))
+		if physics.fixtures[i]:getShape():getType() == "circle" then
+			love.graphics.circle("fill", physics.fixtures[i]:getBody():getX(), physics.fixtures[i]:getBody():getY(), physics.fixtures[i]:getShape():getRadius())
+		elseif physics.fixtures[i]:getShape():getType() == "polygon" then
+			love.graphics.polygon("fill", physics.fixtures[i]:getBody():getWorldPoints(physics.fixtures[i]:getShape():getPoints()))
+		elseif physics.fixtures[i]:getShape():getType() == "edge" then
+			love.graphics.line(physics.fixtures[i]:getBody():getWorldPoints(physics.fixtures[i]:getShape():getPoints()))
+		elseif physics.fixtures[i]:getShape():getType() == "chain" then
+			love.graphics.line(physics.fixtures[i]:getBody():getWorldPoints(physics.fixtures[i]:getShape():getPoints()))
 		end
 	end
 end

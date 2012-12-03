@@ -1,19 +1,21 @@
 -- Math optimization
 local random = math.random
 local sqrt = math.sqrt
+local floor = math.floor
 
-
+love.graphics.setDefaultImageFilter( "nearest", "nearest" )
 
 worldWidth, worldHeight = 2000, 2000
 require "screen"
 require "camera"
+require "hud"
 require "physics"
 require "entities"
 require "terrain"
 require "gui"
-require "hud"
 require "game"
 require "sprites"
+require "weather"
 
 -- Move this later
 function getDistance(x1, y1, x2, y2)
@@ -21,9 +23,8 @@ function getDistance(x1, y1, x2, y2)
 end
 
 function love.load()
+	--initiateFarticle()
 	player = nil
-
-	--love.graphics.setDefaultImageFilter( "nearest", "nearest" )
 	--love.graphics.setMode(screen.width, screen.height, false, true, 0) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
 
 	imagefont2 = love.graphics.newImage("images/imagefont2.png")
@@ -59,6 +60,9 @@ function love.keypressed(key)
 		end
 	end
 
+	if key == "r" then
+		entities.destroy(entities.data[math.random(1, #entities.data)])
+	end
 	if key == "g" then
 		physics.world:setGravity(0, 90)
 	end
@@ -70,21 +74,24 @@ function love.keypressed(key)
 	end
 	if key == "s" then
 		physics.setWorld("world", 0, 0, 32, false)
-		physics.newObject(love.physics.newBody(physics.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1,      worldWidth+1,-1,     worldWidth+1,worldHeight+1,       -1,worldHeight+1))
+		love.physics.newFixture(love.physics.newBody(physics.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, worldWidth+1, -1, worldWidth+1,worldHeight+1, -1, worldHeight+1))
+		
 		camera.setBoundaries(0, 0, worldWidth, worldHeight)
 		player = entities.new("player", 200, 200)
 		camera.follow = player
-
-
-
 	end
-	if key == "d" then
-		map.load("cubicles", "", "isometropolis")
+	if key == "a" then
+		if player then
+			entities.destroy(player)
+			player = nil
+			--collectgarbage()
+		end
 	end
 	if key == "e" then
 		for i=1,50 do
 			entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
 			entities.new("coin", math.random(1, worldWidth), math.random(1, worldHeight))
+			entities.new("monster", math.random(1, worldWidth), math.random(1, worldHeight))
 		end
 	end
 
@@ -103,7 +110,7 @@ function love.update(dt)
 	physics.update(dt)
 	entities.update(dt)
 	camera.update()
-	env.update(dt)
+	--updateFarticle(dt)
 
 	--map.update(camera.x, camera.y)
 end
@@ -122,7 +129,7 @@ function love.draw()
 	entities.draw()
 
 	-- Draw env stuff
-	--env.draw()
+	--drawFarticle()
 
 	-- Draw the GUI
 	gui.draw()

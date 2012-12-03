@@ -1,13 +1,13 @@
 function initiateFarticle()
-	rain = love.graphics.newImage("sprites/ape.png")
+	rain = love.graphics.newImage("/images/ballGrey.png")
 	rainSystem = love.graphics.newParticleSystem(rain,1000)
 
 	rainSystem:setEmissionRate(100)
-	rainSystem:setSpeed(1000, 0)
+	rainSystem:setSpeed(600, 500)
 	rainSystem:setGravity(0)
-	rainSystem:setSizes(0.1, 0.1)
+	rainSystem:setSizes(1, 0.1)
 	rainSystem:setColors(255, 255, 255, 255, 58, 128, 255, 0)
-	rainSystem:setPosition(400, 300)
+	rainSystem:setPosition(0, 0)
 	rainSystem:setLifetime(10)
 	rainSystem:setParticleLife(10)
 	rainSystem:setDirection(math.rad(90))
@@ -20,8 +20,8 @@ end
 
 
 function updateFarticle(dt)
-	local x = player.RoundX + math.random(-400,400)
-	rainSystem:setPosition(x, camera.y-16)
+	--local x = camera.x + math.random(0,camera.width)
+	rainSystem:setPosition(camera.x, camera.y-16)
 	rainSystem:start()
 	rainSystem:update(dt)
 end

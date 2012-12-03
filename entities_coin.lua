@@ -23,18 +23,22 @@ function entities_coin.new(x, y)
 	animation.dt = 0
 
 	-- Anchor variables
-	local anchor = physics.newObject(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(8), self)
-	anchor.body:setLinearDamping( 0.1 )
-	anchor.fixture:setRestitution( 0.9 )
+	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(8))
+	anchor:setRestitution( 0.9 )
+	anchor:getBody():setLinearDamping( 0.1 )
 
 	-- Standard functions
 	function self.update(dt)
-		x, y = anchor.body:getX(), anchor.body:getY()
+		x, y = anchor:getBody():getX(), anchor:getBody():getY()
 		self.animate(1, 8, 0.1, dt)
 	end
 
 	function self.draw()
 		love.graphics.drawq(coin_image, coin_quads[animation.quad], x, y, r, sx, sy, ox, oy)
+		
+		if hud.enabled then
+			physics.draw(anchor)
+		end
 	end
 
 	-- Animation functions
@@ -74,6 +78,9 @@ function entities_coin.new(x, y)
 	end
 	function self.getHeight()
 		return height * sy
+	end
+	function self.destroy()
+		anchor:getBody():destroy()
 	end
 
 	return self

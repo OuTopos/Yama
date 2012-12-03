@@ -1,13 +1,11 @@
 hud = {}
 hud.enabled = false
 
---open = love.joystick.open( 1 )
---print(open)
 function hud.draw()
 	if hud.enabled then
 		local lh = 10
 
-		physics.draw()
+		--physics.draw()
 
 		-- Entities
 		for i = 1, #entities.buffer.data do
@@ -75,17 +73,4 @@ function hud.draw()
 			love.graphics.print(love.joystick.getNumAxes(1), camera.x + 2, camera.y + 72)
 		end
 	end
-end
-
-
-
-
-grid = {}
-grid.width = 128
-grid.height = 64
-
-function grid.draw()
-
-	--for i = 1, 16, i++ do
-
 end
