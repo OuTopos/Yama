@@ -267,7 +267,7 @@ function entities_player.new(x, y)
 		love.graphics.setColor(255, 255, 255, 255);
 		--love.graphics.setColorMode("modulate")
 		love.graphics.setBlendMode("alpha")
-		love.graphics.draw(treeimage, x, y, r, sx, sy, ox, oy)
+		--love.graphics.draw(treeimage, x, y, r, sx, sy, ox, oy)
 
 		if hud.enabled then
 			physics.draw(anchor, {0, 255, 0, 102})

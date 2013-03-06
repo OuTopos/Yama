@@ -3,11 +3,15 @@ local random = math.random
 local sqrt = math.sqrt
 local floor = math.floor
 
+
+local pixelperfect = true
+
 love.graphics.setDefaultImageFilter( "nearest", "nearest" )
 
 worldWidth, worldHeight = 2000, 2000
 require "screen"
 require "camera"
+require "buffer"
 require "hud"
 require "physics"
 require "entities"
@@ -38,6 +42,9 @@ function love.load()
 	love.graphics.setFont(font)
 
 	gui.load()
+
+	music = love.audio.newSource("sound/music.ogg", "static")
+	love.audio.play(music)
 	--camera.setScale(screen.height/1080, screen.height/1080)
 end
 
@@ -130,6 +137,8 @@ function love.draw()
 
 	-- Draw env stuff
 	--drawFarticle()
+
+	buffer.draw()
 
 	-- Draw the GUI
 	gui.draw()
