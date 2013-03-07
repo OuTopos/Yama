@@ -9,6 +9,7 @@ local pixelperfect = true
 love.graphics.setDefaultImageFilter( "nearest", "nearest" )
 
 worldWidth, worldHeight = 2000, 2000
+require "images"
 require "screen"
 require "camera"
 require "buffer"
@@ -20,6 +21,8 @@ require "gui"
 require "game"
 require "sprites"
 require "weather"
+
+require "shaders"
 
 -- Move this later
 function getDistance(x1, y1, x2, y2)
@@ -44,6 +47,10 @@ function love.load()
 	gui.load()
 
 	music = love.audio.newSource("sound/music.ogg", "static")
+
+	time = 0
+	lineNb = canvas:getHeight() * 4
+
 	love.audio.play(music)
 	--camera.setScale(screen.height/1080, screen.height/1080)
 end
@@ -114,6 +121,7 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+	time = time+dt
 	physics.update(dt)
 	entities.update(dt)
 	camera.update()
@@ -131,6 +139,10 @@ function love.draw()
 	--	entities.draw()
 	--	map.draw()
 	--end
+
+
+
+	love.graphics.setCanvas(canvas)
 	terrain.draw()
 
 	entities.draw()
@@ -145,6 +157,20 @@ function love.draw()
 
 	-- Draw the HUD
 	hud.draw()
+	love.graphics.setCanvas()
+
+	
 
 	camera.unset()
+
+	love.graphics.clear()
+
+	effect:send("time",time)
+	effect:send("nIntensity", 0.25)
+	effect:send("sIntensity", 0.25)
+	effect:send("sCount", lineNb)
+
+	love.graphics.setPixelEffect(effect)
+	love.graphics.draw(canvas, 0, 0, 0, 2, 2)
+	love.graphics.setPixelEffect()
 end

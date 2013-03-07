@@ -104,3 +104,22 @@ function buffer.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
 	object.color = color or nil
 	return object
 end
+
+function buffer.newQuad(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
+	object = {}
+	object.type = "quad"
+	object.image = image
+	object.quad = quad
+	object.x = x or 0
+	object.y = y or 0
+	object.z = z or 0
+	object.r = r or 0
+	object.sx = sx or 1
+	object.sy = sy or sx or 1
+	object.ox = ox or 0
+	object.oy = oy or 0
+	object.kx = kx or 0
+	object.ky = ky or 0
+	object.color = color or nil
+	return object
+end

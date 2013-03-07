@@ -5,8 +5,8 @@ camera.sy = 1
 
 camera.x = 0
 camera.y = 0
-camera.width = screen.width / camera.sx
-camera.height = screen.height / camera.sy
+camera.width = canvas:getWidth() / camera.sx
+camera.height = canvas:getHeight() / camera.sy
 
 camera.boundaries = {}
 camera.boundaries.x = 0
@@ -53,8 +53,8 @@ function camera.update()
 end
 
 function camera.center(dx, dy)
-	camera.x = dx - camera.width / 2
-	camera.y = dy - camera.height / 2
+	camera.x = math.floor( (dx - camera.width / 2) + 0.5)
+	camera.y = math.floor( (dy - camera.height / 2) + 0.5)
 
 	if camera.x < camera.boundaries.x then
 		camera.x = camera.boundaries.x

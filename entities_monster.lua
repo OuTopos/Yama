@@ -121,10 +121,10 @@ function entities_monster.new(x, y)
 			local green = math.floor(255*hp+0.5)
 			local red = 255-green
 			love.graphics.setColor(red, green, 0, 255)
-			love.graphics.rectangle("fill", x-16, y-24, math.floor(32*hp+0.5), 8)
-			love.graphics.rectangle("line", x-16, y-24, 32, 8)
+			--love.graphics.rectangle("fill", x-16, y-24, math.floor(32*hp+0.5), 8)
+			--love.graphics.rectangle("line", x-16, y-24, 32, 8)
 			love.graphics.setColor(0, 0, 0, 255)
-			love.graphics.print(math.floor(hp*100+0.5).."%", x-16, y-24)
+			--love.graphics.print(math.floor(hp*100+0.5).."%", x-16, y-24)
 			love.graphics.setColor(255, 255, 255, 255)
 		end
 		

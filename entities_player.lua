@@ -26,14 +26,21 @@ function entities_player.new(x, y)
 	local width, height = 64, 64
 
 	-- SPRITES
-	local treeimage = love.graphics.newImage( "images/player.png" )
+	--local treeimage = 
+
+	--images.load("player")
 	local grid_marker = love.graphics.newImage( "images/grid_marker.png" )
 	local selector = love.graphics.newImage( "images/selectorA.png" )
 
+	local test1 = love.graphics.newImage( "images/player.png" )
+	local test2 = love.graphics.newImage( "images/player.png" )
+	print(test1)
+	print(test2)
 
 
 
-	local p = love.graphics.newParticleSystem(treeimage, 1000)
+
+	local p = love.graphics.newParticleSystem(images.get("player"), 1000)
 	p:setEmissionRate(100)
 	p:setSpeed(300, 400)
 	p:setGravity(0)
@@ -49,7 +56,7 @@ function entities_player.new(x, y)
 	p:stop()
 
 	local particle = {}
-	particle.trail = love.graphics.newParticleSystem(treeimage, 1000)
+	particle.trail = love.graphics.newParticleSystem(images.get("player"), 1000)
 	particle.trail:setEmissionRate(100)
 	particle.trail:setSpeed(0, 25)
 	particle.trail:setGravity(0)
@@ -262,12 +269,12 @@ function entities_player.new(x, y)
 		love.graphics.setColorMode("modulate")
 		--love.graphics.setBlendMode("additive")
 		
-		love.graphics.draw(particle.trail, 0, -16)
+		--love.graphics.draw(particle.trail, 0, -16)
 
 		love.graphics.setColor(255, 255, 255, 255);
 		--love.graphics.setColorMode("modulate")
 		love.graphics.setBlendMode("alpha")
-		love.graphics.draw(treeimage, x, y, r, sx, sy, ox, oy)
+		love.graphics.draw(images.get("player"), x, y, r, sx, sy, ox, oy)
 
 		if hud.enabled then
 			physics.draw(anchor, {0, 255, 0, 102})
