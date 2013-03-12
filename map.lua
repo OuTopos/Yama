@@ -9,7 +9,7 @@ function map.load(name, spawn, world)
 	print(world.."/"..name)
 
 	-- Unloading previous map.
-	map.unload()
+	--map.unload()
 
 	-- Loading map.
 	map.loaded = require("/worlds/"..world.."/"..name)
@@ -61,7 +61,6 @@ function map.load(name, spawn, world)
 							physics.newObject(love.physics.newBody(physics.world, object.x, object.y, "static"), love.physics.newRectangleShape(object.width/2, object.height/2, object.width, object.height))
 						end
 					end
-
 				elseif layer.name == "portals" then
 					-- Adding portals to physics objects
 					for i,object in ipairs(layer.objects) do
@@ -113,7 +112,8 @@ function map.load(name, spawn, world)
 
 		-- Loading tilesets
 		for i,tileset in ipairs(map.loaded.tilesets) do
-			buffer:addSheet(string.match(tileset.image, "../../images/(.*).png"), tileset.tilewidth, tileset.tileheight)
+			local name = string.match(tileset.image, "../../images/(.*).png")
+			images.quads.add(name, tileset.tilewidth, tileset.tileheight)
 		end
 
 		-- Setting up map view
@@ -121,25 +121,25 @@ function map.load(name, spawn, world)
 		map.view.size.y = math.floor(camera.height / map.loaded.tileheight + 0.5 ) + 2
 
 		-- Setting camera boundaries
-		camera.setBoundaries(0, map.loaded.width * map.loaded.tilewidth, 0, map.loaded.height * map.loaded.tileheight)
+		camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
 
 		-- Spawning player
-		map.loaded.properties.player = map.loaded.properties.player or "player"
+		--map.loaded.properties.player = map.loaded.properties.player or "player"
 
-		if player then
-			print("Player did exist")
-			print("  Moving to "..(map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2)..":"..(map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2))
-			player.setPosition(map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2)
-		else
-			if map.loaded.spawns[spawn] then
-				player = entities.new(map.loaded.properties.player, map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2, 32)
-			else
-				player = entities.new(map.loaded.properties.player, 64, 64, 32)
-			end
-		end
+--		if player then
+--			print("Player did exist")
+--			print("  Moving to "..(map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2)..":"..(map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2))
+--			player.setPosition(map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2)
+--		else
+--			if map.loaded.spawns[spawn] then
+--				player = entities.new(map.loaded.properties.player, map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2, 32)
+--			else
+--				player = entities.new(map.loaded.properties.player, 64, 64, 32)
+--			end
+--		end
 
 		--Make the camera follow the player
-		camera.follow = player
+--		camera.follow = player
 	else
 		print("Map is not orthogonal.")
 		print("Unloading!")
@@ -161,19 +161,23 @@ function map.unload()
 	buffer:reset()
 end
 
-function map.findSheet(quad)
+function map.getQuad(quad)
 	i = #map.loaded.tilesets
 	while map.loaded.tilesets[i] and quad < map.loaded.tilesets[i].firstgid do
 		i = i - 1
 	end
-	return {string.match(map.loaded.tilesets[i].image, "../../images/(.*).png"), quad-(map.loaded.tilesets[i].firstgid-1)}
+	local imagename = string.match(map.loaded.tilesets[i].image, "../../images/(.*).png")
+	local quadnumber = quad-(map.loaded.tilesets[i].firstgid-1)
+	local image = images.load(imagename)
+	local quad = images.quads.data[imagename][quadnumber]
+	return image, quad
 end
 
-function map.update(x, y)
+function map.update()
 	if map.loaded then
-		-- Moving the map view to x,y
-		local xn = math.floor( x / map.loaded.tilewidth + 0.5 ) - 1
-		local yn = math.floor( y / map.loaded.tileheight + 0.5 ) - 1
+		-- Moving the map view to camera x,y
+		local xn = math.floor( camera.x / map.loaded.tilewidth + 0.5 ) - 1
+		local yn = math.floor( camera.y / map.loaded.tileheight + 0.5 ) - 1
 		if xn ~= map.view.x or yn ~= map.view.y then
 			-- Player moved to another tile
 			map.view.x = xn
@@ -216,25 +220,22 @@ function map.addToBuffer()
 									if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
 
 										-- Get z from tilelayer properties.
-										z = tonumber(map.loaded.layers[i].properties.z)
+										z = tonumber(map.loaded.layers[i].properties.z) or 0
 
 										-- Check if z has changed.
-										if z*map.loaded.tileheight ~= batch.z then
+										if z * map.loaded.tileheight + (map.loaded.tileheight/2) ~= batch.z then
 											-- Send the previous batch to buffer, unless it's empty.
-											if next(spriteset.data) ~= nil then
+											if next(batch.data) ~= nil then
 												buffer.add(batch)
 												batch = buffer.newBatch(map.tilePosition(x, y, z))
 											end
 											-- Setting batch z to new z
-											batch.z = z*map.loaded.tileheight
+											batch.z = z * map.loaded.tileheight + (map.loaded.tileheight/2)
 										end
 
-										-- Adding sprite to spriteset.
-										poop = map.findSheet(map.loaded.layers[i].data[y*map.loaded.width+x+1])
-										--table.insert(spriteset.data, {sheet = poop[1], quad = poop[2]} )
-
-
-										table.insert(batch.data, buffer.newQuad(poop[1], poop[2], batch.x, batch.y, batch.z)
+										--Getting quad and image and adding it as a quad to the batch
+										image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
+										table.insert(batch.data, buffer.newQuad(image, quad, batch.x, batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
 											
 									end
 								end
@@ -266,9 +267,9 @@ end
 
 function map.tilePosition(x, y, z)
 	if map.loaded.orientation == "orthogonal" then
-		nx = x * map.loaded.tilewidth
-		ny = y * map.loaded.tileheight
-		nz = z * map.loaded.tileheight
+		nx = x * map.loaded.tilewidth - (map.loaded.tilewidth/2)
+		ny = y * map.loaded.tileheight - (map.loaded.tileheight/2)
+		nz = z * map.loaded.tileheight + (map.loaded.tileheight/2)
 	elseif map.loaded.orientation == "isometric" then
 		nx = (x - y) * (map.loaded.tilewidth / 2)
 		ny = (y + x) * (map.loaded.tileheight / 2)

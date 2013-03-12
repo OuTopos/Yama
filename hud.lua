@@ -22,7 +22,7 @@ function hud.draw()
 		
 		-- Backgrounds
 		love.graphics.setColor(0, 0, 0, 204)
-		love.graphics.rectangle("fill", camera.x, camera.y, 120, 200)
+		love.graphics.rectangle("fill", camera.x, camera.y, 100, camera.height)
 		love.graphics.rectangle("fill", camera.x+camera.width-120, camera.y, 120, 200)
 
 		-- Text color
@@ -30,8 +30,8 @@ function hud.draw()
 
 		-- Text top left
 		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + 2, camera.y + 2)
-		love.graphics.print("Camera", camera.x + 2, camera.y + 22)
-		love.graphics.print("  x = "..camera.x , camera.x + 2, camera.y + 32)
+		love.graphics.print("Camera: "..math.floor( camera.x / map.loaded.tilewidth)..":"..math.floor( camera.y / map.loaded.tileheight), camera.x + 2, camera.y + 22)
+		love.graphics.print("  x = "..camera.x.." "..camera.boundaries.x.." "..camera.boundaries.width, camera.x + 2, camera.y + 32)
 		love.graphics.print("  y = "..camera.y , camera.x + 2, camera.y + 42)
 		love.graphics.print("  width = "..camera.width , camera.x + 2, camera.y + 52)
 		love.graphics.print("  height = "..camera.height , camera.x + 2, camera.y + 62)
@@ -46,9 +46,10 @@ function hud.draw()
 		end
 		-- 142
 		if player then
-			love.graphics.print("Player", camera.x + 2, camera.y + 152)
+			love.graphics.print("Player: "..math.floor( player.getX() / map.loaded.tilewidth)..":"..math.floor( player.getY() / map.loaded.tileheight), camera.x + 2, camera.y + 152)
 			love.graphics.print("  x = "..player.getX(), camera.x + 2, camera.y + 162)
 			love.graphics.print("  y = "..player.getY(), camera.x + 2, camera.y + 172)
+			love.graphics.print("  z = "..player.getZ(), camera.x + 2, camera.y + 182)
 		end
 
 		-- Text top left
@@ -72,5 +73,7 @@ function hud.draw()
 			love.graphics.print(axisDir2, camera.x + 2, camera.y + 62)
 			love.graphics.print(love.joystick.getNumAxes(1), camera.x + 2, camera.y + 72)
 		end
+
+		love.graphics.setColor(255, 255, 255, 255)
 	end
 end

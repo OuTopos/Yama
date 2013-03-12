@@ -64,7 +64,7 @@ function camera.center(dx, dy)
 
 	if camera.y < camera.boundaries.y then
 		camera.y = camera.boundaries.y
-	elseif camera.y > camera.boundaries.height  - camera.height then
+	elseif camera.y > camera.boundaries.height - camera.height then
 		camera.y = camera.boundaries.height - camera.height
 	end
 end

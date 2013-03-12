@@ -1,11 +1,11 @@
 entities_player = {}
 
-function entities_player.new(x, y)
+function entities_player.new(x, y, z)
 	local self = {}
 
 	-- Common variables
 	local width, height = 64, 64
-	local ox, oy = 32, 48
+	local ox, oy = 32, 64
 	local sx, sy = 1, 1
 	local r = 0
 
@@ -37,10 +37,13 @@ function entities_player.new(x, y)
 	print(test1)
 	print(test2)
 
+	images.quads.add("tilesets/lpcfemaledark", 64, 64)
+	bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][27], x, y, z, r, sx, sy, ox, oy)
 
 
 
-	local p = love.graphics.newParticleSystem(images.get("player"), 1000)
+
+	local p = love.graphics.newParticleSystem(images.load("player"), 1000)
 	p:setEmissionRate(100)
 	p:setSpeed(300, 400)
 	p:setGravity(0)
@@ -56,7 +59,7 @@ function entities_player.new(x, y)
 	p:stop()
 
 	local particle = {}
-	particle.trail = love.graphics.newParticleSystem(images.get("player"), 1000)
+	particle.trail = love.graphics.newParticleSystem(images.load("player"), 1000)
 	particle.trail:setEmissionRate(100)
 	particle.trail:setSpeed(0, 25)
 	particle.trail:setGravity(0)
@@ -128,6 +131,9 @@ function entities_player.new(x, y)
 		
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
+		bufferObject.x = x
+		bufferObject.y = y
+		bufferObject.z = z
 		--x = anchor.body:getX() - 16
 		--y = anchor.body:getY() - 16
 
@@ -274,11 +280,15 @@ function entities_player.new(x, y)
 		love.graphics.setColor(255, 255, 255, 255);
 		--love.graphics.setColorMode("modulate")
 		love.graphics.setBlendMode("alpha")
-		love.graphics.draw(images.get("player"), x, y, r, sx, sy, ox, oy)
+		--love.graphics.draw(images.load("player"), x, y, r, sx, sy, ox, oy)
 
 		if hud.enabled then
 			physics.draw(anchor, {0, 255, 0, 102})
 		end
+	end
+
+	function self.addToBuffer()
+		buffer.add(bufferObject)
 	end
 
 	-- Basic functions
@@ -304,6 +314,9 @@ function entities_player.new(x, y)
 	end
 	function self.getY()
 		return y
+	end
+	function self.getZ()
+		return z
 	end
 	function self.getOX()
 		return x - ox

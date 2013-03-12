@@ -15,8 +15,8 @@ require	"entities_ball"
 require	"entities_projectile"
 require	"entities_monster"
 
-function entities.new(type, x, y)
-	local entity = _G["entities_"..type].new(x, y)
+function entities.new(type, x, y, z)
+	local entity = _G["entities_"..type].new(x, y, z)
 	table.insert(entities.data, entity)
 	return entity
 end
@@ -54,10 +54,10 @@ function entities.update(dt)
 	end	
 end
 
-function entities.draw()
+function entities.addToBuffer()
 	table.sort(entities.buffer.data, entities.buffer.sort)
 	for i = 1, #entities.buffer.data do
-		entities.buffer.data[i].draw()
+		entities.buffer.data[i].addToBuffer()
 	end
 end
 

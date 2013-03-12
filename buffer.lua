@@ -1,11 +1,13 @@
 buffer = {}
 buffer.enabled = true
 buffer.data = {}
-buffer.sortmode = 1
-
+buffer.sortmode = 2
+buffer.counter = 0
 
 function buffer.reset()
 	buffer.data = {}
+	print("Buffer reset after being drawn "..buffer.counter.." times.")
+	buffer.counter = 0
 end
 
 function buffer.add(object)
@@ -13,6 +15,7 @@ function buffer.add(object)
 end
 
 function buffer.draw()
+	buffer.counter = buffer.counter + 1
 	buffer.length = 0
 	buffer.drawCalls = 0
 
@@ -30,26 +33,28 @@ function buffer.draw()
 end
 
 function buffer.drawBatch(batch)
-	for i = 1, #batch do
+	for i = 1, #batch.data do
 		buffer.drawObject(batch.data[i])
 	end
 end
 
 function buffer.drawObject(object)
+	if object.color then
+		love.graphics.setColor(object.color)
+	end
+
 	if object.type == "drawable" then
 		-- DRAWABLE
-		if object.color then
-			love.graphics.setColor(object.color)
-		end
 		love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
-		if object.color then
-			love.graphics.setColor(255, 255, 255, 255)
-		end
 		buffer.drawCalls = buffer.drawCalls + 1
 	elseif object.type == "quad" then
 		-- QUAD
 		love.graphics.drawq(object.image, object.quad, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 		buffer.drawCalls = buffer.drawCalls + 1
+	end
+
+	if object.color then
+		love.graphics.setColor(255, 255, 255, 255)
 	end
 end
 
@@ -72,6 +77,11 @@ function buffer.sort(a, b)
 					return true
 				end
 			end
+		end
+		return false
+	elseif buffer.sortmode == 3 then
+		if a.z < b.z then
+			return true
 		end
 		return false
 	end
