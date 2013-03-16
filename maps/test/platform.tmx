@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="128" height="9" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="gx" value="0"/>
+  <property name="gy" value="0"/>
+  <property name="player" value="pplayer"/>
+  <property name="scalex" value="2"/>
+  <property name="scaley" value="2"/>
+  <property name="spawnx" value="4"/>
+  <property name="spawny" value="8"/>
+ </properties>
+ <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/platformer.png" width="288" height="608"/>
+ </tileset>
+ <layer name="background" width="128" height="9">
+  <properties>
+   <property name="type" value="background"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztwwEJAAAMBKGr8f2LrsdQcNVUVVVVffsArltwgQ==
+  </data>
+ </layer>
+ <layer name="clouds" width="128" height="9">
+  <properties>
+   <property name="scrollx" value="2"/>
+   <property name="scrolly" value="0"/>
+   <property name="type" value="background"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1rkJACAQBVH7L8Er8WrTX4EGCqLOg8k2MJBljRmzyimvgoqTebwlqayKqqqdfQ6Azdjxf1vd8fyfv3EjAABwlw5t7BLQ
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="128" height="9">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1csKglAURuFT2UVKIhFqUja0nHRx2LT3f6XWhiAHSSJyjtC/4MOBChu2F+eUUqpbIyyxaHFdhQInnFG2uE8Nv+x9tB0fXPNOL7jihruHuZSf9j/O23OxwRQzxDV6//+jFRKs8cQj7DjKc7b/LXahB1Fesm/+GBOkyHEMOZD6WtQz+7/P3ee/rr0Puxfj4AQ1
+  </data>
+ </layer>
+ <layer name="Tile Layer 3" width="128" height="9">
+  <data encoding="base64" compression="zlib">
+   eJztztkJgDAAwNCu5y3e4u3+Q5gpWpAE3n9CMEtThhwFSlSo0aBN+GVx6tBjwIgJMxasCb8sTht2HDhx4caDN92WmZmZmdlv+wDcFggF
+  </data>
+ </layer>
+ <objectgroup color="#ff0000" name="Object Layer 1" width="128" height="9">
+  <object x="384" y="256" width="320" height="32"/>
+  <object x="736" y="224" width="96" height="32"/>
+  <object x="768" y="256" width="64" height="32"/>
+  <object x="832" y="128" width="192" height="32"/>
+  <object x="832" y="160" width="96" height="32"/>
+  <object x="832" y="192" width="96" height="32"/>
+  <object x="832" y="224" width="64" height="32"/>
+  <object x="864" y="64">
+   <polyline points="0,0 160,0"/>
+  </object>
+  <object x="544" y="64">
+   <polyline points="0,0 32,0"/>
+  </object>
+  <object x="640" y="96">
+   <polyline points="0,0 32,0"/>
+  </object>
+  <object x="1024" y="64">
+   <polyline points="0,0 32,32 64,64 128,64 160,32 192,0"/>
+  </object>
+ </objectgroup>
+</map>

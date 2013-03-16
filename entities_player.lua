@@ -38,7 +38,7 @@ function entities_player.new(x, y, z)
 	print(test2)
 
 	images.quads.add("tilesets/lpcfemaledark", 64, 64)
-	bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][27], x, y, z, r, sx, sy, ox, oy)
+	bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][45], x, y, z, r, sx, sy, ox, oy)
 
 
 
@@ -83,12 +83,16 @@ function entities_player.new(x, y, z)
 
 	
 	-- Physics
-	--local hitbox = physics.newObject(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(14), 5)
+	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
+	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y-8, "dynamic"), love.physics.newCircleShape(9), 5)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0.4 )
 	anchor:getBody():setLinearDamping( 8 )
 	anchor:getBody():setFixedRotation( true )
+
+	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
+	hitbox:setUserData(self)
+	hitbox:setSensor(true)
 
 
 	function self.update(dt)
@@ -130,7 +134,7 @@ function entities_player.new(x, y, z)
 		--hitbox.body:setY(anchor.body:getY())
 		
 		x = anchor:getBody():getX()
-		y = anchor:getBody():getY()
+		y = anchor:getBody():getY()+8
 		bufferObject.x = x
 		bufferObject.y = y
 		bufferObject.z = z

@@ -1,7 +1,7 @@
 buffer = {}
 buffer.enabled = true
 buffer.data = {}
-buffer.sortmode = 2
+buffer.sortmode = 1
 buffer.counter = 0
 
 function buffer.reset()
@@ -60,11 +60,16 @@ end
 
 function buffer.sort(a, b)
 	if buffer.sortmode == 1 then
-		if a.y < b.y then
+		if a.z < b.z then
 			return true
 		end
 		return false
 	elseif buffer.sortmode == 2 then
+		if a.y < b.y then
+			return true
+		end
+		return false
+	elseif buffer.sortmode == 3 then
 		if a.y+a.z < b.y+b.z then
 			return true
 		end
@@ -77,11 +82,6 @@ function buffer.sort(a, b)
 					return true
 				end
 			end
-		end
-		return false
-	elseif buffer.sortmode == 3 then
-		if a.z < b.z then
-			return true
 		end
 		return false
 	end

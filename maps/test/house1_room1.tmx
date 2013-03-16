@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="16" height="9" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="sortmode" value="3"/>
+  <property name="yg" value="10"/>
+ </properties>
+ <tileset firstgid="1" name="hyptosis_ff6-recreated" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/hyptosis_ff6-recreated.png" width="512" height="1335"/>
+ </tileset>
+ <layer name="0.0" width="16" height="9">
+  <properties>
+   <property name="z" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBh6wHUA9QcDsRMQO5Oozx2I3aB6YWbAQBoQp+PBGUh2OkPZyPpBYCIaGxlPQrLThUz34wIAwVUMdw==
+  </data>
+ </layer>
+ <layer name="0.1" width="16" height="9">
+  <properties>
+   <property name="z" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFpIAqKF1JRTPxmUVNe2gBAKUzAeY=
+  </data>
+ </layer>
+ <layer name="1.0" width="16" height="9">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBj6wAiIm4DYGAeOQFMLAiZIYpxAvAVKI2MPKM0FxOZAbIbDfkkCWIoSzw1yAAB3SgUw
+  </data>
+ </layer>
+ <layer name="1.1" width="16" height="9">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBhZIAtKZ1LRTHxmweSsqWjfYAIACQoB4Q==
+  </data>
+ </layer>
+ <layer name="2.0" width="16" height="9">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBh4oATERUCsDMQ+UFoZia+CppYBTQwXsIDSlkCsDsRqONRZo/GlgVibCPNHAQMDAClTA2I=
+  </data>
+ </layer>
+ <layer name="3.0" width="16" height="9">
+  <properties>
+   <property name="z" value="3"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYKAcCAFxKhALA7ENlBZG4otgUSvCQBoQB2Ixil06CqgNAMnNAgg=
+  </data>
+ </layer>
+ <layer name="4.0" width="16" height="9">
+  <properties>
+   <property name="z" value="4"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxTZWBgYAJiZjyYBYhZgVgVSS1MTJCBOCCKRS02MVLAqH4GhkAgDoLyk5DYxOpXhJqhCcShUHYIkRikHgCnKQfN
+  </data>
+ </layer>
+ <objectgroup color="#ff0000" name="Collision" width="16" height="9">
+  <properties>
+   <property name="type" value="collision"/>
+  </properties>
+  <object x="32" y="160" width="320" height="32"/>
+  <object x="0" y="0" width="64" height="128"/>
+  <object x="0" y="128" width="32" height="160"/>
+  <object x="416" y="0" width="32" height="64"/>
+  <object x="448" y="0" width="32" height="128"/>
+  <object x="480" y="0" width="32" height="288"/>
+  <object x="96" y="256" width="64" height="32"/>
+  <object x="32" y="256" width="32" height="32"/>
+  <object x="352" y="128" width="32" height="32"/>
+  <object x="352" y="192">
+   <polygon points="0,0 32,-32 0,-32"/>
+  </object>
+  <object x="352" y="0" width="64" height="64"/>
+  <object x="256" y="176" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object x="32" y="176" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object x="384" y="112" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object x="448" y="112" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object x="64" y="0" width="256" height="128"/>
+  <object x="368" y="112" width="32" height="32"/>
+  <object x="352" y="112" width="32" height="32">
+   <ellipse/>
+  </object>
+ </objectgroup>
+ <objectgroup color="#00ffff" name="Doors" width="16" height="9">
+  <properties>
+   <property name="type" value="portal"/>
+  </properties>
+  <object name="door" x="64" y="272" width="32" height="16">
+   <properties>
+    <property name="map" value="test/test1"/>
+    <property name="spawn" value="spawn1"/>
+   </properties>
+  </object>
+  <object name="room2" x="416" y="64" width="32" height="32">
+   <properties>
+    <property name="map" value="test/house1_room2"/>
+    <property name="spawn" value="door1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup color="#ffff00" name="Spawn" width="16" height="9">
+  <properties>
+   <property name="type" value="spawn"/>
+  </properties>
+  <object name="door" x="64" y="240" width="32" height="32"/>
+  <object name="room2" x="416" y="96" width="32" height="32"/>
+ </objectgroup>
+</map>

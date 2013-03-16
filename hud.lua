@@ -5,13 +5,13 @@ function hud.draw()
 	if hud.enabled then
 		local lh = 10
 
-		--physics.draw()
+		physics.draw()
 
 		-- Entities
 		for i = 1, #entities.buffer.data do
 			if camera.isInside(entities.buffer.data[i].getOX(), entities.buffer.data[i].getOY(), entities.buffer.data[i].getWidth(), entities.buffer.data[i].getHeight()) then
 				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(i, entities.buffer.data[i].getX(), entities.buffer.data[i].getY()+2)
+				love.graphics.print(i.." "..entities.buffer.data[i].getY()+entities.buffer.data[i].getZ(), entities.buffer.data[i].getX(), entities.buffer.data[i].getY()+2)
 				love.graphics.circle("fill", entities.buffer.data[i].getX(), entities.buffer.data[i].getY(), 1)
 				love.graphics.setColor(255, 0, 0, 255)
 				love.graphics.rectangle( "line", entities.buffer.data[i].getOX(), entities.buffer.data[i].getOY(), entities.buffer.data[i].getWidth(), entities.buffer.data[i].getHeight() )

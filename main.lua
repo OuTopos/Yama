@@ -53,7 +53,7 @@ function love.load()
 	time = 0
 	lineNb = canvas:getHeight() * 4
 
-	--love.audio.play(music)
+	love.audio.play(music)
 	--camera.setScale(screen.height/1080, screen.height/1080)
 end
 
@@ -89,14 +89,19 @@ function love.keypressed(key)
 		entities.new("ball", player.getX(), player.getY())
 	end
 	if key == "s" then
-		physics.setWorld("world", 0, 0, 32, false)
+		--physics.setWorld("world", 0, 0, 32, false)
 		--camera.setBoundaries(0, 0, worldWidth, worldHeight)
-		player = entities.new("player", 64, 64, 0)
-		camera.follow = player
-		map.load("house1", "test", "test")
-		worldWidth, worldHeight = map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight
-		love.physics.newFixture(love.physics.newBody(physics.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, worldWidth+1, -1, worldWidth+1,worldHeight+1, -1, worldHeight+1))
+		--
+		map.load("test/arkanos", "door1")
+
+		--player = entities.new("player", 128, 200, 0)
+		--camera.follow = player
+		--worldWidth, worldHeight = map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight
+		--love.physics.newFixture(love.physics.newBody(physics.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, worldWidth+1, -1, worldWidth+1,worldHeight+1, -1, worldHeight+1))
 		
+	end
+	if key == "x" then
+		map.load("test/platform", "test")	
 	end
 	if key == "a" then
 		if player then
@@ -128,8 +133,8 @@ function love.update(dt)
 	time = time+dt
 	physics.update(dt)
 	entities.update(dt)
-	camera.update()
-	map.update()
+	camera.update(dt)
+	map.update(dt)
 end
 
 function love.draw()
@@ -158,8 +163,8 @@ function love.draw()
 	love.graphics.clear()
 
 	effect:send("time",time)
-	effect:send("nIntensity", 0.75)
-	effect:send("sIntensity", 0.75)
+	effect:send("nIntensity", 0)
+	effect:send("sIntensity", 0)
 	effect:send("sCount", lineNb)
 
 	love.graphics.setPixelEffect(effect)

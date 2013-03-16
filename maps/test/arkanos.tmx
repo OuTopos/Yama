@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="40" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="boundaries" value="false"/>
+  <property name="env" value="something"/>
+  <property name="name" value="The Mage City"/>
+  <property name="sortmode" value="3"/>
+ </properties>
+ <tileset firstgid="1" name="magecity" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/lorestrome/magecity.png" width="256" height="1450"/>
+  <tile id="12">
+   <properties>
+    <property name="block" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="0" width="40" height="40">
+  <properties>
+   <property name="priority" value="0"/>
+   <property name="z" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt17sOgjAYhuH+brrpPeitGKPGeBoMt+3A4MDAwKDoJfg1llgJeEBC/+EbnrSQNHkJNA1ijJEGeg3XdUV7HxERERER0b+mEr7hnZXCvhj6mAwgxfwMR/P4h7ROgfsSGGIygqvX5bsF7MvcWNfmC9Vn3+dcXltm9p6ivnLbApalRi19a9g4W4V9B9jBHiKFfUVjZHR8f3a8VDRq2b8T+dyYV6yNO+oby/M6LXXm7p54z1FIOny/4jptw7fnW9Zixy80nb91Qu4J9rXjDhSDLuQ=
+  </data>
+ </layer>
+ <layer name="0" width="40" height="40">
+  <properties>
+   <property name="level" value="1"/>
+   <property name="z" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzrERABEAAEGqIdQE+u+IQPyJgB+7M5dfCAAAAPCuOmurfvjlD3I8ffCt+Nvib0+6/A/gNQOpBAIu
+  </data>
+ </layer>
+ <layer name="1" width="40" height="40">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1EEOQDAQBdDhHFaWVjYO4ALiJoSjcDRLW1xDGySNlDRKp5L/komhFT8TKdFzscW7LvieDwAAAMAng6hwr5E5iw7y2UE+O8hnLg+IEtpKSkVlynp2unctemmPS62mnziCnDTcASyUAc936/36t9l1onruEApf51cY/lfVtzGM3M1QrskzZlaeyX75NJGe7vw7RBc9AIBqBQFIGS8=
+  </data>
+ </layer>
+ <layer name="1" width="40" height="40">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzqENgDAARNGyFA5QzFOWg/moQIDCNLlA3ktOnPulAAAAQD9723H7U9t8bYkUwVNNB/BLWzqgo3VIF7wb0wHAJ5xktgO/
+  </data>
+ </layer>
+ <layer name="1" width="40" height="40">
+  <properties>
+   <property name="z" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20PBxQAAAAAAMCXARkAAAE=
+  </data>
+ </layer>
+ <layer name="2" width="40" height="40">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1E0KgCAQBlC7Qydo1aIL1EVy2S6pVeeoK1ZXScPIhT9FqQXfA5lJJxgGkZBnqof/+/b1/gAAAAAAAO4oE0IKHjP5nfM1KOcin4N3dUpfqgmp1+SxZkiVvLPU1b4bMWgu1rU+m7BgMtpmFxM17I98TSEbMWhkdM0v1v1j7pJdrPunss1QnIk3ZlH2RL567UhP9/4dUkMOAPAnG6lUEBo=
+  </data>
+ </layer>
+ <layer name="2" width="40" height="40">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzkENACAMALEhDIGIgS/2wMXCaJP7XwQAAAAvmbeVPVHcyB4ASustYmdPAHzgAMBuAto=
+  </data>
+ </layer>
+ <layer name="2" width="40" height="40">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzsEJAAAIxDD330Yn1C3kIIH+WwUAAECKvuZ7AgAAAiyrTQFk
+  </data>
+ </layer>
+ <layer name="3" width="40" height="40">
+  <properties>
+   <property name="z" value="3"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1LENgEAIhWEcxrN2JivnOGdxBhdR1zmIMbmCxkKJ+n8Jgcs1LxSIAAAAAABOfSPSau/k6ElrrP5tXiOCvdjgzOwQT8paU3SIC+boAB9gN2ar3jbvATm8++dZ7g4CAD9VAN41Co8=
+  </data>
+ </layer>
+ <layer name="3" width="40" height="40">
+  <properties>
+   <property name="z" value="3"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzrEJACAAA0FndTttdERtBDcI6B0EUn4pAAAAHG2vpyM+UNMBwPPG9WesAoCkBQ7sAxU=
+  </data>
+ </layer>
+ <layer name="3" width="40" height="40">
+  <properties>
+   <property name="z" value="3"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20PBxQAAAAAAMCXARkAAAE=
+  </data>
+ </layer>
+ <layer name="4" width="40" height="40">
+  <properties>
+   <property name="z" value="4"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztlt0KgkAQRsfHKS97op5D3yxBKYjQSh/Jby6imOZiQXRH+A4cWFYvDvsjihBCCCGEEPLPE75yR4CyELk483f42DrG4YS+mzOfs+9qjNbXGwd4/nmu4zecYAu7jftS0TVsJMY59NA11HsctU+x5zDKvf7AvnQqWJu5SH0ee+hrjZH69Bszyvd/QcdT1iKfaPtqYd8y2LeM6H1kHxzg0bFMeGdttWEGRx5B3Q==
+  </data>
+ </layer>
+ <layer name="4" width="40" height="40">
+  <properties>
+   <property name="z" value="4"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6D3D2U2Y1w3SEACAABwz7QDAADAaws/3wC/
+  </data>
+ </layer>
+ <layer name="5" width="40" height="40">
+  <properties>
+   <property name="z" value="5"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0EEKgzAQRuHxKF3UhT1Fjy7qIu2ldDGChEinPkWF/4NB0MQ8MpjZ58+JaH06n2HDOb3vpfKz+0LflnPm/bTtm71L/u/k37rCmgjSN9/V2rkpsOaXPe7vSOpj1Meoj1Efoz5Gfcxd+t6VWTM9Xyf35O5yf1elPkZ9jPoY9THqY9THqI9RH9OeHRDwmOZZmDqw5uhZNlzVCJH5aFs=
+  </data>
+ </layer>
+ <layer name="5" width="40" height="40">
+  <properties>
+   <property name="z" value="5"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzrENABAARNEzHDva1gQSCiHyXvObKy4BAAB21ZK0cvsFAADwuz7pyuZ0XzcAp5ULUA==
+  </data>
+ </layer>
+ <layer name="6" width="40" height="40">
+  <properties>
+   <property name="z" value="6"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1zEKgDAMRuHe/0baSZ3U2yg6+xcsSDEgaAnC++BBKRmyJgQAAAB8rVGtit6LGDrVq8F7EcOoJjV7LwIAAADglXwblcUHM7VLO+Tbo+x6i1gztfvDPbSp/Xwvar3593QAgvRGJg==
+  </data>
+ </layer>
+ <layer name="6" width="40" height="40">
+  <properties>
+   <property name="z" value="6"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1zkKgDAARNFJ47Esvf9VXMEl4oBNGpdCich/8EmTYlJGAgAAAL6nClIZcq8AAAAA8GdD7gEXVle7xrWuc73Od9+585TCf7bR5+Rmt7iofXcqfcPRnTdsTE8WyA==
+  </data>
+ </layer>
+ <objectgroup color="#ffff00" name="Spawn points" width="40" height="40">
+  <properties>
+   <property name="type" value="spawn"/>
+  </properties>
+  <object name="entrance" x="240" y="1248" width="32" height="32"/>
+  <object name="door1" x="32" y="1184" width="32" height="32"/>
+  <object x="128" y="736" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup color="#55aaff" name="Portals" width="40" height="40">
+  <properties>
+   <property name="type" value="portal"/>
+  </properties>
+  <object x="224" y="1280">
+   <properties>
+    <property name="map" value="test"/>
+    <property name="spawn" value="arkanos"/>
+    <property name="world" value="orthogonia"/>
+   </properties>
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object x="32" y="1216" width="32" height="32">
+   <properties>
+    <property name="map" value="moenomappu"/>
+    <property name="spawn" value="door"/>
+    <property name="world" value="orthogonia"/>
+   </properties>
+  </object>
+  <object x="128" y="704" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup color="#ff0000" name="Collision" width="40" height="40">
+  <properties>
+   <property name="type" value="collision"/>
+  </properties>
+  <object x="288" y="1184" width="992" height="96"/>
+  <object x="192" y="1072" width="32" height="16"/>
+  <object x="128" y="1040" width="32" height="16"/>
+  <object x="96" y="976" width="32" height="16"/>
+  <object x="96" y="912" width="32" height="16"/>
+  <object x="128" y="832" width="32" height="16"/>
+  <object x="224" y="928" width="64" height="16"/>
+  <object x="192" y="800" width="32" height="16"/>
+  <object x="288" y="816" width="32" height="16"/>
+  <object x="288" y="1072" width="32" height="16"/>
+  <object x="416" y="1056" width="32" height="32"/>
+  <object x="384" y="928" width="192" height="128"/>
+  <object x="512" y="1056" width="32" height="32"/>
+  <object x="448" y="1056" width="64" height="128"/>
+  <object x="0" y="0" width="32" height="1184"/>
+  <object x="32" y="832" width="32" height="192"/>
+  <object x="352" y="960" width="32" height="96"/>
+  <object x="32" y="576" width="96" height="192"/>
+  <object x="128" y="576" width="32" height="128"/>
+  <object x="160" y="576" width="32" height="192"/>
+  <object x="32" y="768" width="32" height="32"/>
+  <object x="192" y="736" width="16" height="32"/>
+  <object x="304" y="736" width="16" height="32"/>
+  <object x="192" y="704" width="32" height="32"/>
+  <object x="288" y="704" width="32" height="32"/>
+  <object x="320" y="672" width="128" height="128"/>
+  <object x="352" y="800" width="96" height="96"/>
+  <object x="384" y="896" width="64" height="32"/>
+  <object x="320" y="544" width="64" height="128"/>
+  <object x="1248" y="0" width="32" height="1184"/>
+  <object x="0" y="1184" width="32" height="96"/>
+  <object x="32" y="1248" width="32" height="32"/>
+  <object x="64" y="1184" width="160" height="96"/>
+ </objectgroup>
+</map>
