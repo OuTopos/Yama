@@ -59,17 +59,17 @@ function buffer.drawObject(object)
 end
 
 function buffer.sort(a, b)
-	if buffer.sortmode == 1 then
-		if a.z < b.z then
-			return true
-		end
-		return false
-	elseif buffer.sortmode == 2 then
-		if a.y < b.y then
-			return true
-		end
-		return false
-	elseif buffer.sortmode == 3 then
+--	if buffer.sortmode == 1 then
+--		if a.z < b.z then
+--			return true
+--		end
+--		return false
+--	elseif buffer.sortmode == 2 then
+--		if a.y < b.y then
+--			return true
+--		end
+--		return false
+--	elseif buffer.sortmode == 3 then
 		if a.y+a.z < b.y+b.z then
 			return true
 		end
@@ -83,8 +83,8 @@ function buffer.sort(a, b)
 				end
 			end
 		end
-		return false
-	end
+--		return false
+--	end
 end
 
 function buffer.newBatch(x, y, z, data)

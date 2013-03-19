@@ -89,16 +89,10 @@ function love.keypressed(key)
 		entities.new("ball", player.getX(), player.getY())
 	end
 	if key == "s" then
-		--physics.setWorld("world", 0, 0, 32, false)
-		--camera.setBoundaries(0, 0, worldWidth, worldHeight)
-		--
 		map.load("test/arkanos", "door1")
-
-		--player = entities.new("player", 128, 200, 0)
-		--camera.follow = player
-		--worldWidth, worldHeight = map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight
-		--love.physics.newFixture(love.physics.newBody(physics.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, worldWidth+1, -1, worldWidth+1,worldHeight+1, -1, worldHeight+1))
-		
+	end
+	if key == "d" then
+		map.load("test/house1_room1", "door1")
 	end
 	if key == "x" then
 		map.load("test/platform", "test")	
@@ -112,9 +106,9 @@ function love.keypressed(key)
 	end
 	if key == "e" then
 		for i=1,50 do
-			entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
-			entities.new("coin", math.random(1, worldWidth), math.random(1, worldHeight))
-			entities.new("monster", math.random(1, worldWidth), math.random(1, worldHeight))
+			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
+			entities.new("coin", math.random(1, worldWidth), math.random(1, worldHeight), 0)
+			--entities.new("monster", math.random(1, worldWidth), math.random(1, worldHeight))
 		end
 	end
 
@@ -139,7 +133,7 @@ end
 
 function love.draw()
 	camera.set()
-	love.graphics.setCanvas(canvas)
+	--love.graphics.setCanvas(canvas)
 
 	-- Check if thr buffer has been reset 
 	if next(buffer.data) == nil then
@@ -156,18 +150,18 @@ function love.draw()
 	-- Draw the HUD
 	hud.draw()
 
-	love.graphics.setCanvas()
+	--love.graphics.setCanvas()
+	--love.graphics.clear()
 	camera.unset()
 
 	-- Pixel shader n stuff
-	love.graphics.clear()
 
-	effect:send("time",time)
-	effect:send("nIntensity", 0)
-	effect:send("sIntensity", 0)
-	effect:send("sCount", lineNb)
+	--effect:send("time",time)
+	--effect:send("nIntensity", 0.5)
+	--effect:send("sIntensity", 0.75)
+	--effect:send("sCount", lineNb)
 
-	love.graphics.setPixelEffect(effect)
-	love.graphics.draw(canvas, 0, 0, 0, 2, 2)
-	love.graphics.setPixelEffect()
+	--love.graphics.setPixelEffect(effect)
+	--love.graphics.draw(canvas, 0, 0, 0, 2, 2)
+	--love.graphics.setPixelEffect()
 end

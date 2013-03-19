@@ -53,8 +53,10 @@ function camera.update()
 end
 
 function camera.center(dx, dy)
-	camera.x = math.floor( (dx - camera.width / 2) + 0.5)
-	camera.y = math.floor( (dy - camera.height / 2) + 0.5)
+	--camera.x = math.floor( (dx - camera.width / 2) + 0.5)
+	--camera.y = math.floor( (dy - camera.height / 2) + 0.5)
+	camera.x = (dx - camera.width / 2)
+	camera.y = (dy - camera.height / 2)
 
 	if camera.x < camera.boundaries.x then
 		camera.x = camera.boundaries.x

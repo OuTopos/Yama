@@ -1,8 +1,8 @@
 entities = {}
 entities.data = {}
 
-entities.buffer = {}
-entities.buffer.data = {}
+entities.visible = {}
+entities.visible.data = {}
 
 entities.destroyQueue = {}
 
@@ -18,6 +18,7 @@ require	"entities_monster"
 function entities.new(type, x, y, z)
 	local entity = _G["entities_"..type].new(x, y, z)
 	table.insert(entities.data, entity)
+	buffer.reset()
 	return entity
 end
 
@@ -29,7 +30,7 @@ function entities.destroy(entity)
 end
 
 function entities.update(dt)
-	entities.buffer.data = {}
+	entities.visible.data = {}
 
 	-- Destroy entities
 	local i1 = 1
@@ -48,26 +49,25 @@ function entities.update(dt)
 	for key=1, #entities.data do
 		entities.data[key].update(dt)
 
-		if camera.isInside(entities.data[key].getOX(), entities.data[key].getOY(), entities.data[key].getWidth(), entities.data[key].getHeight()) then
-			entities.buffer.add(entities.data[key])
+		local visible = entities.data[key].visible or false
+		local inView = camera.isInside(entities.data[key].getOX(), entities.data[key].getOY(), entities.data[key].getWidth(), entities.data[key].getHeight())
+		
+		if visible and inView then
+			table.insert(entities.visible.data, entities.data[key])
+		elseif not visible and inView then
+			table.insert(entities.visible.data, entities.data[key])
+			entities.data[key].visible = true
+			buffer.reset()
+		elseif visible and not inView then
+			entities.data[key].visible = false
+			buffer.reset()
 		end
 	end	
 end
 
 function entities.addToBuffer()
-	table.sort(entities.buffer.data, entities.buffer.sort)
-	for i = 1, #entities.buffer.data do
-		entities.buffer.data[i].addToBuffer()
+	--table.sort(entities.visible.data, entities.visible.sort)
+	for i = 1, #entities.visible.data do
+		entities.visible.data[i].addToBuffer()
 	end
-end
-
-function entities.buffer.add(entity)
-	table.insert(entities.buffer.data, entity)
-end
-
-function entities.buffer.sort(a, b)
-	if a.getY() < b.getY() then
-		return true
-	end
-	return false
 end

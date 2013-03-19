@@ -1,21 +1,23 @@
 entities_coin = {}
 
-function entities_coin.new(x, y)
+function entities_coin.new(x, y, z)
 	local self = {}
 
 	-- Common variables
 	local width, height = 32, 32
-	local ox, oy = 16, 16
+	local ox, oy = 16, 24
 	local sx, sy = 1, 1
 	local r = 0
 
 	-- Sprite/Quad Variables
-	local coin_image = love.graphics.newImage( "images/coin_"..tostring(math.random(1,3))..".png" )
-	local coin_quads = {}
+	images.quads.add("coin_1", 32, 32)
+	local bufferObject = buffer.newQuad(images.load("coin_1"), images.quads.data["coin_1"][1], x, y, z, r, sx, sy, ox, oy)
+	--local coin_image = love.graphics.newImage( "images/coin_"..tostring(math.random(1,3))..".png" )
+	--local coin_quads = {}
 
-	for i=0, 7 do
-		table.insert(coin_quads, love.graphics.newQuad(i*32, 0, 32, 32, 256, 32))
-	end
+	--for i=0, 7 do
+	--	table.insert(coin_quads, love.graphics.newQuad(i*32, 0, 32, 32, 256, 32))
+	--end
 
 	-- Animation Variables
 	local animation = {}
@@ -30,15 +32,19 @@ function entities_coin.new(x, y)
 	-- Standard functions
 	function self.update(dt)
 		x, y = anchor:getBody():getX(), anchor:getBody():getY()
+
+		-- Update bufferObjects position
+		bufferObject.x = x
+		bufferObject.y = y
+		bufferObject.z = z
+
+
 		self.animate(1, 8, 0.1, dt)
+		bufferObject.quad = images.quads.data["coin_1"][animation.quad]
 	end
 
-	function self.draw()
-		love.graphics.drawq(coin_image, coin_quads[animation.quad], x, y, r, sx, sy, ox, oy)
-		
-		if hud.enabled then
-			physics.draw(anchor)
-		end
+	function self.addToBuffer()
+		buffer.add(bufferObject)
 	end
 
 	-- Animation functions
@@ -66,6 +72,9 @@ function entities_coin.new(x, y)
 	end
 	function self.getY()
 		return y
+	end
+	function self.getZ()
+		return z
 	end
 	function self.getOX()
 		return x - ox * sx

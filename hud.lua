@@ -8,13 +8,13 @@ function hud.draw()
 		physics.draw()
 
 		-- Entities
-		for i = 1, #entities.buffer.data do
-			if camera.isInside(entities.buffer.data[i].getOX(), entities.buffer.data[i].getOY(), entities.buffer.data[i].getWidth(), entities.buffer.data[i].getHeight()) then
+		for i = 1, #entities.visible.data do
+			if camera.isInside(entities.visible.data[i].getOX(), entities.visible.data[i].getOY(), entities.visible.data[i].getWidth(), entities.visible.data[i].getHeight()) then
 				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(i.." "..entities.buffer.data[i].getY()+entities.buffer.data[i].getZ(), entities.buffer.data[i].getX(), entities.buffer.data[i].getY()+2)
-				love.graphics.circle("fill", entities.buffer.data[i].getX(), entities.buffer.data[i].getY(), 1)
+				love.graphics.print(i.." "..entities.visible.data[i].getY()+entities.visible.data[i].getZ(), entities.visible.data[i].getX(), entities.visible.data[i].getY()+2)
+				love.graphics.circle("fill", entities.visible.data[i].getX(), entities.visible.data[i].getY(), 1)
 				love.graphics.setColor(255, 0, 0, 255)
-				love.graphics.rectangle( "line", entities.buffer.data[i].getOX(), entities.buffer.data[i].getOY(), entities.buffer.data[i].getWidth(), entities.buffer.data[i].getHeight() )
+				love.graphics.rectangle( "line", entities.visible.data[i].getOX(), entities.visible.data[i].getOY(), entities.visible.data[i].getWidth(), entities.visible.data[i].getHeight() )
 			end
 		end
 		
@@ -39,23 +39,36 @@ function hud.draw()
 		love.graphics.print("  sy = "..camera.sy , camera.x + 2, camera.y + 82)
 		--92
 		love.graphics.print("Entities:  "..#entities.data, camera.x + 2, camera.y + 102)
-		love.graphics.print("  in Buffer: "..#entities.buffer.data, camera.x + 2, camera.y + 112)
+		love.graphics.print("  visible: "..#entities.visible.data, camera.x + 2, camera.y + 112)
 		--122
 		if physics.world then
 			love.graphics.print("Physics:   "..physics.world:getBodyCount(), camera.x + 2, camera.y + 132)
 		end
 		-- 142
-		if player then
-			love.graphics.print("Player: "..math.floor( player.getX() / map.loaded.tilewidth)..":"..math.floor( player.getY() / map.loaded.tileheight), camera.x + 2, camera.y + 152)
-			love.graphics.print("  x = "..player.getX(), camera.x + 2, camera.y + 162)
-			love.graphics.print("  y = "..player.getY(), camera.x + 2, camera.y + 172)
-			love.graphics.print("  z = "..player.getZ(), camera.x + 2, camera.y + 182)
+		if buffer.enabled then
+			love.graphics.print("Buffer: "..buffer.length, camera.x + 2, camera.y + 152)
+			--love.graphics.print("  x = "..player.getX(), camera.x + 2, camera.y + 162)
+			--love.graphics.print("  y = "..player.getY(), camera.x + 2, camera.y + 172)
+			--love.graphics.print("  z = "..player.getZ(), camera.x + 2, camera.y + 182)
+		else
+			love.graphics.print("Buffer: disabled", camera.x + 2, camera.y + 152)
 		end
+
+
+
 
 		-- Text top left
 		love.graphics.print("Modes", camera.x+camera.width-118, camera.y + 2)
 		for i = 1, #screen.modes do
 			love.graphics.print("  "..i..": "..screen.modes[i].width.."x"..screen.modes[i].height, camera.x+camera.width-118, camera.y + 2+i*lh)
+		end
+
+		-- 
+		if player then
+			love.graphics.print("Player: "..math.floor( player.getX() / map.loaded.tilewidth)..":"..math.floor( player.getY() / map.loaded.tileheight), camera.x + 2, camera.y + 152)
+			love.graphics.print("  x = "..player.getX(), camera.x + 2, camera.y + 162)
+			love.graphics.print("  y = "..player.getY(), camera.x + 2, camera.y + 172)
+			love.graphics.print("  z = "..player.getZ(), camera.x + 2, camera.y + 182)
 		end
 
 

@@ -26,19 +26,8 @@ function entities_player.new(x, y, z)
 	local width, height = 64, 64
 
 	-- SPRITES
-	--local treeimage = 
-
-	--images.load("player")
-	local grid_marker = love.graphics.newImage( "images/grid_marker.png" )
-	local selector = love.graphics.newImage( "images/selectorA.png" )
-
-	local test1 = love.graphics.newImage( "images/player.png" )
-	local test2 = love.graphics.newImage( "images/player.png" )
-	print(test1)
-	print(test2)
-
 	images.quads.add("tilesets/lpcfemaledark", 64, 64)
-	bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][45], x, y, z, r, sx, sy, ox, oy)
+	local bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][45], x, y, z, r, sx, sy, ox, oy)
 
 
 

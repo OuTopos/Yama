@@ -42,6 +42,12 @@ function map.load(path, spawn)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							local fixture = map.shape(object)
+							if object.properties.userdata then
+								--set stuff acording to the object
+							elseif layer.properties.userdata then
+								--set stuff according to the object layer
+							end
+
 						end
 					elseif layer.properties.type == "portals" then
 						-- Adding portals to physics objects
@@ -177,7 +183,7 @@ function map.update()
 		local xn = math.floor( camera.x / map.loaded.tilewidth )
 		local yn = math.floor( camera.y / map.loaded.tileheight )
 		if xn ~= map.view.x or yn ~= map.view.y then
-			-- Player moved to another tile
+			-- Camera moved to another tile
 			map.view.x = xn
 			map.view.y = yn
 
