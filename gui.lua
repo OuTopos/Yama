@@ -12,12 +12,12 @@ function gui.draw()
 		love.graphics.draw(gui.images.test, camera.x + 2,  camera.y + camera.height - 66)
 
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 5)
+		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 3)
 		love.graphics.print("Skeleton: HELLO", camera.x + 12 + 1, camera.y + camera.height - 55 +1)
 		love.graphics.print("Princess: Aahh!", camera.x + 12 + 1, camera.y + camera.height - 45 +1)
 
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 4)
+		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 2)
 		love.graphics.print("Skeleton: HELLO", camera.x + 12, camera.y + camera.height - 55)
 		love.graphics.print("Princess: Aahh!", camera.x + 12, camera.y + camera.height - 45)
 	end

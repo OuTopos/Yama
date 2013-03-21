@@ -2,7 +2,9 @@ map = {}
 map.data = {}
 map.view = { x = 0, y = 0, z = 0}
 map.view.size = { x = 0, y = 0, z = 0}
---map.view.buffer = {}
+
+map.tileres = 0
+map.tilecount = 0
 
 function map.load(path, spawn)
 	print("Loading map: "..path)
@@ -73,10 +75,6 @@ function map.load(path, spawn)
 				images.quads.add(name, tileset.tilewidth, tileset.tileheight)
 			end
 
-			-- Setting up map view
-			map.view.size.x = math.ceil(camera.width / map.loaded.tilewidth) + 1
-			map.view.size.y = math.ceil(camera.height / map.loaded.tileheight) + 1
-
 			-- Setting camera boundaries
 			camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
 
@@ -104,8 +102,14 @@ function map.load(path, spawn)
 	--Setting sortmode
 	buffer.sortmode = tonumber(map.loaded.properties.sortmode) or 1
 
+	-- Setting up map view
+	map.resetView()
 	-- Set camera to follow player
 	camera.follow = map.loaded.player
+	--camera.follow = nil
+
+--	map.optimize()
+--	print(map.loaded.optimized.tilecount)
 end
 
 function map.shape(object)
@@ -151,6 +155,11 @@ function map.shape(object)
 	return nil
 end
 
+function map.resetView()
+	map.view.size.x = math.ceil(camera.width / map.loaded.tilewidth) + 1
+	map.view.size.y = math.ceil(camera.height / map.loaded.tileheight) + 1
+end
+
 function map.loadPhysics()
 	-- body
 end
@@ -193,74 +202,179 @@ function map.update()
 	end
 end
 
-function map.addToBuffer()
+function map.optimize()
 	if map.loaded then
-		local z = 0
-		local batch = nil
+		map.loaded.optimized = {}
+--		map.tileres = 0
+		map.loaded.optimized.tilecount = 0
 
-		-- Iterate the x-axis.
-		for x=map.view.x, map.view.x+map.view.size.x-1 do
-			-- Check so that x is not outside the map.
-			if x > -1 and x < map.loaded.width then
-				
-				-- Iterate the y-axis.
-				for y=map.view.y, map.view.y+map.view.size.y-1 do
-					-- Check so that y is not outside the map.
-					if y > -1 and y < map.loaded.height then
+		-- Iterate the y-axis.
+		ytemp = {y = 0, data = {}}
+		for y=0, map.loaded.width-1 do
 
-						-- Create a buffer batch.
-						batch = buffer.newBatch(map.getXYZ(x, y, z))
+			-- Check if y has changed.
+			if y ~= ytemp.y then
+				if next(ytemp.data) ~= nil then
+					table.insert(map.loaded.optimized, ytemp)
+				end
+				ytemp = {y = y, data = {}}
+			end
 
-						-- Iterate the map.loaded.layercount (z-axis)
-						for i=1, map.loaded.layercount do
-							-- Check if layer is a tilelayer.
-							if map.loaded.layers[i].type == "tilelayer" then
+			-- Iterate the map.loaded.layercount (z-axis)
+			ztemp = {z = 0, data = {}}
+			for i=1, map.loaded.layercount do
 
-								-- Checking so tile exists.
-								if map.loaded.layers[i].data[map.tileIndex(x, y)] then
-									-- Checking so tile is not empty.
-									if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
+				-- Get z from tilelayer properties.
+				z = tonumber(map.loaded.layers[i].properties.z) or 0
 
-										-- Get z from tilelayer properties.
-										z = tonumber(map.loaded.layers[i].properties.z) or 0
-
-										-- Check if z has changed.
-										if map.getZ(z) ~= batch.z then
-											-- Send the previous batch to buffer, unless it's empty.
-											if next(batch.data) ~= nil then
-												buffer.add(batch)
-												batch = buffer.newBatch(map.getXYZ(x, y, z))
-											end
-											-- Setting batch z to new z
-											batch.z = map.getZ(z)
-										end
-
-										--Getting quad and image and adding it as a quad to the batch
-										image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
-										table.insert(batch.data, buffer.newQuad(image, quad, batch.x, batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
-											
-									end
-								end
-
-
-							end
-
-						end
-						-- Check for sprites in spriteset to avoid sending empty spriteset to buffer
-						if next(batch.data) ~= nil then
-							buffer.add(batch)
-						end
-
+				-- Check if z has changed.
+				if z ~= ztemp.z then
+					if next(ztemp.data) ~= nil then
+						table.insert(ytemp.data, ztemp)
 					end
+					ztemp = {z = z, data = {}}
+				end
 
-
-
+				-- Iterate the x-axis.
+				for x=0, map.loaded.width-1 do
+					-- Check so tile is not empty
+					if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
+						-- Fetch image and quad and put it in xtemp
+						local image, quad = map.getQuad(map.loaded.layers[i].data[map.tileIndex(x, y)])
+						--print("nummer"..map.loaded.layers[i].data[map.tileIndex(x, y)].."    ")
+						--print(quad)
+						xtemp = {x = x, image = image, quad = quad}
+						-- Put xtemp in ztemp
+						--if quad and image then
+							table.insert(ztemp.data, xtemp)
+							map.loaded.optimized.tilecount = map.loaded.optimized.tilecount + 1
+						--end
+						--print(x.." "..y.." "..z)
+					end
 				end
 			end
 
+			if next(ztemp.data) ~= nil then
+				table.insert(ytemp.data, ztemp)
+			end
+
+		end
+
+		if next(ytemp.data) ~= nil then
+			table.insert(map.loaded.optimized, ytemp)
+		end
+
+	end
+end
+
+function map.addToBufferCrazy()
+	batchmade = 0
+	if map.loaded then
+		map.tileres = 0
+		map.tilecount = 0
+
+		iy = 1
+		while map.loaded.optimized[iy].y < map.view.y+map.view.size.y do
+			if map.loaded.optimized[iy].y >= map.view.y then
+				y = map.loaded.optimized[iy].y
+				for iz = 1, #map.loaded.optimized[iy].data do
+					z = map.loaded.optimized[iy].data[iz].z
+					ix = 1
+					local batch = buffer.newBatch(0, map.getX(y), map.getX(z))
+					batchmade = batchmade + 1
+					while map.loaded.optimized[iy].data[iz].data[ix].x < map.view.x+map.view.size.x do
+						if map.loaded.optimized[iy].data[iz].data[ix].x >= map.view.x then
+							x = map.loaded.optimized[iy].data[iz].data[ix].x
+							batch.x = map.getX(x)
+							image = map.loaded.optimized[iy].data[iz].data[ix].image
+							quad = map.loaded.optimized[iy].data[iz].data[ix].quad
+							table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), map.getY(y), map.getZ(z), 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+							map.tilecount = map.tilecount + 1
+						end
+						map.tileres = map.tileres + 1
+						ix = ix + 1
+						if not map.loaded.optimized[iy].data[iz].data[ix] then
+							break
+						end
+					end
+					buffer.add(batch)
+				end
+			end
+			iy = iy + 1
+			if not map.loaded.optimized[iy] then
+				break
+			end
+		end
+		print("tilecount: "..map.tilecount)
+		print("batches made: ".. batchmade)
+	end
+end
+
+function map.addToBuffer()
+	if map.loaded then
+		map.tileres = 0
+		map.tilecount = 0
+
+		-- Iterate the y-axis.
+		for y=map.view.y, map.view.y+map.view.size.y-1 do
+			-- Check so that y is not outside the map.
+			if y > -1 and y < map.loaded.height then
+
+				-- Create a buffer batch.
+				local batch = buffer.newBatch(map.getXYZ(map.view.x, y, 0))
+
+				-- Iterate the map.loaded.layercount (z-axis)
+				for i=1, map.loaded.layercount do
+					-- Check if layer is a tilelayer.
+					--if map.loaded.layers[i].type == "tilelayer" then
+
+						-- Get z from tilelayer properties.
+						z = tonumber(map.loaded.layers[i].properties.z) or 0
+
+						-- Check if z has changed.
+						if map.getZ(z) ~= batch.z then
+							-- Send the previous batch to buffer, unless it's empty.
+							if next(batch.data) ~= nil then
+								buffer.add(batch)
+								batch = buffer.newBatch(map.getXYZ(map.view.x, y, z))
+							end
+							-- Setting batch z to new z
+							batch.z = map.getZ(z)
+						end
+
+						-- Iterate the x-axis.
+						for x=map.view.x, map.view.x+map.view.size.x-1 do
+							map.tileres = map.tileres +1
+
+							-- Check so that x is not outside the map.
+							if x > -1 and x < map.loaded.width then
+
+								-- Checking so tile exists.
+								--if map.loaded.layers[i].data[map.tileIndex(x, y)] then
+
+									-- Checking so tile is not empty.
+									if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
+
+										map.tilecount = map.tilecount +1
+
+										--Getting quad and image and adding it as a quad to the batch
+										image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
+										table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+
+									end
+								--end
+							end
+						end
+					--end
+				end
+
+				-- Check for sprites in spriteset to avoid sending empty spriteset to buffer
+				if next(batch.data) ~= nil then
+					buffer.add(batch)
+				end
+			end
 		end
 	end
-
 end
 
 function map.tileIndex(x, y)

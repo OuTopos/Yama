@@ -25,51 +25,34 @@ function entities_player.new(x, y, z)
 
 	local width, height = 64, 64
 
-	-- SPRITES
-	images.quads.add("tilesets/lpcfemaledark", 64, 64)
-	local bufferObject = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][45], x, y, z, r, sx, sy, ox, oy)
+	-- BUFFER BATCH
+	local bufferBatch = buffer.newBatch(x, y, z)
 
-
-
-
-	local p = love.graphics.newParticleSystem(images.load("player"), 1000)
-	p:setEmissionRate(100)
-	p:setSpeed(300, 400)
-	p:setGravity(0)
-	p:setSizes(2, 1)
-	p:setColors(255, 255, 255, 255, 58, 128, 255, 0)
-	p:setPosition(400, 300)
-	p:setLifetime(1)
-	p:setParticleLife(1)
-	p:setDirection(0)
-	p:setSpread(360)
-	p:setRadialAcceleration(-2000)
-	p:setTangentialAcceleration(1000)
-	p:stop()
-
+	-- PARTICLE EFFECT
 	local particle = {}
-	particle.trail = love.graphics.newParticleSystem(images.load("player"), 1000)
-	particle.trail:setEmissionRate(100)
-	particle.trail:setSpeed(0, 25)
-	particle.trail:setGravity(0)
-	particle.trail:setSizes(1, 1)
-	particle.trail:setColors(200, 170, 50, 51, 255, 204, 0, 0)
-	particle.trail:setPosition(0, 0)
-	particle.trail:setLifetime(1)
-	particle.trail:setParticleLife(0.5)
-	particle.trail:setDirection(0)
-	particle.trail:setSpread(360)
-	particle.trail:setRadialAcceleration(0)
-	particle.trail:setTangentialAcceleration(0)
-	particle.trail:stop()
+	particle = love.graphics.newParticleSystem(images.load("player"), 1000)
+	particle:setEmissionRate(100)
+	particle:setSpeed(0, 25)
+	particle:setGravity(0)
+	particle:setSizes(1, 1)
+	particle:setColors(200, 170, 50, 51, 255, 204, 0, 0)
+	particle:setPosition(0, 0)
+	particle:setLifetime(0.5)
+	particle:setParticleLife(0.2)
+	particle:setDirection(0)
+	particle:setSpread(360)
+	particle:setRadialAcceleration(0)
+	particle:setTangentialAcceleration(0)
+	particle:stop()
 
-	--table.insert(spriteset.data, {sheet = "tilesets/LPC/lori_angela_nagel_-_jastivs_artwork/png/female_dwing_walkcycle", quad = 14} )
---	table.insert(spriteset.data, {sheet = "BODY_skeleton", quad = 14} )
---	table.insert(spriteset.data, {sheet = "HEAD_chain_armor_hood", quad = 14} )
-	--table.insert(spriteset.data, {sheet = "HEAD_chain_armor_helmet", quad = 14} )
---	table.insert(spriteset.data, {sheet = "FEET_shoes_brown", quad = 14} )
+	table.insert(bufferBatch.data, buffer.newDrawable(particle))
+
+
+	-- SPRITE
+	images.quads.add("tilesets/lpcfemaledark", 64, 64)
+	local sprite = buffer.newQuad(images.load("tilesets/lpcfemaledark"), images.quads.data["tilesets/lpcfemaledark"][45], x, y, z, r, sx, sy, ox, oy)
 	
-
+	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
@@ -89,8 +72,8 @@ function entities_player.new(x, y, z)
 		self.updatePosition()
 		self.updateAnimation(dt)
 
-		particle.trail:start()
-		particle.trail:update(dt)
+		particle:start()
+		particle:update(dt)
 
 		self.triggersupdate()
 	end
@@ -124,13 +107,16 @@ function entities_player.new(x, y, z)
 		
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()+8
-		bufferObject.x = x
-		bufferObject.y = y
-		bufferObject.z = z
+		sprite.x = self.getX()
+		sprite.y = self.getY()
+		sprite.z = z
+		bufferBatch.x = self.getX()
+		bufferBatch.y = self.getY()
+		bufferBatch.z = z
+
+		particle:setPosition(self.getX(), self.getY()-oy/2)
 		--x = anchor.body:getX() - 16
 		--y = anchor.body:getY() - 16
-
-		particle.trail:setPosition(x, y)
 	end
 
 	local animation = {}
@@ -268,7 +254,7 @@ function entities_player.new(x, y, z)
 		love.graphics.setColorMode("modulate")
 		--love.graphics.setBlendMode("additive")
 		
-		--love.graphics.draw(particle.trail, 0, -16)
+		--love.graphics.draw(particle, 0, -16)
 
 		love.graphics.setColor(255, 255, 255, 255);
 		--love.graphics.setColorMode("modulate")
@@ -281,7 +267,7 @@ function entities_player.new(x, y, z)
 	end
 
 	function self.addToBuffer()
-		buffer.add(bufferObject)
+		buffer.add(bufferBatch)
 	end
 
 	-- Basic functions
@@ -303,10 +289,10 @@ function entities_player.new(x, y, z)
 
 	-- Common functions
 	function self.getX()
-		return x
+		return math.floor(x + 0.5)
 	end
 	function self.getY()
-		return y
+		return math.floor(y + 0.5)
 	end
 	function self.getZ()
 		return z

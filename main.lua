@@ -4,11 +4,7 @@ local sqrt = math.sqrt
 local floor = math.floor
 
 
-local pixelperfect = true
-
-love.graphics.setDefaultImageFilter( "nearest", "nearest" )
-
-worldWidth, worldHeight = 2000, 2000
+--local pixelperfect = true
 require "images"
 require "screen"
 require "camera"
@@ -16,7 +12,6 @@ require "buffer"
 require "hud"
 require "physics"
 require "entities"
-require "terrain"
 require "gui"
 require "game"
 require "sprites"
@@ -31,6 +26,7 @@ function getDistance(x1, y1, x2, y2)
 end
 
 function love.load()
+	screen.initiate()
 	--initiateFarticle()
 	player = nil
 	--love.graphics.setMode(screen.width, screen.height, false, true, 0) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
@@ -47,13 +43,13 @@ function love.load()
 
 	gui.load()
 
-	music = love.audio.newSource("sound/music.ogg", "static")
-	music:setLooping(true)
+	--music = love.audio.newSource("sound/music.ogg", "static")
+	--music:setLooping(true)
 
 	time = 0
-	lineNb = canvas:getHeight() * 4
+	lineNb = screen.canvas:getHeight() * 4
 
-	love.audio.play(music)
+	--love.audio.play(music)
 	--camera.setScale(screen.height/1080, screen.height/1080)
 end
 
@@ -107,7 +103,7 @@ function love.keypressed(key)
 	if key == "e" then
 		for i=1,50 do
 			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
-			entities.new("coin", math.random(1, worldWidth), math.random(1, worldHeight), 0)
+			entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
 			--entities.new("monster", math.random(1, worldWidth), math.random(1, worldHeight))
 		end
 	end
@@ -133,7 +129,7 @@ end
 
 function love.draw()
 	camera.set()
-	--love.graphics.setCanvas(canvas)
+	love.graphics.setCanvas(screen.canvas)
 
 	-- Check if thr buffer has been reset 
 	if next(buffer.data) == nil then
@@ -150,9 +146,9 @@ function love.draw()
 	-- Draw the HUD
 	hud.draw()
 
-	--love.graphics.setCanvas()
-	--love.graphics.clear()
 	camera.unset()
+	love.graphics.setCanvas()
+	love.graphics.clear()
 
 	-- Pixel shader n stuff
 
@@ -162,6 +158,6 @@ function love.draw()
 	--effect:send("sCount", lineNb)
 
 	--love.graphics.setPixelEffect(effect)
-	--love.graphics.draw(canvas, 0, 0, 0, 2, 2)
+	love.graphics.draw(screen.canvas, 0, 0, 0, screen.scale, screen.scale)
 	--love.graphics.setPixelEffect()
 end
