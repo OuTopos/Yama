@@ -10,6 +10,7 @@ camera.boundaries.x = 0
 camera.boundaries.y = 0
 camera.boundaries.width = 0
 camera.boundaries.height = 0
+camera.round = true
 camera.follow = nil
 
 function camera.set()
@@ -39,34 +40,42 @@ function camera.update(dt)
 		if love.keyboard.isDown("left") then
 			dx = -100 * dt
 		end
-		camera.move(dx, dy)
 	end
 	camera.boundary()
-	--camera.x = math.floor(camera.x + 0.5)
-	--camera.y = math.floor(camera.y + 0.5)
 end
 
-function camera.move(dx, dy)
-	camera.x = camera.x + (dx or 0)
-	camera.y = camera.y + (dy or 0)
+function camera.setPosition(x, y)
+	camera.x = x
+	camera.y = y
+	if camera.round then
+		camera.x = math.floor(camera.x + 0.5)
+		camera.y = math.floor(camera.y + 0.5)
+	end
 end
 
-function camera.center(dx, dy)
-	camera.x = (dx - camera.width / 2)
-	camera.y = (dy - camera.height / 2)
+function camera.center(x, y)
+	camera.setPosition(x - camera.width / 2, y - camera.height / 2)
 end
 
 function camera.boundary()
-	if camera.x < camera.boundaries.x then
-		camera.x = camera.boundaries.x
-	elseif camera.x > camera.boundaries.width - camera.width then
-		camera.x = camera.boundaries.width - camera.width
+	if camera.width <= camera.boundaries.width then
+		if camera.x < camera.boundaries.x then
+			camera.x = camera.boundaries.x
+		elseif camera.x > camera.boundaries.width - camera.width then
+			camera.x = camera.boundaries.width - camera.width
+		end
+	else
+		camera.x = camera.boundaries.x - (camera.width - camera.boundaries.width) / 2
 	end
 
-	if camera.y < camera.boundaries.y then
-		camera.y = camera.boundaries.y
-	elseif camera.y > camera.boundaries.height - camera.height then
-		camera.y = camera.boundaries.height - camera.height
+	if camera.height <= camera.boundaries.height then
+		if camera.y < camera.boundaries.y then
+			camera.y = camera.boundaries.y
+		elseif camera.y > camera.boundaries.height - camera.height then
+			camera.y = camera.boundaries.height - camera.height
+		end
+	else
+		camera.y = camera.boundaries.y - (camera.height - camera.boundaries.height) / 2
 	end
 end
 

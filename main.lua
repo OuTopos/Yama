@@ -12,9 +12,9 @@ require "buffer"
 require "hud"
 require "physics"
 require "entities"
+require "animations"
 require "gui"
 require "game"
-require "sprites"
 require "weather"
 
 require "shaders"
@@ -93,6 +93,9 @@ function love.keypressed(key)
 	if key == "x" then
 		map.load("test/platform", "test")	
 	end
+	if key == "z" then
+		map.load("test/mini", "test")	
+	end
 	if key == "a" then
 		if player then
 			entities.destroy(player)
@@ -151,13 +154,13 @@ function love.draw()
 	love.graphics.clear()
 
 	-- Pixel shader n stuff
-
+	--lineNb = screen.canvas:getHeight() * 4
 	--effect:send("time",time)
-	--effect:send("nIntensity", 0.5)
-	--effect:send("sIntensity", 0.75)
+	--effect:send("nIntensity", 0.75)
+	--effect:send("sIntensity", 0.1)
 	--effect:send("sCount", lineNb)
 
 	--love.graphics.setPixelEffect(effect)
-	love.graphics.draw(screen.canvas, 0, 0, 0, screen.scale, screen.scale)
+	love.graphics.draw(screen.canvas, 0, 0, 0, screen.sx, screen.sy)
 	--love.graphics.setPixelEffect()
 end

@@ -7,8 +7,10 @@ return {
   tilewidth = 32,
   tileheight = 32,
   properties = {
-    ["sortmode"] = "3",
-    ["yg"] = "10"
+    ["gx"] = "0",
+    ["gy"] = "0",
+    ["sx"] = "2",
+    ["sy"] = "2"
   },
   tilesets = {
     {
@@ -93,7 +95,7 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 0, 52, 0,
+        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 130, 52, 0,
         0, 9, 180, 9, 9, 9, 9, 72, 9, 10, 55, 54, 0, 0, 0, 0,
         0, 25, 25, 25, 25, 25, 25, 25, 25, 26, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -226,17 +228,6 @@ return {
           type = "",
           shape = "rectangle",
           x = 0,
-          y = 0,
-          width = 64,
-          height = 128,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 0,
           y = 128,
           width = 32,
           height = 160,
@@ -250,7 +241,7 @@ return {
           x = 416,
           y = 0,
           width = 32,
-          height = 64,
+          height = 96,
           visible = true,
           properties = {}
         },
@@ -329,10 +320,10 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 352,
+          x = 288,
           y = 0,
           width = 64,
-          height = 64,
+          height = 160,
           visible = true,
           properties = {}
         },
@@ -384,9 +375,9 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 64,
+          x = 0,
           y = 0,
-          width = 256,
+          width = 288,
           height = 128,
           visible = true,
           properties = {}
@@ -395,21 +386,32 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 368,
-          y = 112,
-          width = 32,
-          height = 32,
+          x = 384,
+          y = 128,
+          width = 16,
+          height = 16,
           visible = true,
           properties = {}
         },
         {
           name = "",
           type = "",
-          shape = "ellipse",
+          shape = "rectangle",
           x = 352,
-          y = 112,
-          width = 32,
-          height = 32,
+          y = 0,
+          width = 64,
+          height = 128,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 464,
+          y = 128,
+          width = 16,
+          height = 16,
           visible = true,
           properties = {}
         }
@@ -480,6 +482,17 @@ return {
           shape = "rectangle",
           x = 416,
           y = 96,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "behind_counter",
+          type = "",
+          shape = "rectangle",
+          x = 128,
+          y = 128,
           width = 32,
           height = 32,
           visible = true,

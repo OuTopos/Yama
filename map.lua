@@ -25,8 +25,9 @@ function map.load(path, spawn)
 			map.loaded.properties.xg = map.loaded.properties.xg or 0
 			map.loaded.properties.yg = map.loaded.properties.yg or 0
 			map.loaded.properties.sleep = map.loaded.properties.sleep or true
-			map.loaded.world =  love.physics.newWorld(map.loaded.properties.xg, map.loaded.properties.yg, map.loaded.properties.sleep)
-			love.physics.setMeter(map.loaded.properties.meter or map.loaded.tileheight)
+			map.loaded.properties.meter = map.loaded.properties.meter or map.loaded.tileheight
+			map.loaded.world =  love.physics.newWorld(map.loaded.properties.xg*map.loaded.properties.meter, map.loaded.properties.yg*map.loaded.properties.meter, map.loaded.properties.sleep)
+			love.physics.setMeter(map.loaded.properties.meter)
 			
 			-- Create Boundaries
 			if map.loaded.properties.boundaries ~= "false" then
@@ -82,11 +83,12 @@ function map.load(path, spawn)
 			map.loaded.entities = {}
 
 			-- Spawning player
-			map.loaded.properties.playertype = map.loaded.properties.playertype or "player"
+			map.loaded.properties.player_entity = map.loaded.properties.player_entity or "player"
+			print(map.loaded.properties.player_entity)
 			if map.loaded.spawns[spawn] then
-				map.loaded.player = entities.new(map.loaded.properties.playertype, map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2, map.loaded.spawns[spawn].properties.z or 0)
+				map.loaded.player = entities.new(map.loaded.properties.player_entity, map.loaded.spawns[spawn].x + map.loaded.spawns[spawn].width / 2, map.loaded.spawns[spawn].y + map.loaded.spawns[spawn].height / 2, map.loaded.spawns[spawn].properties.z or 0)
 			else
-				map.loaded.player = entities.new(map.loaded.properties.playertype, 200, 200, 0)
+				map.loaded.player = entities.new(map.loaded.properties.player_entity, 200, 200, 0)
 			end
 			
 		else
@@ -95,6 +97,11 @@ function map.load(path, spawn)
 			map.unload()
 		end
 	end
+
+	-- Scale the screen
+	map.loaded.properties.sx = tonumber(map.loaded.properties.sx) or 1
+	map.loaded.properties.sy = tonumber(map.loaded.properties.sy) or map.loaded.properties.sx or 1
+	screen.setScale(map.loaded.properties.sx, map.loaded.properties.sy)
 
 	-- Set physics world
 	physics.setWorld(map.loaded.world)
@@ -108,8 +115,9 @@ function map.load(path, spawn)
 	camera.follow = map.loaded.player
 	--camera.follow = nil
 
---	map.optimize()
---	print(map.loaded.optimized.tilecount)
+	--map.optimize()
+	--print(map.loaded.optimized.tilecount)
+	--	Was a but too nuts
 end
 
 function map.shape(object)
@@ -315,63 +323,67 @@ function map.addToBuffer()
 		map.tileres = 0
 		map.tilecount = 0
 
+		local xmin = map.view.x
+		local xmax = map.view.x+map.view.size.x-1
+		local ymin = map.view.y
+		local ymax = map.view.y+map.view.size.y-1
+
+		if xmin < 0 then
+			xmin = 0
+		end
+		if xmax > map.loaded.width-1 then
+			xmax = map.loaded.width-1
+		end
+
+		if ymin < 0 then
+			ymin = 0
+		end
+		if ymax > map.loaded.height-1 then
+			ymax = map.loaded.height-1
+		end
+
 		-- Iterate the y-axis.
-		for y=map.view.y, map.view.y+map.view.size.y-1 do
-			-- Check so that y is not outside the map.
-			if y > -1 and y < map.loaded.height then
+		for y=ymin, ymax do
 
-				-- Create a buffer batch.
-				local batch = buffer.newBatch(map.getXYZ(map.view.x, y, 0))
+			-- Create a buffer batch.
+			local batch = buffer.newBatch(map.getXYZ(map.view.x, y, 0))
 
-				-- Iterate the map.loaded.layercount (z-axis)
-				for i=1, map.loaded.layercount do
-					-- Check if layer is a tilelayer.
-					--if map.loaded.layers[i].type == "tilelayer" then
+			-- Iterate the map.loaded.layercount (z-axis)
+			for i=1, map.loaded.layercount do
 
-						-- Get z from tilelayer properties.
-						z = tonumber(map.loaded.layers[i].properties.z) or 0
+				-- Get z from tilelayer properties.
+				z = tonumber(map.loaded.layers[i].properties.z) or 0
 
-						-- Check if z has changed.
-						if map.getZ(z) ~= batch.z then
-							-- Send the previous batch to buffer, unless it's empty.
-							if next(batch.data) ~= nil then
-								buffer.add(batch)
-								batch = buffer.newBatch(map.getXYZ(map.view.x, y, z))
-							end
-							-- Setting batch z to new z
-							batch.z = map.getZ(z)
-						end
-
-						-- Iterate the x-axis.
-						for x=map.view.x, map.view.x+map.view.size.x-1 do
-							map.tileres = map.tileres +1
-
-							-- Check so that x is not outside the map.
-							if x > -1 and x < map.loaded.width then
-
-								-- Checking so tile exists.
-								--if map.loaded.layers[i].data[map.tileIndex(x, y)] then
-
-									-- Checking so tile is not empty.
-									if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
-
-										map.tilecount = map.tilecount +1
-
-										--Getting quad and image and adding it as a quad to the batch
-										image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
-										table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
-
-									end
-								--end
-							end
-						end
-					--end
+				-- Check if z has changed.
+				if map.getZ(z) ~= batch.z then
+					-- Send the previous batch to buffer, unless it's empty.
+					if next(batch.data) ~= nil then
+						buffer.add(batch)
+						batch = buffer.newBatch(map.getXYZ(map.view.x, y, z))
+					end
+					-- Setting batch z to new z
+					batch.z = map.getZ(z)
 				end
 
-				-- Check for sprites in spriteset to avoid sending empty spriteset to buffer
-				if next(batch.data) ~= nil then
-					buffer.add(batch)
+				-- Iterate the x-axis.
+				for x=xmin, xmax do
+					map.tileres = map.tileres +1
+
+					-- Checking so tile is not empty.
+					if map.loaded.layers[i].data[map.tileIndex(x, y)] > 0 then
+
+						map.tilecount = map.tilecount +1
+
+						--Getting quad and image and adding it as a quad to the batch
+						image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
+						table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+					end
 				end
+			end
+
+			-- Check for sprites in spriteset to avoid sending empty spriteset to buffer
+			if next(batch.data) ~= nil then
+				buffer.add(batch)
 			end
 		end
 	end

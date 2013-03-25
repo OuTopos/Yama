@@ -26,8 +26,8 @@ function entities_coin.new(x, y, z)
 
 	-- Anchor variables
 	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(8))
-	anchor:setRestitution( 0.9 )
-	anchor:getBody():setLinearDamping( 0.1 )
+	anchor:setRestitution( 1 )
+	anchor:getBody():setLinearDamping( 5 )
 
 	-- Standard functions
 	function self.update(dt)

@@ -2,12 +2,14 @@ buffer = {}
 buffer.enabled = true
 buffer.data = {}
 buffer.sortmode = 1
-buffer.counter = 0
+buffer.debug = {}
+buffer.debug.drawcalls = 0
+buffer.debug.redraws = 0
+buffer.debug.redraws = 0
 
 function buffer.reset()
 	buffer.data = {}
-	print("Buffer reset after being drawn "..buffer.counter.." times.")
-	buffer.counter = 0
+	buffer.debug.redraws = 0
 end
 
 function buffer.add(object)
@@ -15,9 +17,9 @@ function buffer.add(object)
 end
 
 function buffer.draw()
-	buffer.counter = buffer.counter + 1
+	buffer.debug.redraws = buffer.debug.redraws + 1
+	buffer.debug.drawcalls = 0
 	buffer.length = 0
-	buffer.drawCalls = 0
 
 	if buffer.enabled then
 		buffer.length = #buffer.data
@@ -46,11 +48,11 @@ function buffer.drawObject(object)
 	if object.type == "drawable" then
 		-- DRAWABLE
 		love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
-		buffer.drawCalls = buffer.drawCalls + 1
+		buffer.debug.drawcalls = buffer.debug.drawcalls + 1
 	elseif object.type == "quad" then
 		-- QUAD
 		love.graphics.drawq(object.image, object.quad, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
-		buffer.drawCalls = buffer.drawCalls + 1
+		buffer.debug.drawcalls = buffer.debug.drawcalls + 1
 	end
 
 	if object.color then

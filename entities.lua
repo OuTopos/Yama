@@ -8,6 +8,7 @@ entities.destroyQueue = {}
 
 -- Entity types
 require	"entities_player"
+require	"entities_pplayer"
 require	"entities_tree"
 require	"entities_coin"
 require	"entities_turret"

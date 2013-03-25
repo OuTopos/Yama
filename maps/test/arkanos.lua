@@ -8,9 +8,9 @@ return {
   tileheight = 32,
   properties = {
     ["boundaries"] = "false",
-    ["env"] = "something",
     ["name"] = "The Mage City",
-    ["sortmode"] = "3"
+    ["sx"] = "3",
+    ["sy"] = "3"
   },
   tilesets = {
     {
@@ -1212,32 +1212,10 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 416,
-          y = 1056,
-          width = 32,
-          height = 32,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 384,
-          y = 928,
-          width = 192,
-          height = 128,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 512,
-          y = 1056,
-          width = 32,
-          height = 32,
+          x = 352,
+          y = 960,
+          width = 224,
+          height = 96,
           visible = true,
           properties = {}
         },
@@ -1278,10 +1256,10 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 352,
-          y = 960,
-          width = 32,
-          height = 96,
+          x = 512,
+          y = 736,
+          width = 64,
+          height = 160,
           visible = true,
           properties = {}
         },
@@ -1315,17 +1293,6 @@ return {
           y = 576,
           width = 32,
           height = 192,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 32,
-          y = 768,
-          width = 32,
-          height = 32,
           visible = true,
           properties = {}
         },
@@ -1379,8 +1346,8 @@ return {
           shape = "rectangle",
           x = 320,
           y = 672,
-          width = 128,
-          height = 128,
+          width = 32,
+          height = 96,
           visible = true,
           properties = {}
         },
@@ -1389,9 +1356,9 @@ return {
           type = "",
           shape = "rectangle",
           x = 352,
-          y = 800,
+          y = 672,
           width = 96,
-          height = 96,
+          height = 224,
           visible = true,
           properties = {}
         },
@@ -1401,8 +1368,8 @@ return {
           shape = "rectangle",
           x = 384,
           y = 896,
-          width = 64,
-          height = 32,
+          width = 192,
+          height = 64,
           visible = true,
           properties = {}
         },
@@ -1458,6 +1425,50 @@ return {
           y = 1184,
           width = 160,
           height = 96,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "ellipse",
+          x = 416,
+          y = 1056,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "ellipse",
+          x = 32,
+          y = 768,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "ellipse",
+          x = 320,
+          y = 768,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "ellipse",
+          x = 512,
+          y = 1056,
+          width = 32,
+          height = 32,
           visible = true,
           properties = {}
         }

@@ -1,11 +1,11 @@
-entities_player = {}
+entities_pplayer = {}
 
-function entities_player.new(x, y, z)
+function entities_pplayer.new(x, y, z)
 	local self = {}
 
 	-- Common variables
-	local width, height = 64, 64
-	local ox, oy = 32, 64
+	local width, height = 24, 24
+	local ox, oy = 12, 12
 	local sx, sy = 1, 1
 	local r = 0
 
@@ -23,13 +23,10 @@ function entities_player.new(x, y, z)
 	local friction = 0.99
 	local direction = 0
 
-	local width, height = 64, 64
+	local width, height = 24, 24
 
 	-- BUFFER BATCH
 	local bufferBatch = buffer.newBatch(x, y, z)
-
-	-- ANIMATION
-	local animation = animations.new()
 
 	-- PARTICLE EFFECT
 	local particle = {}
@@ -52,68 +49,62 @@ function entities_player.new(x, y, z)
 
 
 	-- SPRITE
-	local tileset = "tilesets/lpcfemaletest"
-	images.quads.add(tileset, 64, 64)
-	local sprite = buffer.newQuad(images.load(tileset), images.quads.data[tileset][131], x, y, z, r, sx, sy, ox, oy)
+	images.quads.add("twefou", 24, 24)
+	local sprite = buffer.newQuad(images.load("twefou"), images.quads.data["twefou"][1], x, y, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newCircleShape(9), 5)
+	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, 24, 24))
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
-	anchor:getBody():setLinearDamping( 10 )
-	anchor:getBody():setFixedRotation( true )
+	anchor:getBody():setLinearDamping( 1 )
+	anchor:getBody():setFixedRotation( false )
 
-	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
-	hitbox:setUserData(self)
-	hitbox:setSensor(true)
+	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
+	--hitbox:setUserData(self)
+	--hitbox:setSensor(true)
 
 
 	function self.update(dt)
-		self.updateInput()
+		self.updateInput(dt)
 		self.updatePosition()
-		--self.updateAnimation(dt)
-		animation.update(dt)
-		sprite.quad = images.quads.data[tileset][animation.getFrame()]
+		self.updateAnimation(dt)
 
 		--particle:start()
 		--particle:update(dt)
+
+		self.triggersupdate()
 	end
 
-	function self.updateInput()
+	function self.updateInput(dt)
 		fx, fy = 0, 0
 
 		if love.keyboard.isDown("up") then
 			direction = 3.141592654
 			fy = -5000
-			animation.set("humanoid_walk_up")
-			animation.setTimescale(2)
 		end
 		if love.keyboard.isDown("right") then
 			direction = 1.570796327
 			fx = 5000
-			animation.set("humanoid_walk_right")
-			animation.setTimescale(20)
 		end
 		if love.keyboard.isDown("down") then
 			direction = 0
 			fy = 5000
-			animation.set("humanoid_walk_down")
-			animation.setTimescale(0.5)
 		end
 		if love.keyboard.isDown("left") then
 			direction = 4.71238898
 			fx = -5000
-			animation.set("humanoid_walk_left")
-			animation.setTimescale(1)
 		end
 
 		anchor:getBody():applyForce( fx, fy )
 	end
 
-	function self.updatePosition()
+	function self.updatePosition(xn, yn)
+		--hitbox.body:setX(anchor.body:getX())
+		--hitbox.body:setY(anchor.body:getY())
+		
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		sprite.x = self.getX()
@@ -126,36 +117,98 @@ function entities_player.new(x, y, z)
 		--particle:setPosition(self.getX(), self.getY()-oy/2)
 	end
 
+	local animation = {}
+	animation.quad = 1
+	animation.dt = 0
+
 	function self.updateAnimation(dt)
 		if direction > -0.785398163 and direction < 0.785398163 then
 			-- Up
 			if speed > 0 then
-				animation.set("humanoid_walk_up")
+				self.animate(20, 27, 0.08, dt)
 			else
-				animation.set("humanoid_stand_up")
+				self.animate(19)
 			end
 		elseif direction > 0.785398163 and direction < 2.35619449 then
 			-- Right
 			if speed > 0 then
-				animation.set("humanoid_walk_right")
+				self.animate(29, 36, 0.08, dt)
 			else
-				animation.set("humanoid_stand_right")
+				self.animate(28)
 			end
 		elseif direction > 2.35619449 and direction < 3.926990817 then
 			-- Down
 			if speed > 0 then
-				animation.set("humanoid_walk_down")
+				self.animate(2, 9, 0.08, dt)
 			else
-				animation.set("humanoid_stand_down")
+				self.animate(1)
 			end
 		elseif direction > 3.926990817 and direction < 5.497787144 then
 			-- Left
 			if speed > 0 then
-				animation.set("humanoid_walk_left")
+				self.animate(11, 18, 0.08, dt)
 			else
-				animation.set("humanoid_stand_left")
+				self.animate(10)
 			end
 		end
+	end
+
+	function self.animate(first, last, delay, dt)
+		if dt then
+			animation.dt = animation.dt + dt
+
+			if animation.dt > delay then
+				animation.dt = animation.dt - delay
+				animation.quad = animation.quad + 1
+			end
+
+			if animation.quad < first or animation.quad > last then
+					animation.quad = first
+			end
+		else
+			animation.dt = 0
+			animation.quad = first
+		end
+	end
+
+	-- TRIGGERS
+	local triggers = {}
+	triggers.data = {}
+	function triggers.add(entity)
+		table.insert(triggers.data, entity)
+		print("Trigger now added, legnth is: "..#triggers.data)
+	end
+
+	function triggers.remove(entity)
+		for i=1, #triggers.data do
+			if triggers.data[i] == entity then
+				print("removing "..#triggers.data)
+				triggers.data[i].active = false
+				table.remove(triggers.data, i)
+				print("gone! "..#triggers.data)
+			end
+		end
+	end
+
+	function self.triggersupdate()
+		--print("updating")
+		table.sort(triggers.data, triggers.sort)
+
+		if triggers.data[1] then
+			triggers.data[1].active = true
+			for i=2, #triggers.data do
+				triggers.data[i].active = false
+			end
+		end
+	end
+
+	function triggers.sort(a, b)
+		--print("a = "..getDistance(a:getX(), a:getY(), x, y))
+		if getDistance(a:getX(), a:getY(), x, y) < getDistance(b:getX(), b:getY(), x, y) then
+			return true
+		end
+
+		return false
 	end
 
 	-- CONTACT
@@ -187,6 +240,27 @@ function entities_player.new(x, y, z)
 					triggers.remove(entity)
 				end
 			end
+		end
+	end
+
+	function self.draw()
+		-- Draw
+		--sprites.draw(bodySprite)
+
+		--love.graphics.draw(selector, math.floor(x/32+0.5)*32-19, math.floor(y/32+0.5)*32-19)
+		--love.graphics.draw(grid_marker, math.floor(x/32+0.5)*32-16, math.floor(y/32+0.5)*32-16)
+		love.graphics.setColorMode("modulate")
+		--love.graphics.setBlendMode("additive")
+		
+		--love.graphics.draw(particle, 0, -16)
+
+		love.graphics.setColor(255, 255, 255, 255);
+		--love.graphics.setColorMode("modulate")
+		love.graphics.setBlendMode("alpha")
+		--love.graphics.draw(images.load("player"), x, y, r, sx, sy, ox, oy)
+
+		if hud.enabled then
+			physics.draw(anchor, {0, 255, 0, 102})
 		end
 	end
 

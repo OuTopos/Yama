@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="128" height="9" tilewidth="32" tileheight="32">
  <properties>
-  <property name="gx" value="0"/>
-  <property name="gy" value="0"/>
-  <property name="player" value="pplayer"/>
-  <property name="scalex" value="2"/>
+  <property name="player_entity" value="pplayer"/>
+  <property name="scalex" value="3"/>
   <property name="scaley" value="2"/>
   <property name="spawnx" value="4"/>
   <property name="spawny" value="8"/>
+  <property name="xg" value="0"/>
+  <property name="yg" value="90.18"/>
  </properties>
  <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/platformer.png" width="288" height="608"/>
@@ -15,6 +15,7 @@
  <layer name="background" width="128" height="9">
   <properties>
    <property name="type" value="background"/>
+   <property name="z" value="0"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztwwEJAAAMBKGr8f2LrsdQcNVUVVVVffsArltwgQ==
@@ -25,12 +26,13 @@
    <property name="scrollx" value="2"/>
    <property name="scrolly" value="0"/>
    <property name="type" value="background"/>
+   <property name="z" value="0"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1rkJACAQBVH7L8Er8WrTX4EGCqLOg8k2MJBljRmzyimvgoqTebwlqayKqqqdfQ6Azdjxf1vd8fyfv3EjAABwlw5t7BLQ
+   eJzt1jcOgDAQBVHODTSkgngAUkO6JnMBAxJgJPNHepW32MKy7HnHtejQY8B4Mq/casKMBSu2b9dRSj2c3vh/d/eN1/1xLx8Bwguz+iO4V4IUmeE8QmxvHWWxHBVqNIaZAqW1jZRSb7QDYAUaFQ==
   </data>
  </layer>
- <layer name="Tile Layer 1" width="128" height="9">
+ <layer name="ground" width="128" height="9">
   <properties>
    <property name="z" value="1"/>
   </properties>
@@ -38,22 +40,31 @@
    eJzt1TsLgmAUh/G30i5QhC261dhlsNShocWg7/+Veg44OCSJxPsK/R/44aDCgePFOaWUGtYEOZY9rqtwxAlnXHrcp8bfvTnajp+ue6dX3FCg9DCX8lP95bw9FwlizLFqLJze/39pjQ22eOERdhzlOdt/iiz0IMpL9s2fYoYd9jiEHEh9LPox+7+3/+va+7h7A2lRBMM=
   </data>
  </layer>
- <layer name="Tile Layer 3" width="128" height="9">
+ <layer name="bridge" width="128" height="9">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJztztkJgDAAwNCu5y3e4u3+Q5gpWpAE3n9CMEtThhwFSlSo0aBN+GVx6tBjwIgJMxasCb8sTht2HDhx4caDN92WmZmZmdlv+wDcFggF
   </data>
  </layer>
- <objectgroup color="#ff0000" name="Ground" width="128" height="9">
+ <layer name="foreground" width="128" height="9">
+  <properties>
+   <property name="z" value="2"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0TEKACAMA0Cf76p+WIS6CA7iIMIdlCwZCkkJAADgXo1sT7/gRN5ciRybrnvODvCXDndpB6Q=
+  </data>
+ </layer>
+ <objectgroup color="#ff0000" name="Ground" width="128" height="9" visible="0">
   <properties>
    <property name="type" value="collision"/>
   </properties>
   <object x="0" y="256" width="704" height="32"/>
-  <object x="736" y="224" width="96" height="32"/>
+  <object x="736" y="224" width="160" height="32"/>
   <object x="768" y="256" width="64" height="32"/>
   <object x="832" y="128" width="192" height="32"/>
-  <object x="832" y="160" width="96" height="32"/>
-  <object x="832" y="192" width="96" height="32"/>
-  <object x="832" y="224" width="64" height="32"/>
+  <object x="832" y="160" width="96" height="64"/>
   <object x="864" y="64">
    <polyline points="0,0 160,0"/>
   </object>
@@ -65,9 +76,6 @@
   </object>
   <object x="1024" y="64">
    <polyline points="0,0 32,32 64,64 128,64 160,32 192,0"/>
-  </object>
-  <object x="224" y="109">
-   <polyline points="0,0 7,13 17,15 27,24 36,29 46,30 55,40 68,53 90,59 94,70 103,77 123,80 146,86 179,79 197,73 198,64 190,59 179,62 168,62 165,51 168,44 180,43 194,46 218,42 227,15 208,-11"/>
   </object>
  </objectgroup>
 </map>
