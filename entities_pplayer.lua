@@ -4,8 +4,8 @@ function entities_pplayer.new(x, y, z)
 	local self = {}
 
 	-- Common variables
-	local width, height = 24, 24
-	local ox, oy = 12, 12
+	local width, height = 32, 32
+	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
 
@@ -22,8 +22,6 @@ function entities_pplayer.new(x, y, z)
 	local speed = 0
 	local friction = 0.99
 	local direction = 0
-
-	local width, height = 24, 24
 
 	-- BUFFER BATCH
 	local bufferBatch = buffer.newBatch(x, y, z)
@@ -49,18 +47,18 @@ function entities_pplayer.new(x, y, z)
 
 
 	-- SPRITE
-	images.quads.add("twefou", 24, 24)
-	local sprite = buffer.newQuad(images.load("twefou"), images.quads.data["twefou"][1], x, y, z, r, sx, sy, ox, oy)
+	images.quads.add("crate", 32, 32)
+	local sprite = buffer.newQuad(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, 24, 24))
+	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width, height))
 	anchor:setUserData(self)
-	anchor:setRestitution( 0 )
-	anchor:getBody():setLinearDamping( 1 )
-	anchor:getBody():setFixedRotation( false )
+	--anchor:setRestitution( 0 )
+	--anchor:getBody():setLinearDamping( 1 )
+	anchor:getBody():setFixedRotation( falses )
 
 	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
 	--hitbox:setUserData(self)
@@ -78,6 +76,9 @@ function entities_pplayer.new(x, y, z)
 		self.triggersupdate()
 	end
 
+	local allowjump = true
+	local jumping = false
+
 	function self.updateInput(dt)
 		fx, fy = 0, 0
 
@@ -87,11 +88,11 @@ function entities_pplayer.new(x, y, z)
 		end
 		if love.keyboard.isDown("right") then
 			direction = 1.570796327
-			fx = 5000
+			fx = 1000
 		end
 		if love.keyboard.isDown("down") then
 			direction = 0
-			fy = 5000
+			fy = 1000
 		end
 		if love.keyboard.isDown("left") then
 			direction = 4.71238898
@@ -99,6 +100,23 @@ function entities_pplayer.new(x, y, z)
 		end
 
 		anchor:getBody():applyForce( fx, fy )
+
+		xv, yv = anchor:getBody():getLinearVelocity()
+		print(yv)
+
+		if jumping and love.keyboard.isDown(" ") and yv < 0 then
+			anchor:getBody():applyForce( 0, -2000 )
+		else
+			jumping = false
+		end
+
+		if allowjump and love.keyboard.isDown(" ") then
+			anchor:getBody():applyLinearImpulse( 0, -500 )
+			allowjump = false
+			jumping = true
+		end
+
+
 	end
 
 	function self.updatePosition(xn, yn)
@@ -107,12 +125,15 @@ function entities_pplayer.new(x, y, z)
 		
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
+		r = anchor:getBody():getAngle()
 		sprite.x = self.getX()
 		sprite.y = self.getY()
-		sprite.z = z
+		sprite.z = 100
+		sprite.r = r
 		bufferBatch.x = self.getX()
 		bufferBatch.y = self.getY()
-		bufferBatch.z = z
+		bufferBatch.z = 100
+		bufferBatch.r = r
 
 		--particle:setPosition(self.getX(), self.getY()-oy/2)
 	end

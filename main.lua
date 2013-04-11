@@ -94,7 +94,7 @@ function love.keypressed(key)
 		map.load("test/platform", "test")	
 	end
 	if key == "z" then
-		map.load("test/mini", "test")	
+		map.load("test/gravityfall", "test")	
 	end
 	if key == "a" then
 		if player then

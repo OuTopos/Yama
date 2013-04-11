@@ -66,7 +66,8 @@ function map.load(path, spawn)
 						end
 					end
 					table.remove(map.loaded.layers, layerkey)
-				end
+				elseif
+
 			end
 			map.loaded.layercount = #map.loaded.layers
 

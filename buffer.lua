@@ -23,7 +23,7 @@ function buffer.draw()
 
 	if buffer.enabled then
 		buffer.length = #buffer.data
-		table.sort(buffer.data, buffer.sort)
+		buffer.sort()
 		for i = 1, buffer.length do
 			if buffer.data[i].type == "batch" then
 				buffer.drawBatch(buffer.data[i])
@@ -60,7 +60,10 @@ function buffer.drawObject(object)
 	end
 end
 
-function buffer.sort(a, b)
+function buffer.sort()
+	table.sort(buffer.data, buffer.sortmethod)
+end
+function buffer.sortmethod(a, b)
 --	if buffer.sortmode == 1 then
 --		if a.z < b.z then
 --			return true
@@ -90,7 +93,7 @@ function buffer.sort(a, b)
 end
 
 function buffer.newBatch(x, y, z, data)
-	object = {}
+	local object = {}
 	object.type = "batch"
 	object.x = x or 0
 	object.y = y or 0
@@ -100,7 +103,7 @@ function buffer.newBatch(x, y, z, data)
 end
 
 function buffer.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
-	object = {}
+	local object = {}
 	object.type = "drawable"
 	object.drawable = drawable
 	object.x = x or 0
@@ -118,7 +121,7 @@ function buffer.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
 end
 
 function buffer.newQuad(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
-	object = {}
+	local object = {}
 	object.type = "quad"
 	object.image = image
 	object.quad = quad

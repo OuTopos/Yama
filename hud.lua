@@ -32,27 +32,25 @@ function hud.draw()
 		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 2)
 
 		-- Entities
-		love.graphics.print("Entities:  "..#entities.data, camera.x + 2, camera.y + 2)
-		love.graphics.print("  visible: "..#entities.visible.data, camera.x + 2, camera.y + 12)
+		love.graphics.print("Entities: "..#entities.data, camera.x + 2, camera.y + 2)
+		love.graphics.print("  Visible: "..#entities.visible.data, camera.x + 2, camera.y + 12)
 		-- Map
 		if map.loaded then
-			love.graphics.print("Map:  "..map.loaded.width.."x"..map.loaded.height.."x"..map.loaded.layercount, camera.x + 2, camera.y + 22)
-			love.graphics.print("  View:  "..map.view.size.x.."x"..map.view.size.y, camera.x + 2, camera.y + 32)
+			love.graphics.print("Map: "..map.loaded.width.."x"..map.loaded.height.."x"..map.loaded.layercount, camera.x + 2, camera.y + 22)
+			love.graphics.print("  View: "..map.view.size.x.."x"..map.view.size.y.." ("..map.view.x..":"..map.view.y..")", camera.x + 2, camera.y + 32)
 
 			love.graphics.print("  Tiles: "..map.tilecount.."/"..map.tileres, camera.x + 2, camera.y + 42)
 		end
-		--122
+		-- Physics
 		if physics.world then
-			love.graphics.print("Physics:   "..physics.world:getBodyCount(), camera.x + 2, camera.y + 132)
+			love.graphics.print("Physics: "..physics.world:getBodyCount(), camera.x + 2, camera.y + 52)
 		end
-		-- 142
-
 
 		-- Buffer
 		if buffer.enabled then
 			love.graphics.print("Buffer: "..buffer.length, camera.x+camera.width-118, camera.y + 2)
 			love.graphics.print("  Drawcalls: "..buffer.debug.drawcalls, camera.x+camera.width-118, camera.y + 12)
-			love.graphics.print("  Redraws "..buffer.debug.redraws, camera.x+camera.width-118, camera.y + 22)
+			love.graphics.print("  Redraws: "..buffer.debug.redraws, camera.x+camera.width-118, camera.y + 22)
 		else
 			love.graphics.print("Buffer: disabled", camera.x+camera.width-118, camera.y + 2)
 		end
