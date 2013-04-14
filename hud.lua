@@ -45,6 +45,16 @@ function hud.draw()
 		if physics.world then
 			love.graphics.print("Physics: "..physics.world:getBodyCount(), camera.x + 2, camera.y + 52)
 		end
+		-- Player
+		if map.loaded.player then
+			local player = map.loaded.player
+			love.graphics.print("Player: "..player.getX()..":"..player.getY(), camera.x + 2, camera.y + 62)
+			love.graphics.print("  Direction: "..player.getDirection().."   "..getRelativeDirection(player.getDirection()), camera.x + 2, camera.y + 72)
+		--	love.graphics.print("  View: "..map.view.size.x.."x"..map.view.size.y.." ("..map.view.x..":"..map.view.y..")", camera.x + 2, camera.y + 32)
+
+		--	love.graphics.print("  Tiles: "..map.tilecount.."/"..map.tileres, camera.x + 2, camera.y + 42)
+		end
+
 
 		-- Buffer
 		if buffer.enabled then

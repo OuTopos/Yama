@@ -49,8 +49,8 @@ function buffer.drawObject(object)
 		-- DRAWABLE
 		love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 		buffer.debug.drawcalls = buffer.debug.drawcalls + 1
-	elseif object.type == "quad" then
-		-- QUAD
+	elseif object.type == "sprite" then
+		-- SPRITE
 		love.graphics.drawq(object.image, object.quad, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 		buffer.debug.drawcalls = buffer.debug.drawcalls + 1
 	end
@@ -120,9 +120,9 @@ function buffer.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
 	return object
 end
 
-function buffer.newQuad(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
+function buffer.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
 	local object = {}
-	object.type = "quad"
+	object.type = "sprite"
 	object.image = image
 	object.quad = quad
 	object.x = x or 0

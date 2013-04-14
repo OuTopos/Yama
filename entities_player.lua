@@ -3,27 +3,19 @@ entities_player = {}
 function entities_player.new(x, y, z)
 	local self = {}
 
-	-- Common variables
+	-- Sprite variables
 	local width, height = 64, 64
-	local ox, oy = 32, 64
+	local ox, oy = width/2, height
 	local sx, sy = 1, 1
 	local r = 0
 
-
-	self.type = "player"
-
-
-	local remove = false
-
-
-
-	--local x, y, z = xn, yn, 32
-	local xvel, yvel = 0, 0
-	local speed = 0
-	local friction = 0.99
+	-- Movement variables
+	local scale = (sx + sy) / 2
+	local radius = 10 * scale
+	local mass = 1
+	local velocity = 250 * scale
 	local direction = 0
-
-	local width, height = 64, 64
+	local move = false
 
 	-- BUFFER BATCH
 	local bufferBatch = buffer.newBatch(x, y, z)
@@ -31,131 +23,106 @@ function entities_player.new(x, y, z)
 	-- ANIMATION
 	local animation = animations.new()
 
-	-- PARTICLE EFFECT
-	local particle = {}
-	particle = love.graphics.newParticleSystem(images.load("player"), 1000)
-	particle:setEmissionRate(100)
-	particle:setSpeed(0, 25)
-	particle:setGravity(0)
-	particle:setSizes(1, 1)
-	particle:setColors(200, 170, 50, 51, 255, 204, 0, 0)
-	particle:setPosition(0, 0)
-	particle:setLifetime(0.5)
-	particle:setParticleLife(0.2)
-	particle:setDirection(0)
-	particle:setSpread(360)
-	particle:setRadialAcceleration(0)
-	particle:setTangentialAcceleration(0)
-	particle:stop()
-
-	--table.insert(bufferBatch.data, buffer.newDrawable(particle))
-
-
 	-- SPRITE
 	local tileset = "tilesets/lpcfemaletest"
-	images.quads.add(tileset, 64, 64)
-	local sprite = buffer.newQuad(images.load(tileset), images.quads.data[tileset][131], x, y, z, r, sx, sy, ox, oy)
+	images.quads.add(tileset, width, height)
+	local sprite = buffer.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y+radius, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newCircleShape(9), 5)
+	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
 
-	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
-	hitbox:setUserData(self)
-	hitbox:setSensor(true)
+	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
+	--hitbox:setUserData(self)
+	--hitbox:setSensor(true)
+
+	-- PATROL
+	local patrol = patrols.new()
+	patrol.set("test1")
 
 
 	function self.update(dt)
-		self.updateInput()
+		self.updateInput(dt)
 		self.updatePosition()
-		--self.updateAnimation(dt)
-		animation.update(dt)
-		sprite.quad = images.quads.data[tileset][animation.getFrame()]
 
-		--particle:start()
-		--particle:update(dt)
+		if move then
+			a = "walk"
+		else
+			a = "stand"
+		end
+		animation.update(dt, "humanoid_"..a.."_"..getRelativeDirection(direction))
+		sprite.quad = images.quads.data[tileset][animation.getFrame()]
 	end
 
-	function self.updateInput()
-		fx, fy = 0, 0
+	function self.updateInput(dt)
+		local nx, ny = 0, 0
+		local fx, fy = 0, 0
+		move = false
 
-		if love.keyboard.isDown("up") then
-			direction = 3.141592654
-			fy = -5000
-			animation.set("humanoid_walk_up")
-			animation.setTimescale(2)
+		if love.keyboard.isDown("right") or love.keyboard.isDown("left") or love.keyboard.isDown("down") or love.keyboard.isDown("up") then
+			if love.keyboard.isDown("right") then
+				nx = nx+1
+			end
+			if love.keyboard.isDown("left") then
+				nx = nx-1
+			end
+			if love.keyboard.isDown("up") then
+				ny = ny-1
+			end
+			if love.keyboard.isDown("down") then
+				ny = ny+1
+			end
+			direction = math.atan2(ny, nx)
+			move = true
 		end
-		if love.keyboard.isDown("right") then
-			direction = 1.570796327
-			fx = 5000
-			animation.set("humanoid_walk_right")
-			animation.setTimescale(20)
+
+		if love.keyboard.isDown(" ") then
+			patrol.update(x, y)
+			if patrol.isActive() then
+				local px, py = patrol.getPoint()
+				direction = math.atan2(py-y, px-x)
+				move = true
+			else
+				move = false
+			end
 		end
-		if love.keyboard.isDown("down") then
-			direction = 0
-			fy = 5000
-			animation.set("humanoid_walk_down")
-			animation.setTimescale(0.5)
-		end
-		if love.keyboard.isDown("left") then
-			direction = 4.71238898
-			fx = -5000
-			animation.set("humanoid_walk_left")
+
+
+
+		
+		if move and love.keyboard.isDown("lshift") then
+			fx = velocity * 3 * math.cos(direction)
+			fy = velocity * 3 * math.sin(direction)
+			anchor:getBody():applyForce( fx, fy )
+			animation.setTimescale(3)
+		elseif move then
+			fx = velocity * math.cos(direction)
+			fy = velocity * math.sin(direction)
+			anchor:getBody():applyForce( fx, fy )
 			animation.setTimescale(1)
 		end
-
-		anchor:getBody():applyForce( fx, fy )
 	end
 
 	function self.updatePosition()
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
+		--r = anchor:getBody():getAngle()
 		sprite.x = self.getX()
-		sprite.y = self.getY()
+		sprite.y = self.getY() + radius
+		sprite.r = r
 		sprite.z = z
 		bufferBatch.x = self.getX()
-		bufferBatch.y = self.getY()
+		bufferBatch.y = self.getY() + radius
 		bufferBatch.z = z
+		bufferBatch.r = r
 
 		--particle:setPosition(self.getX(), self.getY()-oy/2)
-	end
-
-	function self.updateAnimation(dt)
-		if direction > -0.785398163 and direction < 0.785398163 then
-			-- Up
-			if speed > 0 then
-				animation.set("humanoid_walk_up")
-			else
-				animation.set("humanoid_stand_up")
-			end
-		elseif direction > 0.785398163 and direction < 2.35619449 then
-			-- Right
-			if speed > 0 then
-				animation.set("humanoid_walk_right")
-			else
-				animation.set("humanoid_stand_right")
-			end
-		elseif direction > 2.35619449 and direction < 3.926990817 then
-			-- Down
-			if speed > 0 then
-				animation.set("humanoid_walk_down")
-			else
-				animation.set("humanoid_stand_down")
-			end
-		elseif direction > 3.926990817 and direction < 5.497787144 then
-			-- Left
-			if speed > 0 then
-				animation.set("humanoid_walk_left")
-			else
-				animation.set("humanoid_stand_left")
-			end
-		end
 	end
 
 	-- CONTACT
@@ -222,16 +189,19 @@ function entities_player.new(x, y, z)
 		return z
 	end
 	function self.getOX()
-		return x - ox
+		return x - ox * sx
 	end
 	function self.getOY()
-		return y - oy
+		return y - oy * sy + radius
 	end
 	function self.getWidth()
 		return width * sx
 	end
 	function self.getHeight()
 		return height * sy
+	end
+	function self.getDirection()
+		return direction
 	end
 	function self.destroy()
 		anchor:getBody():destroy()

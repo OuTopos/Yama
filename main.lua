@@ -13,6 +13,7 @@ require "hud"
 require "physics"
 require "entities"
 require "animations"
+require "patrols"
 require "gui"
 require "game"
 require "weather"
@@ -23,6 +24,37 @@ require "map"
 -- Move this later
 function getDistance(x1, y1, x2, y2)
 	return sqrt((x1-x2)^2+(y1-y2)^2)
+end
+
+function getRelativeDirection(r)
+	--if r < 0 then
+	--	r = 4*math.pi/2+r
+	--elseif r >= 4*math.pi/2 then
+	--	while r >= 4*math.pi/2 do
+	--		r = r - 4*math.pi/2
+	--	end
+	--end
+
+	local i = math.floor(r / (math.pi/2) + 0.5)
+	
+	while i < 0 do
+		i = i + 4
+	end
+	while i >= 4 do
+		i = i - 4
+	end
+
+	if i == 0 then
+		return "right"
+	elseif i == 1 then
+		return "down"
+	elseif i == 2 then
+		return "left"
+	elseif i == 3 then
+		return "up"
+	else
+		print("retard "..i..r)
+	end
 end
 
 function love.load()
@@ -104,10 +136,11 @@ function love.keypressed(key)
 		end
 	end
 	if key == "e" then
-		for i=1,50 do
+		for i=1,10 do
 			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
-			entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
-			--entities.new("monster", math.random(1, worldWidth), math.random(1, worldHeight))
+			--entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
+			entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0)
+			entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
 	end
 

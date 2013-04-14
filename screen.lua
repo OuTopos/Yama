@@ -7,7 +7,7 @@ screen.sy = 1
 function screen.initiate()
 	screen.canvas = love.graphics.newCanvas(screen.width/screen.sx, screen.height/screen.sy)
 	screen.canvas:setFilter( "nearest", "nearest" )
-	--love.graphics.setDefaultImageFilter( "nearest", "nearest" )
+	love.graphics.setDefaultImageFilter( "nearest", "nearest" )
 	camera.setSize(screen.canvas:getWidth(), screen.canvas:getHeight())
 end
 

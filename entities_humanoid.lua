@@ -1,19 +1,18 @@
-entities_monster = {}
+entities_humanoid = {}
 
-function entities_monster.new(x, y, z)
+function entities_humanoid.new(x, y, z)
 	local self = {}
 
-	-- Common variables
-	local width, height = 32, 38
+	-- Sprite variables
+	local width, height = 64, 64
 	local ox, oy = width/2, height
 	local sx, sy = 1, 1
 	local r = 0
 
 	-- Movement variables
-	local scale = (sx + sy) / 2
-	local radius = 8 * scale
+	local radius = 10
 	local mass = 1
-	local velocity = 10 * scale
+	local velocity = 250
 	local direction = math.atan2(math.random(-1, 1), math.random(-1, 1))
 	local move = false
 
@@ -22,27 +21,28 @@ function entities_monster.new(x, y, z)
 
 	-- ANIMATION
 	local animation = animations.new()
-	animation.set("eyeball_walk_down")
+	--animation.set("humanoid_stand_down")
 	animation.setTimescale(math.random(9, 11)/10)
 
 	-- PATROL
-	local patrol = patrols.new()
-	patrol.set("smooth")
+	local patrol = patrols.new(true, 16)
+	patrol.set("fun")
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 
 	-- SPRITE
-	local tileset = "eyeball"
-	images.quads.add(tileset, 32, 38)
+	local tileset = "tilesets/lpcfemaledark"
+	images.quads.add(tileset, width, height)
 	local sprite = buffer.newSprite(images.load(tileset), images.quads.data[tileset][1], x, y+radius, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
+	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
 	anchor:setUserData(self)
-	anchor:setRestitution( 0.9 )
-	anchor:getBody():setLinearDamping( 1 )
+	anchor:setRestitution( 0 )
+	anchor:getBody():setLinearDamping( 10 )
+	anchor:getBody():setFixedRotation( true )
 
 	-- Monster variables
 	self.monster = true
@@ -54,9 +54,10 @@ function entities_monster.new(x, y, z)
 
 	-- Standard functions
 	function self.update(dt)
-		-- Patrol stuff
+		-- Patrol update
 		patrol.update(x, y)
 
+		-- Direction and move
 		if patrol.isActive() then
 			dx, dy = patrol.getPoint()
 			move = true
@@ -78,15 +79,15 @@ function entities_monster.new(x, y, z)
 		-- Position updates
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
-		sprite.x = self.getX()
-		sprite.y = self.getY() + radius
+		sprite.x = x
+		sprite.y = y + radius
 		--sprite.z = z
-		bufferBatch.x = self.getX()
-		bufferBatch.y = self.getY() + radius
+		bufferBatch.x = x
+		bufferBatch.y = y + radius
 		--bufferBatch.z = z
 
 		-- Animation updates
-		animation.update(dt, "eyeball_walk_"..getRelativeDirection(direction))
+		animation.update(dt, "humanoid_walk_"..getRelativeDirection(direction))
 		sprite.quad = images.quads.data[tileset][animation.getFrame()]
 	end
 

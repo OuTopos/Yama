@@ -33,6 +33,9 @@ function map.load(path, spawn)
 			if map.loaded.properties.boundaries ~= "false" then
 				map.loaded.boundaries = love.physics.newFixture(love.physics.newBody(map.loaded.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, map.loaded.width * map.loaded.tilewidth + 1, -1, map.loaded.width * map.loaded.tilewidth + 1, map.loaded.height * map.loaded.tileheight + 1, -1, map.loaded.height * map.loaded.tileheight))
 			end
+
+			-- Create table for patrols
+			map.loaded.patrols = {}
 			
 			-- Creating table the spawns
 			map.loaded.spawns = {}
@@ -50,7 +53,16 @@ function map.load(path, spawn)
 							elseif layer.properties.userdata then
 								--set stuff according to the object layer
 							end
-
+						end
+					elseif layer.properties.type == "patrols" then
+						-- Adding patrols to the patrols table
+						for i, object in ipairs(layer.objects) do
+							if object.shape == "polyline" then
+								map.loaded.patrols[object.name] = {}
+								for k, vertice in ipairs(object.polyline) do
+									table.insert(map.loaded.patrols[object.name], {x = object.polyline[k].x+object.x, y = object.polyline[k].y+object.y})
+								end
+							end
 						end
 					elseif layer.properties.type == "portals" then
 						-- Adding portals to physics objects
@@ -66,7 +78,9 @@ function map.load(path, spawn)
 						end
 					end
 					table.remove(map.loaded.layers, layerkey)
-				elseif
+				elseif layer.properties.type == "quadmap" then
+					-- spritebatch backgrounds and stuff
+				end
 
 			end
 			map.loaded.layercount = #map.loaded.layers
@@ -297,7 +311,7 @@ function map.addToBufferCrazy()
 							batch.x = map.getX(x)
 							image = map.loaded.optimized[iy].data[iz].data[ix].image
 							quad = map.loaded.optimized[iy].data[iz].data[ix].quad
-							table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), map.getY(y), map.getZ(z), 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+							table.insert(batch.data, buffer.newSprite(image, quad, map.getX(x), map.getY(y), map.getZ(z), 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
 							map.tilecount = map.tilecount + 1
 						end
 						map.tileres = map.tileres + 1
@@ -377,7 +391,7 @@ function map.addToBuffer()
 
 						--Getting quad and image and adding it as a quad to the batch
 						image, quad = map.getQuad(map.loaded.layers[i].data[y*map.loaded.width+x+1])
-						table.insert(batch.data, buffer.newQuad(image, quad, map.getX(x), batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+						table.insert(batch.data, buffer.newSprite(image, quad, map.getX(x), batch.y, batch.z, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
 					end
 				end
 			end
