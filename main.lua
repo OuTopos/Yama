@@ -139,9 +139,10 @@ function love.keypressed(key)
 		for i=1,10 do
 			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
 			--entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
-			entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0)
-			entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
+			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
+
+		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0)
 	end
 
 	if key == "1" then

@@ -28,7 +28,7 @@ function patrols.new(loop, radius)
 
 	function self.update(x, y)
 		if v then
-			if x > v.x - radius and x < v.x + radius and y > v.y - radius and y < v.y + radius then
+			if getDistance(x, y, v.x, v.y) < radius then
 				self.next()
 			end
 		end
