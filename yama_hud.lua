@@ -1,4 +1,4 @@
-hud = {}
+local hud = {}
 hud.enabled = false
 
 function hud.draw()
@@ -23,7 +23,7 @@ function hud.draw()
 		-- Backgrounds
 		love.graphics.setColor(0, 0, 0, 204)
 		love.graphics.rectangle("fill", camera.x, camera.y, 100, camera.height)
-		love.graphics.rectangle("fill", camera.x+camera.width-120, camera.y, 120, 92+#screen.modes*lh)
+		love.graphics.rectangle("fill", camera.x+camera.width-120, camera.y, 120, 92+#yama.screen.modes*lh)
 
 		-- Text color
 		love.graphics.setColor(0, 255, 0, 255)
@@ -66,9 +66,9 @@ function hud.draw()
 		end
 
 		-- Screen
-		love.graphics.print("Screen: "..screen.canvas:getWidth().."x"..screen.canvas:getHeight(), camera.x+camera.width-118, camera.y + 32)
-		love.graphics.print("  sx: "..screen.sx, camera.x+camera.width-118, camera.y + 42)
-		love.graphics.print("              sy: "..screen.sy, camera.x+camera.width-118, camera.y + 42)
+		love.graphics.print("Screen: "..yama.screen.canvas:getWidth().."x"..yama.screen.canvas:getHeight(), camera.x+camera.width-118, camera.y + 32)
+		love.graphics.print("  sx: "..yama.screen.sx, camera.x+camera.width-118, camera.y + 42)
+		love.graphics.print("              sy: "..yama.screen.sy, camera.x+camera.width-118, camera.y + 42)
 
 		-- Camera
 		love.graphics.print("Camera: "..camera.width.."x"..camera.height, camera.x+camera.width-118, camera.y + 52)
@@ -83,8 +83,8 @@ function hud.draw()
 
 		-- Modes
 		love.graphics.print("Modes", camera.x+camera.width-118, camera.y + 82)
-		for i = 1, #screen.modes do
-			love.graphics.print("  "..i..": "..screen.modes[i].width.."x"..screen.modes[i].height, camera.x+camera.width-118, camera.y + 2+i*lh+80)
+		for i = 1, #yama.screen.modes do
+			love.graphics.print("  "..i..": "..yama.screen.modes[i].width.."x"..yama.screen.modes[i].height, camera.x+camera.width-118, camera.y + 2+i*lh+80)
 		end
 
 		-- 
@@ -114,3 +114,5 @@ function hud.draw()
 		love.graphics.setColor(255, 255, 255, 255)
 	end
 end
+
+return hud

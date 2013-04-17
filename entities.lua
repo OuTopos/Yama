@@ -6,6 +6,7 @@ entities.visible.data = {}
 
 entities.destroyQueue = {}
 
+require	"entitiesBase"
 -- Entity types
 require	"entities_player"
 require	"entities_pplayer"

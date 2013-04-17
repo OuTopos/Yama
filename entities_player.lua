@@ -21,7 +21,7 @@ function entities_player.new(x, y, z)
 	local bufferBatch = buffer.newBatch(x, y, z)
 
 	-- ANIMATION
-	local animation = animations.new()
+	local animation = yama.animations.new()
 
 	-- SPRITE
 	local tileset = "tilesets/lpcfemaletest"

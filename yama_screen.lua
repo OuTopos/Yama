@@ -1,10 +1,10 @@
-screen = {}
+local screen = {}
 screen.width, screen.height, screen.fullscreen, screen.vsync, screen.fsaa = love.graphics.getMode()
 screen.modes = love.graphics.getModes()
 screen.sx = 1
 screen.sy = 1
 
-function screen.initiate()
+function screen.load()
 	screen.canvas = love.graphics.newCanvas(screen.width/screen.sx, screen.height/screen.sy)
 	screen.canvas:setFilter( "nearest", "nearest" )
 	love.graphics.setDefaultImageFilter( "nearest", "nearest" )
@@ -14,7 +14,7 @@ end
 function screen.setScale(sx, sy)
 	screen.sx = sx or 1
 	screen.sy = sy or sx or 1
-	screen.initiate()
+	screen.load()
 	if map.loaded then
 		map.resetView()
 	end
@@ -33,3 +33,5 @@ function screen.scaleToggle()
 	end
 	screen.setScale(screen.toggle)
 end
+
+return screen

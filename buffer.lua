@@ -138,3 +138,21 @@ function buffer.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color
 	object.color = color or nil
 	return object
 end
+
+
+
+function buffer.setBatchPosition(batch, x, y, z)
+	batch.x = x or batch.x
+	batch.y = y or batch.y 
+	batch.z = z or batch.z 
+	for i = 1, #batch.data do
+		batch.data[i].x = batch.x
+		batch.data[i].y = batch.y
+		batch.data[i].z = batch.z
+	end
+end
+function buffer.setBatchQuad(batch, quad)
+	for i = 1, #batch.data do
+		batch.data[i].quad = quad
+	end
+end

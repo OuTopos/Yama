@@ -1,5 +1,6 @@
-animations = {}
+local animations = {}
 
+-- Animation class
 function animations.new()
 	local self = {}
 
@@ -37,7 +38,9 @@ function animations.new()
 			elseif currentframe < first then
 					currentframe = last
 			end
+			return true
 		end
+		return false
 	end
 
 	function self.getFrame()
@@ -51,7 +54,7 @@ function animations.new()
 	return self
 end
 
-
+-- List of all the animations
 animations.list = {}
 
 -- Humanoid
@@ -70,3 +73,5 @@ animations.list.eyeball_walk_left   = {delay = 0.2, first = 4, last = 6}
 animations.list.eyeball_walk_right  = {delay = 0.2, first = 10, last = 12}
 animations.list.eyeball_walk_up     = {delay = 0.2, first = 1, last = 3}
 animations.list.eyeball_walk_down   = {delay = 0.2, first = 7, last = 9}
+
+return animations

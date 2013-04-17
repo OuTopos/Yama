@@ -116,7 +116,7 @@ function map.load(path, spawn)
 	-- Scale the screen
 	map.loaded.properties.sx = tonumber(map.loaded.properties.sx) or 1
 	map.loaded.properties.sy = tonumber(map.loaded.properties.sy) or map.loaded.properties.sx or 1
-	screen.setScale(map.loaded.properties.sx, map.loaded.properties.sy)
+	yama.screen.setScale(map.loaded.properties.sx, map.loaded.properties.sy)
 
 	-- Set physics world
 	physics.setWorld(map.loaded.world)

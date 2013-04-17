@@ -3,16 +3,15 @@ local random = math.random
 local sqrt = math.sqrt
 local floor = math.floor
 
+-- Yama/core
+yama = require("yama")
 
 --local pixelperfect = true
 require "images"
-require "screen"
 require "camera"
 require "buffer"
-require "hud"
 require "physics"
 require "entities"
-require "animations"
 require "patrols"
 require "gui"
 require "game"
@@ -58,7 +57,7 @@ function getRelativeDirection(r)
 end
 
 function love.load()
-	screen.initiate()
+	yama.screen.load()
 	--initiateFarticle()
 	player = nil
 	--love.graphics.setMode(screen.width, screen.height, false, true, 0) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
@@ -79,7 +78,7 @@ function love.load()
 	--music:setLooping(true)
 
 	time = 0
-	lineNb = screen.canvas:getHeight() * 4
+	lineNb = yama.screen.canvas:getHeight() * 4
 
 	--love.audio.play(music)
 	--camera.setScale(screen.height/1080, screen.height/1080)
@@ -90,10 +89,10 @@ function love.keypressed(key)
 		love.event.push("quit")
 	end
 	if key == "h" then
-		if hud.enabled then
-			hud.enabled = false
+		if yama.hud.enabled then
+			yama.hud.enabled = false
 		else
-			hud.enabled = true
+			yama.hud.enabled = true
 		end
 	end
 	if key == "p" then
@@ -152,7 +151,7 @@ function love.keypressed(key)
 		camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
-		screen.scaleToggle()
+		yama.screen.scaleToggle()
 	end
 end
 
@@ -166,7 +165,7 @@ end
 
 function love.draw()
 	camera.set()
-	love.graphics.setCanvas(screen.canvas)
+	love.graphics.setCanvas(yama.screen.canvas)
 
 	-- Check if thr buffer has been reset 
 	if next(buffer.data) == nil then
@@ -181,7 +180,7 @@ function love.draw()
 	gui.draw()
 
 	-- Draw the HUD
-	hud.draw()
+	yama.hud.draw()
 
 	camera.unset()
 	love.graphics.setCanvas()
@@ -195,6 +194,6 @@ function love.draw()
 	--effect:send("sCount", lineNb)
 
 	--love.graphics.setPixelEffect(effect)
-	love.graphics.draw(screen.canvas, 0, 0, 0, screen.sx, screen.sy)
+	love.graphics.draw(yama.screen.canvas, 0, 0, 0, yama.screen.sx, yama.screen.sy)
 	--love.graphics.setPixelEffect()
 end
