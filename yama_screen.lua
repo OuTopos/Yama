@@ -8,15 +8,15 @@ function screen.load()
 	screen.canvas = love.graphics.newCanvas(screen.width/screen.sx, screen.height/screen.sy)
 	screen.canvas:setFilter( "nearest", "nearest" )
 	love.graphics.setDefaultImageFilter( "nearest", "nearest" )
-	camera.setSize(screen.canvas:getWidth(), screen.canvas:getHeight())
+	yama.camera.setSize(screen.canvas:getWidth(), screen.canvas:getHeight())
 end
 
 function screen.setScale(sx, sy)
 	screen.sx = sx or 1
 	screen.sy = sy or sx or 1
 	screen.load()
-	if map.loaded then
-		map.resetView()
+	if yama.map.loaded then
+		yama.map.resetView()
 	end
 	buffer.reset()
 	end

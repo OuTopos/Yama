@@ -1,4 +1,4 @@
-patrols = {}
+local patrols = {}
 
 function patrols.new(loop, radius)
 	local self = {}
@@ -11,8 +11,8 @@ function patrols.new(loop, radius)
 	local order = nil
 
 	function self.set(name)
-		if map.loaded.patrols[name] then
-			patrol = map.loaded.patrols[name]
+		if yama.map.loaded.patrols[name] then
+			patrol = yama.map.loaded.patrols[name]
 			k = 0
 			self.next()
 		end
@@ -28,7 +28,7 @@ function patrols.new(loop, radius)
 
 	function self.update(x, y)
 		if v then
-			if getDistance(x, y, v.x, v.y) < radius then
+			if yama.g.getDistance(x, y, v.x, v.y) < radius then
 				self.next()
 			end
 		end
@@ -69,3 +69,5 @@ function patrols.new(loop, radius)
 
 	return self
 end
+
+return patrols

@@ -1,4 +1,4 @@
-map = {}
+local map = {}
 map.data = {}
 map.view = { x = 0, y = 0, z = 0}
 map.view.size = { x = 0, y = 0, z = 0}
@@ -432,3 +432,5 @@ end
 function map.getZ(z)
 	return z * map.loaded.tileheight + (map.loaded.tileheight/2)
 end
+
+return map

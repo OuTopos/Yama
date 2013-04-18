@@ -22,7 +22,7 @@ function entities_humanoid.new(x, y, z)
 	animation.setTimescale(math.random(9, 11)/10)
 
 	-- PATROL
-	local patrol = patrols.new(true, 20)
+	local patrol = yama.patrols.new(true, 20)
 	patrol.set("fun")
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
@@ -175,7 +175,7 @@ function entities_humanoid.new(x, y, z)
 		buffer.setBatchPosition(bufferBatch, x, y + radius)
 
 		-- Animation updates
-		if animation.update(dt, "humanoid_walk_"..getRelativeDirection(direction)) then
+		if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(direction)) then
 			buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
 		end
 	end

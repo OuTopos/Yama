@@ -53,7 +53,7 @@ function entities.update(dt)
 		entities.data[key].update(dt)
 
 		local visible = entities.data[key].visible or false
-		local inView = camera.isInside(entities.data[key].getOX(), entities.data[key].getOY(), entities.data[key].getWidth(), entities.data[key].getHeight())
+		local inView = yama.camera.isInside(entities.data[key].getOX(), entities.data[key].getOY(), entities.data[key].getWidth(), entities.data[key].getHeight())
 		
 		if visible and inView then
 			table.insert(entities.visible.data, entities.data[key])

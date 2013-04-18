@@ -20,8 +20,8 @@ end
 
 
 function updateFarticle(dt)
-	--local x = camera.x + math.random(0,camera.width)
-	rainSystem:setPosition(camera.x, camera.y-16)
+	--local x = yama.camera.x + math.random(0,yama.camera.width)
+	rainSystem:setPosition(yama.camera.x, yama.camera.y-16)
 	rainSystem:start()
 	rainSystem:update(dt)
 end

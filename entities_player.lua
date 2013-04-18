@@ -31,8 +31,8 @@ function entities_player.new(x, y, z)
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
-	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
+	--local hitbox = physics.newObject(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
+	local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
@@ -43,7 +43,7 @@ function entities_player.new(x, y, z)
 	--hitbox:setSensor(true)
 
 	-- PATROL
-	local patrol = patrols.new()
+	local patrol = yama.patrols.new()
 	patrol.set("test1")
 
 
@@ -56,7 +56,7 @@ function entities_player.new(x, y, z)
 		else
 			a = "stand"
 		end
-		animation.update(dt, "humanoid_"..a.."_"..getRelativeDirection(direction))
+		animation.update(dt, "humanoid_"..a.."_"..yama.g.getRelativeDirection(direction))
 		sprite.quad = images.quads.data[tileset][animation.getFrame()]
 	end
 
