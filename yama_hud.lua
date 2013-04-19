@@ -39,7 +39,7 @@ function hud.draw()
 			love.graphics.print("Map: "..yama.map.loaded.width.."x"..yama.map.loaded.height.."x"..yama.map.loaded.layercount, yama.camera.x + 2, yama.camera.y + 22)
 			love.graphics.print("  View: "..yama.map.view.size.x.."x"..yama.map.view.size.y.." ("..yama.map.view.x..":"..yama.map.view.y..")", yama.camera.x + 2, yama.camera.y + 32)
 
-			love.graphics.print("  Tiles: "..yama.map.tilecount.."/"..yama.map.tileres, yama.camera.x + 2, yama.camera.y + 42)
+			love.graphics.print("  Tiles: "..yama.map.tilecount.."/"..yama.map.loaded.optimized.tilecount, yama.camera.x + 2, yama.camera.y + 42)
 		end
 		-- Physics
 		if physics.world then
