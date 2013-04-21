@@ -1,6 +1,6 @@
-entities_humanoid = {}
+entities_bunny = {}
 
-function entities_humanoid.new(x, y, z)
+function entities_bunny.new(x, y, z)
 	local self = {}
 
 	-- Sprite variables

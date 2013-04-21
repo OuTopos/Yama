@@ -12,9 +12,9 @@ function love.load()
 	yama.screen.load()
 	yama.gui.load()
 
-	music = love.audio.newSource("sound/music.ogg", "static")
-	music:setLooping(true)
-	love.audio.play(music)
+	--music = love.audio.newSource("sound/music.ogg", "static")
+	--music:setLooping(true)
+	--love.audio.play(music)
 end
 
 function love.keypressed(key)

@@ -50,11 +50,11 @@ function hud.draw()
 			local player = yama.map.loaded.player
 			love.graphics.print("Player: "..player.getX()..":"..player.getY(), yama.camera.x + 2, yama.camera.y + 62)
 			love.graphics.print("  Direction: "..player.getDirection().."   "..yama.g.getRelativeDirection(player.getDirection()), yama.camera.x + 2, yama.camera.y + 72)
-		--	love.graphics.print("  View: "..yama.map.view.size.x.."x"..yama.map.view.size.y.." ("..yama.map.view.x..":"..yama.map.view.y..")", yama.camera.x + 2, yama.camera.y + 32)
-
-		--	love.graphics.print("  Tiles: "..yama.map.tilecount.."/"..yama.map.tileres, yama.camera.x + 2, yama.camera.y + 42)
+			love.graphics.print("  Stick: "..love.joystick.getAxis(1, 1), yama.camera.x + 2, yama.camera.y + 82)
+			love.graphics.print("  Stick: "..love.joystick.getAxis(1, 2), yama.camera.x + 2, yama.camera.y + 92)
+			love.graphics.print("  Distance: "..yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)), yama.camera.x + 2, yama.camera.y + 102)
+			love.graphics.print("  Button: ", yama.camera.x + 2, yama.camera.y + 112)
 		end
-
 
 		-- Buffer
 		if buffer.enabled then
@@ -104,7 +104,7 @@ function hud.draw()
 
 
 
-		if love.joystick.getNumJoysticks() > 0 then
+		if love.joystick.getNumJoysticks() > 0  and false then
 			xisDir1, axisDir2, axisDirN = love.joystick.getAxes( 1 )
 			love.graphics.print(xisDir1, yama.camera.x + 2, yama.camera.y + 52)
 			love.graphics.print(axisDir2, yama.camera.x + 2, yama.camera.y + 62)

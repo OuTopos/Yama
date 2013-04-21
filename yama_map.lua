@@ -193,7 +193,7 @@ function map.unload()
 	yama.camera.follow = nil
 	entities.destroy()
 	--physics.destroy()
-	buffer:reset()
+	buffer.reset()
 end
 
 function map.getQuad(quad)
@@ -208,7 +208,7 @@ function map.getQuad(quad)
 	return image, quad
 end
 
-function map.update()
+function map.update(dt)
 	if map.loaded then
 		-- Moving the map view to camera x,y
 		local xn = math.floor( yama.camera.x / map.loaded.tilewidth )
@@ -219,7 +219,7 @@ function map.update()
 			map.view.y = yn
 
 			-- Trigger a buffer reset.
-			buffer:reset()	
+			buffer.reset()	
 		end
 	end
 end
@@ -253,19 +253,49 @@ function map.addToBuffer()
 	if map.loaded then
 		map.tilecount = 0
 		local batches = {}
-		for i=map.xy2index(map.view.x, map.view.y), map.xy2index(map.view.x+map.view.size.x-1, map.view.y+map.view.size.y-1) do
-			local tile = map.loaded.optimized.tiles[i]
-			if tile then
-				for il=1, #tile do
-					local sprite = tile[il]
-					local x, y = map.index2xy(i)
-					local zy = sprite.z + sprite.y
-					if not batches[zy] then
-						batches[zy] = buffer.newBatch(sprite.x, sprite.y, sprite.z)
-						buffer.add(batches[zy])
+
+		local xmin = map.view.x
+		local xmax = map.view.x+map.view.size.x-1
+		local ymin = map.view.y
+		local ymax = map.view.y+map.view.size.y-1
+
+		if xmin < 0 then
+			xmin = 0
+		end
+		if xmax > map.loaded.width-1 then
+			xmax = map.loaded.width-1
+		end
+
+		if ymin < 0 then
+			ymin = 0
+		end
+		if ymax > map.loaded.height-1 then
+			ymax = map.loaded.height-1
+		end
+
+		-- Iterate the y-axis.
+		for y=ymin, ymax do
+
+			-- Iterate the x-axis.
+			for x=xmin, xmax do
+
+				-- Set the tile
+				local tile = map.loaded.optimized.tiles[map.xy2index(x, y)]
+
+				-- Check so tile is not empty
+				if tile then
+
+					-- Iterate the layers
+					for i=1, #tile do
+						local sprite = tile[i]
+						local zy = sprite.z + sprite.y
+						if not batches[zy] then
+							batches[zy] = buffer.newBatch(sprite.x, sprite.y, sprite.z)
+							buffer.add(batches[zy])
+						end
+						table.insert(batches[zy].data, sprite)
+						map.tilecount = map.tilecount +1
 					end
-					table.insert(batches[zy].data, sprite)
-					map.tilecount = map.tilecount +1
 				end
 			end
 		end

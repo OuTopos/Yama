@@ -8,6 +8,9 @@ yama.animations     = require("yama_animations")
 yama.patrols        = require("yama_patrols")
 yama.map            = require("yama_map")
 
+yama.input          = require("yama_input")
+yama.joystick       = require("yama_joystick")
+
 yama.g              = require("yama_g")
 
 return yama
