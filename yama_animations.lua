@@ -12,12 +12,14 @@ function animations.new()
 	local delay = 1
 	local first = 1
 	local last = 1
+	local loop = true
 
 	function self.set(animation)
 		currentanimation = animation
 		delay = animations.list[animation].delay
 		first = animations.list[animation].first
 		last = animations.list[animation].last
+		loop = animations.list[animation].loop or true
 
 		time = 0
 		currentframe = animations.list[animation].first
@@ -28,17 +30,21 @@ function animations.new()
 			self.set(animation)
 		end
 
-		time = time + dt * timescale
-		if time > delay then
-			time = time - delay
-			currentframe = currentframe + 1
+		if currentframe ~= last or loop then
+			time = time + dt * timescale
+			if time > delay then
+				time = time - delay
+				currentframe = currentframe + 1
 
-			if currentframe > last then
+				if currentframe > last and loop then
 					currentframe = first
-			elseif currentframe < first then
+				elseif currentframe > last then
 					currentframe = last
+				elseif currentframe < first then
+					currentframe = last
+				end
+				return true
 			end
-			return true
 		end
 		return false
 	end
@@ -67,6 +73,8 @@ animations.list.humanoid_walk_left    = {delay = 0.08, first = 119, last = 126}
 animations.list.humanoid_walk_right   = {delay = 0.08, first = 145, last = 152}
 animations.list.humanoid_walk_up      = {delay = 0.08, first = 106, last = 113}
 animations.list.humanoid_walk_down    = {delay = 0.08, first = 132, last = 139}
+
+animations.list.humanoid_die          = {delay = 0.08, first = 261, last = 266, loop = false}
 
 -- Eyeball
 animations.list.eyeball_walk_left   = {delay = 0.2, first = 4, last = 6}

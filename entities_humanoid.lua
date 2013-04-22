@@ -16,6 +16,8 @@ function entities_humanoid.new(x, y, z)
 	local direction = math.atan2(math.random(-1, 1), math.random(-1, 1))
 	local move = false
 
+	local team = 2
+
 	-- ANIMATION
 	local animation = yama.animations.new()
 	--animation.set("humanoid_stand_down")
@@ -140,6 +142,7 @@ function entities_humanoid.new(x, y, z)
 	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -64, 192, -96, 192, 96, 32, 64), 0)
 	hitbox:setUserData(self)
 	hitbox:setSensor(true)
+	hitbox:setCategory(2)
 
 
 	-- Monster variables
@@ -192,8 +195,22 @@ function entities_humanoid.new(x, y, z)
 
 	-- Monster functions
 
-	function self.hurt(p)
+	function self.hurt(p, dx, dy)
+		hp = hp - p
 
+		local d = math.atan2(y-dy, x-dx)
+		wvx = 500 * math.cos(d)
+		wvy = 500 * math.sin(d)
+		anchor:getBody():setLinearVelocity(wvx, wvy)
+
+		print("ittai!")
+		if hp < 0 then
+			--self.die()
+		end
+	end
+
+	function self.getTeam()
+		return team
 	end
 
 	-- Common functions

@@ -114,3 +114,8 @@ function physics.postSolve(a, b, contact)
 		end
 	end
 end
+
+physics.catagories = {}
+
+physics.catagories["player"] = 1
+physics.catagories["sensors"] = 2

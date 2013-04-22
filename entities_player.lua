@@ -18,6 +18,10 @@ function entities_player.new(x, y, z)
 	local move = false
 	local state = "stand"
 
+	local team = 1
+	local targets = {}
+	local cooldown = 0
+
 	-- BUFFER BATCH
 	local bufferBatch = buffer.newBatch(x, y, z)
 
@@ -42,6 +46,7 @@ function entities_player.new(x, y, z)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
+	anchor:setCategory(1)
 	--love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"),
 	local weapon = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -32, 32, 32), 0)
 	weapon:setUserData(self)
@@ -61,6 +66,7 @@ function entities_player.new(x, y, z)
 
 
 	function self.update(dt)
+		cooldown = cooldown - dt
 		self.updateInput(dt)
 		self.updatePosition()
 
@@ -69,7 +75,11 @@ function entities_player.new(x, y, z)
 		else
 			a = "stand"
 		end
-		animation.update(dt, "humanoid_"..state.."_"..yama.g.getRelativeDirection(direction))
+		if state == "walk" or state == "stand" then
+			animation.update(dt, "humanoid_"..state.."_"..yama.g.getRelativeDirection(direction))
+		else
+			animation.update(dt, "humanoid_die")
+		end
 		sprite.quad = images.quads.data[tileset][animation.getFrame()]
 	end
 
@@ -85,6 +95,10 @@ function entities_player.new(x, y, z)
 				state = "stand"
 				wvx = 500 * math.cos(direction)
 				wvy = 500 * math.sin(direction)
+				if cooldown <= 0 then
+					cooldown = 1
+					self.attack()
+				end
 				--weapon:getBody():setPosition(x, y)
 				--weapon:getBody():setLinearVelocity(wvx, wvy)
 
@@ -164,32 +178,48 @@ function entities_player.new(x, y, z)
 	-- CONTACT
 	function self.beginContact(a, b, contact)
 		--print("beginContact for player")
-		if b:isSensor() then
-			if b:getUserData() then
-				local entity = b:getUserData()
+		--if b:isSensor() then
+		if b:getUserData() then
+			local entity = b:getUserData()
 
-				if entity.isTree then
+			if entity.getTeam then
+				if entity.getTeam() ~= team then
+					--table.insert(targets, entity)
+					targets = {entity}
+				end
+			end
+		end
+
+				--if entity.isTree then
 					--print("adding entity to triggers")
 					--local d, x1, y1, x2, y2 = love.physics.getDistance(b, anchor.fixture)
-					d = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
+					--d = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
 					--print(d)
-					triggers.add(entity)
+					--triggers.add(entity)
+				--end
+		--end
+	end
+
+	function self.endContact(a, b, contact)
+		if b:getUserData() then
+			local entity = b:getUserData()
+
+			if entity.getTeam then
+				if entity.getTeam() ~= team then
+					--terget(targets, entity)
+					-- should remove
 				end
 			end
 		end
 	end
 
-	function self.endContact(a, b, contact)
-		--print("END")
-		--print(contact:getSeparation( ))
-		if b:isSensor() then
-			if b:getUserData() then
-				local entity = b:getUserData()
+	function self.getTeam()
+		return team
+	end
 
-				if entity.isTree then
-					triggers.remove(entity)
-				end
-			end
+	function self.attack()
+		for k, target in ipairs(targets) do
+			target.hurt(0.3, x, y)
 		end
 	end
 
