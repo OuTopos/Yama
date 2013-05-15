@@ -5,6 +5,7 @@ yama.camera         = require("yama_camera")
 yama.gui            = require("yama_gui")
 yama.hud            = require("yama_hud")
 yama.animations     = require("yama_animations")
+yama.ai             = require("yama_ai")
 yama.patrols        = require("yama_patrols")
 yama.map            = require("yama_map")
 

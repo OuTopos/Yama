@@ -265,7 +265,7 @@
    <property name="type" value="patrols"/>
   </properties>
   <object name="test1" x="308" y="313">
-   <polyline points="-82,33 128,114 225,-49 385,258 440,-94"/>
+   <polyline points="1,31 27,106 116,106 146,30 78,-22"/>
   </object>
   <object name="test2" x="890" y="337">
    <polyline points="0,0 -103,157 95,157"/>

@@ -15,6 +15,7 @@ function entities_player.new(x, y, z)
 	local mass = 1
 	local velocity = 250 * scale
 	local direction = 0
+	local aim = 0
 	local move = false
 	local state = "stand"
 
@@ -33,6 +34,10 @@ function entities_player.new(x, y, z)
 	images.quads.add(tileset, width, height)
 	local sprite = buffer.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y+radius, z, r, sx, sy, ox, oy)
 	table.insert(bufferBatch.data, sprite)
+
+	tilesetArrow = "directionarrow"
+	images.load(tilesetArrow):setFilter("linear", "linear")
+	local spriteArrow = buffer.newDrawable(images.load(tilesetArrow), x, y-16, 1000, 1, sx, sy, -24, 12)
 
 	local tilesetOversized = "tilesets/lpcfemaletest"
 	local spriteOversized = buffer.newSprite(images.load(tilesetOversized), images.quads.data[tilesetOversized][1], x-64, y+radius-64, z, r, sx, sy, ox, oy)
@@ -96,17 +101,18 @@ function entities_player.new(x, y, z)
 				wvx = 500 * math.cos(direction)
 				wvy = 500 * math.sin(direction)
 				if cooldown <= 0 then
-					cooldown = 1
+					cooldown = 0.1
 					self.attack()
 				end
 				--weapon:getBody():setPosition(x, y)
 				--weapon:getBody():setLinearVelocity(wvx, wvy)
 
-			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)) > 0.25 then
+			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)) > 0.2 then
 				state = "walk"
 				nx = love.joystick.getAxis(1, 1)
 				ny = love.joystick.getAxis(1, 2)
 				direction = math.atan2(ny, nx)
+				aim = direction
 				vmultiplier = yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2))
 				if vmultiplier >  1 then
 					vmultiplier = 1
@@ -127,23 +133,20 @@ function entities_player.new(x, y, z)
 					ny = ny+1
 				end
 				direction = math.atan2(ny, nx)
+				aim = direction
 			elseif love.keyboard.isDown(" ") then
 				patrol.update(anchor:getBody():getX(), anchor:getBody():getY())
 				if patrol.isActive() then
 					state = "walk"
 					nx, ny = patrol.getPoint()
 					direction = math.atan2(ny, nx)
+					aim = direction
 				else
 					state = "stand"
 				end
 			end
 		end
 
-
-
-
-
-		
 		
 
 		if state == "walk" then
@@ -157,20 +160,26 @@ function entities_player.new(x, y, z)
 			animation.setTimescale(vmultiplier)
 		end
 
+
+		if yama.g.getDistance(0, 0, love.joystick.getAxis(1, 4), love.joystick.getAxis(1, 5)) > 0.2 then
+			local nx = love.joystick.getAxis(1, 4)
+			local ny = love.joystick.getAxis(1, 5)
+			aim = math.atan2(ny, nx)
+		end
+
 	end
 
 	function self.updatePosition()
+
+		-- Position updates
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
-		--r = anchor:getBody():getAngle()
-		sprite.x = self.getX()
-		sprite.y = self.getY() + radius
-		sprite.r = r
-		sprite.z = z
-		bufferBatch.x = self.getX()
-		bufferBatch.y = self.getY() + radius
-		bufferBatch.z = z
-		bufferBatch.r = r
+		anchor:getBody():setAngle(direction)
+		buffer.setBatchPosition(bufferBatch, x, y + radius)
+		spriteArrow.x = math.floor(x + 0.5)
+		spriteArrow.y = math.floor(y-16 + 0.5)
+		spriteArrow.r = aim
+
 
 		--particle:setPosition(self.getX(), self.getY()-oy/2)
 	end
@@ -225,6 +234,7 @@ function entities_player.new(x, y, z)
 
 	function self.addToBuffer()
 		buffer.add(bufferBatch)
+		buffer.add(spriteArrow)
 	end
 
 	-- Basic functions

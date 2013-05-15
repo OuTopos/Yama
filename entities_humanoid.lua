@@ -24,8 +24,8 @@ function entities_humanoid.new(x, y, z)
 	animation.setTimescale(math.random(9, 11)/10)
 
 	-- PATROL
-	local patrol = yama.patrols.new(true, 20)
-	patrol.set("fun")
+	--local patrol = yama.patrols.new(true, 20)
+	--patrol.set("fun")
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 
@@ -149,44 +149,39 @@ function entities_humanoid.new(x, y, z)
 	self.monster = true
 	local hp = 0.75
 
-	-- Destination
-	local dx, dy = nil, nil
-
+	local brain = yama.ai.new()
+	print(brain.patrol)
+	brain.setBehaviour("patrol")
+	brain.patrol.set("test1")
 
 	-- Standard functions
 	function self.update(dt)
-		-- Patrol update
-		patrol.update(x, y)
+		brain.update(x, y)
 
-		-- Direction and move
-		if patrol.isActive() then
-			dx, dy = patrol.getPoint()
-			move = true
-		else
-			dx, dy = nil, nil
-			move = false
-		end
-
-		if dx and dy then
-			direction = math.atan2(dy-y, dx-x)
-		end
-
-		if move then
-			fx = velocity * math.cos(direction)
-			fy = velocity * math.sin(direction)
-			anchor:getBody():applyForce( fx, fy )
+		if brain.getSpeed() > 0 or brain.getSpeed() < 0 then
+			local fx = velocity * math.cos(brain.getDirection()) * brain.getSpeed()
+			local fy = velocity * math.sin(brain.getDirection()) * brain.getSpeed()
+			anchor:getBody():applyForce(fx, fy)
 		end
 
 		-- Position updates
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
-		anchor:getBody():setAngle(direction)
+		anchor:getBody():setAngle(brain.getDirection())
 		buffer.setBatchPosition(bufferBatch, x, y + radius)
 
 		-- Animation updates
-		if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(direction)) then
-			buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
+		animation.setTimescale(brain.getSpeed())
+		if brain.getSpeed() > 0 then
+			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.getDirection())) then
+				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
+			end
+		else
+			if animation.update(dt, "humanoid_stand_"..yama.g.getRelativeDirection(brain.getDirection())) then
+				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
+			end
 		end
+
 	end
 
 	function self.addToBuffer()
