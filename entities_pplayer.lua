@@ -48,13 +48,14 @@ function entities_pplayer.new(x, y, z)
 
 	-- SPRITE
 	images.quads.add("crate", 32, 32)
-	local sprite = buffer.newQuad(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
+	images.load("crate"):setFilter("linear", "linear")
+	local sprite = buffer.newSprite(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width, height))
+	local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width, height))
 	anchor:setUserData(self)
 	--anchor:setRestitution( 0 )
 	--anchor:getBody():setLinearDamping( 1 )
