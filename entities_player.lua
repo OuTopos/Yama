@@ -53,7 +53,7 @@ function entities_player.new(x, y, z)
 	anchor:getBody():setFixedRotation( true )
 	anchor:setCategory(1)
 	--love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"),
-	local weapon = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -32, 32, 32), 0)
+	local weapon = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
 	weapon:setUserData(self)
 	weapon:setSensor(true)
 	--weapon:getBody():setActive(false)
@@ -80,12 +80,12 @@ function entities_player.new(x, y, z)
 		else
 			a = "stand"
 		end
-		if state == "walk" or state == "stand" then
+		if state == "walk" or state == "stand" or state == "sword" then
 			animation.update(dt, "humanoid_"..state.."_"..yama.g.getRelativeDirection(direction))
 		else
 			animation.update(dt, "humanoid_die")
 		end
-		sprite.quad = images.quads.data[tileset][animation.getFrame()]
+		sprite.quad = images.quads.data[tileset][animation.frame]
 	end
 
 	function self.updateInput(dt)
@@ -97,7 +97,7 @@ function entities_player.new(x, y, z)
 		if state == "stand" or state == "walk" then
 
 			if love.keyboard.isDown("lctrl") or love.joystick.isDown(1, 1) then
-				state = "stand"
+				state = "sword"
 				wvx = 500 * math.cos(direction)
 				wvy = 500 * math.sin(direction)
 				if cooldown <= 0 then

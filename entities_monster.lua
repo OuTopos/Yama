@@ -27,7 +27,7 @@ function entities_monster.new(x, y, z)
 
 	-- PATROL
 	local patrol = yama.patrols.new()
-	patrol.set("smooth")
+	patrol.set("1")
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 

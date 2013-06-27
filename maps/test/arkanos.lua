@@ -1602,7 +1602,7 @@ return {
       },
       objects = {
         {
-          name = "test1",
+          name = "2",
           type = "",
           shape = "polyline",
           x = 308,
@@ -1620,39 +1620,7 @@ return {
           properties = {}
         },
         {
-          name = "test2",
-          type = "",
-          shape = "polyline",
-          x = 890,
-          y = 337,
-          width = 0,
-          height = 0,
-          visible = true,
-          polyline = {
-            { x = 0, y = 0 },
-            { x = -103, y = 157 },
-            { x = 95, y = 157 }
-          },
-          properties = {}
-        },
-        {
-          name = "test3",
-          type = "",
-          shape = "polyline",
-          x = 812,
-          y = 580,
-          width = 0,
-          height = 0,
-          visible = true,
-          polyline = {
-            { x = 174, y = -13 },
-            { x = -184, y = 98 },
-            { x = 168, y = 143 }
-          },
-          properties = {}
-        },
-        {
-          name = "smooth",
+          name = "1",
           type = "",
           shape = "polyline",
           x = 350,
@@ -1715,7 +1683,7 @@ return {
           properties = {}
         },
         {
-          name = "fun",
+          name = "3",
           type = "",
           shape = "polyline",
           x = 256,

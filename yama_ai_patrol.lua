@@ -1,81 +1,89 @@
-local patrol = {}
+patrol = {}
 
-patrol.current = nil
+function patrol.new()
+	local public = {}
+	local private = {}
 
-patrol.k, patrol.v = nil, nil
-patrol.loop = true
-patrol.radius = 32
-patrol.order = nil
 
-patrol.goal = nil
-patrol.speed = 0
+	private.current = nil
 
-function patrol.set(name)
-	if yama.map.loaded.patrols[name] then
-		patrol.current = yama.map.loaded.patrols[name]
-		patrol.k = 0
-		patrol.next()
-	end
-end
+	private.k, private.v = nil, nil
+	private.loop = true
+	private.radius = 32
+	private.order = nil
 
-function patrol.setLoop(loop)
-	patrol.loop = loop
-end
+	public.goal = nil
+	public.speed = 0
 
-function patrol.setRadius(radius)
-	patrol.radius = radius
-end
-
-function patrol.update(x, y)
-	if patrol.v then
-		if yama.g.getDistance(x, y, patrol.v.x, patrol.v.y) < patrol.radius then
-			patrol.next()
+	function public.set(name)
+		if yama.map.loaded.patrols[name] then
+			private.current = yama.map.loaded.patrols[name]
+			private.k = 0
+			public.next()
 		end
+	end
 
-		if patrol.v then
-			patrol.goal = {patrol.v.x, patrol.v.y}
-			patrol.speed = 1
+	function public.setLoop(loop)
+		private.loop = loop
+	end
+
+	function public.setRadius(radius)
+		private.radius = radius
+	end
+
+	function public.update(x, y)
+		if private.v then
+			if yama.g.getDistance(x, y, private.v.x, private.v.y) < private.radius then
+				public.next()
+			end
+
+			if private.v then
+				public.goal = {private.v.x, private.v.y}
+				public.speed = 1
+			else
+				public.goal = nil
+				public.speed = 0
+			end
+		end
+	end
+
+	function public.next()
+		if private.order == "random" then
+			private.k = math.random(1, #private.current)
+			private.v = private.current[private.k]
+		elseif private.order == "reverse" then
+			private.k = private.k - 1
 		else
-			patrol.goal = nil
-			patrol.speed = 0
+			private.k = private.k + 1
+		end
+
+		if private.current[private.k] then
+			private.v = private.current[private.k]
+		elseif private.loop and private.order == "reverse" then
+			private.k = #private.current
+			private.v = private.current[private.k]
+		elseif private.loop then
+			private.k = 1
+			private.v = private.current[private.k]
+		else
+			private.v = nil
+
 		end
 	end
-end
 
-function patrol.next()
-	if patrol.order == "random" then
-		patrol.k = math.random(1, #patrol.current)
-		patrol.v = patrol.current[patrol.k]
-	elseif patrol.order == "reverse" then
-		patrol.k = patrol.k - 1
-	else
-		patrol.k = patrol.k + 1
+	function public.getPoint()
+		return private.v.x, private.v.y
 	end
 
-	if patrol.current[patrol.k] then
-		patrol.v = patrol.current[patrol.k]
-	elseif patrol.loop and patrol.order == "reverse" then
-		patrol.k = #patrol.current
-		patrol.v = patrol.current[patrol.k]
-	elseif patrol.loop then
-		patrol.k = 1
-		patrol.v = patrol.current[patrol.k]
-	else
-		patrol.v = nil
-
+	function public.isActive()
+		if private.v then
+			return truepatrol
+		else
+			return false
+		end
 	end
-end
 
-function patrol.getPoint()
-	return patrol.v.x, patrol.v.y
-end
-
-function patrol.isActive()
-	if patrol.v then
-		return true
-	else
-		return false
-	end
+	return public
 end
 
 return patrol

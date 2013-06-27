@@ -152,7 +152,7 @@ function entities_humanoid.new(x, y, z)
 	local brain = yama.ai.new()
 	print(brain.patrol)
 	brain.setBehaviour("patrol")
-	brain.patrol.set("test1")
+	brain.patrol.set(""..math.random(1, 3).."")
 
 	-- Standard functions
 	function self.update(dt)
@@ -174,11 +174,11 @@ function entities_humanoid.new(x, y, z)
 		animation.setTimescale(brain.getSpeed())
 		if brain.getSpeed() > 0 then
 			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.getDirection())) then
-				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
+				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		else
 			if animation.update(dt, "humanoid_stand_"..yama.g.getRelativeDirection(brain.getDirection())) then
-				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.getFrame()])
+				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		end
 

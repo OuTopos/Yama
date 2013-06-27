@@ -1,3 +1,4 @@
+
 local ai = {}
 
 function ai.new()
@@ -43,7 +44,21 @@ function ai.new()
 
 
 	-- BEHAVIOUR: PATROL
-	self.patrol = require("yama_ai_patrol")
+	--dofile("yama_ai_patrol.lua")
+	self.patrol = yama.ai.patrol.new()
+
+function self.patrol.getPoint()
+	return self.patrol.v.x, self.patrol.v.y
+end
+
+function self.patrol.isActive()
+	if self.patrol.v then
+		return truepatrol
+	else
+		return false
+	end
+end
+	
 
 	-- INPUT
 	function self.setBehaviour(aBehaviour)
