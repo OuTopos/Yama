@@ -17,6 +17,7 @@ require	"entities_ball"
 require	"entities_projectile"
 require	"entities_monster"
 require	"entities_humanoid"
+require "entities_mplayer"
 
 function entities.new(type, x, y, z)
 	local entity = _G["entities_"..type].new(x, y, z)

@@ -2,10 +2,10 @@
 <map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
  <properties>
   <property name="name" value="Gravity Fall"/>
-  <property name="player_entity" value="pplayer"/>
+  <property name="player_entity" value="mplayer"/>
   <property name="sx" value="1"/>
   <property name="sy" value="1"/>
-  <property name="yg" value="90.18"/>
+  <property name="yg" value="10"/>
  </properties>
  <tileset firstgid="1" name="test" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/test.png" width="512" height="512"/>
@@ -24,67 +24,48 @@
    eJztwzEJAAAMA7Ae82+xVgrTkUB6SVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV1T/ocKUv
   </data>
  </layer>
- <layer name="Tile Layer 1" width="100" height="100">
+ <layer name="Tiles Layer 2" width="100" height="100">
   <properties>
    <property name="z" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2AFugjAAQFFS77Ht7ki2cyxOd5DtHtOsZp1BUShQ8b2EAGoQ+QjVqgIAgMexDlVVh9858zu02Ohxl2rNRleH649z0/G6Tfjb3ka70XVd044dbmlMf01y73e88zodUx2Wm3h+n7vWHDs0emR17JBrTPWqTW/pee2euxxf+5bfSc/3uNw1BmO4j3iMd/v5Z5x2oX19l/Qw3hrmaVVVz/vpZdX+/Fs8vts4b+LyNnnc9yOPdfj/X1afMW3tuwBktA6muaa2Brkazu3cPpSwb9e6p33tokdZ9ChH2/W4bblt/dL2pr4WL6nHpfVrn0tfo0d/uXvc+t65ui2lx6mpeqQdcjSZYmw9h5w9btlWyT3m+m019efK/b5LkPs8ZRg9yqJHWfSYz7n7aNe6RuPJOWZlOD3KokdZHvV3FgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwrh9rBPeR
+   eJzt0bsJACAQREGx/y5s1FhN/CM4A5desC8EAABghxTL44zeffW4Y3RfPc7S4y2zPXRp1dus3s6fP9IDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAH2SGZEB1
   </data>
  </layer>
  <objectgroup color="#ff0000" name="Ground" width="100" height="100">
   <properties>
    <property name="type" value="collision"/>
   </properties>
-  <object x="128" y="224" width="96" height="64"/>
-  <object x="480" y="544" width="320" height="64"/>
-  <object x="736" y="608" width="96" height="32"/>
-  <object x="192" y="416" width="128" height="32"/>
-  <object x="0" y="960" width="704" height="64"/>
-  <object x="736" y="320" width="128" height="64"/>
-  <object x="0" y="480" width="32" height="32"/>
-  <object x="32" y="448" width="32" height="32"/>
-  <object x="64" y="416" width="32" height="32"/>
-  <object x="96" y="416" width="32" height="96"/>
-  <object x="128" y="320" width="64" height="32"/>
-  <object x="192" y="608" width="192" height="32"/>
-  <object x="480" y="288" width="32" height="160"/>
-  <object x="512" y="384" width="96" height="64"/>
-  <object x="672" y="448" width="32" height="32"/>
-  <object x="768" y="512" width="32" height="32"/>
-  <object x="864" y="544" width="128" height="32"/>
-  <object x="704" y="528" width="32" height="16"/>
-  <object x="608" y="528" width="32" height="16"/>
-  <object x="224" y="576">
-   <polyline points="0,0 96,0"/>
+  <object x="672" y="384" width="576" height="64"/>
+  <object type="floor" x="0" y="384" width="640" height="64"/>
+  <object x="1376" y="384"/>
+  <object x="1376" y="480"/>
+  <object x="864" y="224">
+   <polyline points="0,0 128,0"/>
   </object>
-  <object x="576" y="560">
-   <polygon points="0,-16 32,-32 32,-16"/>
+  <object x="992" y="352">
+   <polyline points="0,0 64,0"/>
   </object>
-  <object x="416" y="560" width="32" height="16"/>
-  <object x="1440" y="1152" width="32" height="160"/>
-  <object x="1472" y="1280" width="352" height="32"/>
-  <object x="1824" y="1152" width="32" height="160"/>
-  <object x="1856" y="1152" width="32" height="32"/>
-  <object x="1408" y="1152" width="32" height="32"/>
-  <object x="1568" y="1024" width="32" height="160"/>
-  <object x="1696" y="832" width="32" height="352"/>
-  <object x="704" y="992" width="896" height="32"/>
-  <object x="1568" y="832" width="32" height="96"/>
-  <object x="1600" y="736" width="32" height="128"/>
-  <object x="1792" y="736" width="32" height="128"/>
-  <object x="1920" y="832" width="32" height="160"/>
-  <object x="1728" y="992" width="832" height="32"/>
-  <object x="2304" y="960" width="32" height="32"/>
-  <object x="2208" y="832" width="128" height="64"/>
-  <object x="2560" y="896" width="96" height="32"/>
-  <object x="2528" y="928" width="64" height="32"/>
-  <object x="2624" y="928" width="64" height="32"/>
-  <object x="2528" y="960" width="32" height="32"/>
-  <object x="2656" y="960" width="32" height="32"/>
-  <object x="2656" y="992" width="544" height="32"/>
-  <object x="3168" y="736" width="32" height="256"/>
-  <object x="3104" y="704" width="96" height="32"/>
-  <object x="0" y="704" width="3040" height="32"/>
+  <object x="864" y="288">
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object type="wall" x="544" y="256" width="64" height="128"/>
+ </objectgroup>
+ <objectgroup name="Walls" width="100" height="100">
+  <properties>
+   <property name="type" value="collision"/>
+  </properties>
+  <object x="864" y="224">
+   <polyline points="0,0 0,64"/>
+  </object>
+  <object x="992" y="224">
+   <polyline points="0,0 0,128"/>
+  </object>
+  <object x="1056" y="352">
+   <polyline points="0,0 0,32"/>
+  </object>
+  <object x="928" y="288">
+   <polyline points="0,0 0,96"/>
+  </object>
  </objectgroup>
 </map>
