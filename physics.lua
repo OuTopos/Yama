@@ -35,15 +35,9 @@ function physics.drawFixture(fixture, color)
 		love.graphics.setColor(color)
 	else
 		if fixture:getBody():getType() == "static" then
-			r = 255
+			r, g = 255, 0
 		else
-			r = 0
-		end
-
-		if fixture:getUserData() then
-			g = 255
-		else
-			g = 0
+			r, g = 0, 255
 		end
 
 		if fixture:isSensor() then
@@ -56,6 +50,10 @@ function physics.drawFixture(fixture, color)
 			a = 102
 		else
 			a = 51
+		end
+
+		if not fixture:getUserData() then
+			a = 255
 		end
 		love.graphics.setColor(r, g, b, a)
 	end
