@@ -51,19 +51,21 @@ function entities_player.new(x, y, z)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
-	anchor:setCategory(1)
+	--anchor:setCategory(1)
 	--love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"),
-	local weapon = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
+	local weapon = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
 	weapon:setUserData(self)
 	weapon:setSensor(true)
 	--weapon:getBody():setActive(false)
-	weapon:setCategory(1, 2)
+	--weapon:setCategory(1, 2)
+	weapon:getBody():setActive(false)
 
 	--joint = love.physics.newDistanceJoint( anchor:getBody(), weapon:getBody(), -10, -10, 10, 10, false)
 
-	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--local weapon2 = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--weapon2:getBody():setActive(false)
 	--hitbox:setUserData(self)
-	hitbox:setSensor(true)
+	--weapon2:setSensor(true)
 
 	-- PATROL
 	local patrol = yama.patrols.new(true, 32)
@@ -227,6 +229,10 @@ function entities_player.new(x, y, z)
 	end
 
 	function self.attack()
+		weapon:getBody():setPosition(x, y)
+		weapon:getBody():setAngle(direction)
+		weapon:getBody():setActive(true)
+
 		for k, target in ipairs(targets) do
 			target.hurt(0.3, x, y)
 		end

@@ -1,6 +1,5 @@
 local animations = {}
 
--- Animation class
 function animations.new()
 	local public = {}
 	local private = {}

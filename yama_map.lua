@@ -48,11 +48,7 @@ function map.load(path, spawn)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							local fixture = map.shape(object)
-							if object.properties.userdata then
-								--set stuff acording to the object
-							elseif layer.properties.userdata then
-								--set stuff according to the object layer
-							end
+							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
 						end
 					elseif layer.properties.type == "patrols" then
 						-- Adding patrols to the patrols table
@@ -68,7 +64,7 @@ function map.load(path, spawn)
 						-- Adding portals to physics objects
 						for i, object in ipairs(layer.objects) do
 							local fixture = map.shape(object)
-							fixture:setUserData({portal = {map = object.properties.map, spawn = object.properties.spawn}})
+							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
 							fixture:setSensor(true)
 						end
 					elseif layer.properties.type == "spawns" then

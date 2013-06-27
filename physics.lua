@@ -29,26 +29,35 @@ function physics.draw()
 end
 
 function physics.drawFixture(fixture, color)
+	local r, g, b, a = 0, 0, 0, 0
+
 	if color then
 		love.graphics.setColor(color)
 	else
 		if fixture:getBody():getType() == "static" then
-			if fixture:isSensor() then
-				love.graphics.setColor(0, 255, 255, 102)
-			elseif fixture:getUserData() then
-				love.graphics.setColor(255, 255, 0, 102)
-			else
-				love.graphics.setColor(255, 0, 0, 102)
-			end
-		elseif fixture:getBody():getType() == "dynamic" then
-			if fixture:isSensor() then
-				love.graphics.setColor(255, 0, 255, 102)
-			elseif fixture:getUserData() then
-				love.graphics.setColor(0, 255, 0, 102)
-			else
-				love.graphics.setColor(0, 0, 255, 102)
-			end
+			r = 255
+		else
+			r = 0
 		end
+
+		if fixture:getUserData() then
+			g = 255
+		else
+			g = 0
+		end
+
+		if fixture:isSensor() then
+			b = 255
+		else
+			b = 0
+		end
+
+		if fixture:getBody():isActive() then
+			a = 102
+		else
+			a = 51
+		end
+		love.graphics.setColor(r, g, b, a)
 	end
 
 	if fixture:getShape():getType() == "circle" then

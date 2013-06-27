@@ -159,25 +159,25 @@ function entities_humanoid.new(x, y, z)
 		brain.update(x, y)
 
 		if brain.getSpeed() > 0 or brain.getSpeed() < 0 then
-			local fx = velocity * math.cos(brain.getDirection()) * brain.getSpeed()
-			local fy = velocity * math.sin(brain.getDirection()) * brain.getSpeed()
+			local fx = velocity * math.cos(brain.direction) * brain.speed
+			local fy = velocity * math.sin(brain.direction) * brain.speed
 			anchor:getBody():applyForce(fx, fy)
 		end
 
 		-- Position updates
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
-		anchor:getBody():setAngle(brain.getDirection())
+		anchor:getBody():setAngle(brain.direction)
 		buffer.setBatchPosition(bufferBatch, x, y + radius)
 
 		-- Animation updates
 		animation.setTimescale(brain.getSpeed())
 		if brain.getSpeed() > 0 then
-			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.getDirection())) then
+			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.direction)) then
 				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		else
-			if animation.update(dt, "humanoid_stand_"..yama.g.getRelativeDirection(brain.getDirection())) then
+			if animation.update(dt, "humanoid_stand_"..yama.g.getRelativeDirection(brain.direction)) then
 				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		end

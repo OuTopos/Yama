@@ -53,7 +53,12 @@ function love.keypressed(key)
 		yama.camera.follow = entities.new("turret", player.getX(), player.getY())
 	end
 	if key == "b" then
-		entities.new("ball", player.getX(), player.getY())
+		if buffer.enabled then
+			buffer.enabled = false
+		else
+			buffer.enabled = true
+		end
+
 	end
 	if key == "s" then
 		yama.map.load("test/arkanos", "door1")

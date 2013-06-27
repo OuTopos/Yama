@@ -1,10 +1,15 @@
-patrol = {}
+patrols = {}
 
-function patrol.new()
+function patrols.new()
 	local public = {}
 	local private = {}
 
+	-- Public
+	public.goal = nil
+	public.speed = 0
 
+
+	-- Private
 	private.current = nil
 
 	private.k, private.v = nil, nil
@@ -12,9 +17,8 @@ function patrol.new()
 	private.radius = 32
 	private.order = nil
 
-	public.goal = nil
-	public.speed = 0
 
+	-- Public Functions
 	function public.set(name)
 		if yama.map.loaded.patrols[name] then
 			private.current = yama.map.loaded.patrols[name]
@@ -86,4 +90,4 @@ function patrol.new()
 	return public
 end
 
-return patrol
+return patrols
