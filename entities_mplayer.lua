@@ -138,7 +138,7 @@ function entities_mplayer.new(x, y, z)
 			jumping = true
 		end
 		
-		if not love.keyboard.isDown(" ") and yv == 0 then
+		if not love.keyboard.isDown(" ") and onGround == true then
 			allowjump = true
 		end
 
@@ -266,35 +266,15 @@ function entities_mplayer.new(x, y, z)
 				contact:setFriction( 1.3 )
 			end
 		end
-		
-		--print("beginContact for player")
-		if b:isSensor() then
-			if b:getUserData() then
-				local entity = b:getUserData()
-
-				if entity.isTree then
-					--print("adding entity to triggers")
-					--local d, x1, y1, x2, y2 = love.physics.getDistance(b, anchor.fixture)
-					d = getDistance(a:getBody():getX(), a:getBody():getY(), b:getBody():getX(), b:getBody():getY())
-					--print(d)
-					triggers.add(entity)
-				end
-			end
-		end
 	end
 
 	function self.endContact(a, b, contact)
-		--print("END")
-		--print(contact:getSeparation( ))
-		if b:isSensor() then
-			if b:getUserData() then
-				local entity = b:getUserData()
-
-				if entity.isTree then
-					triggers.remove(entity)
-				end
+		if b:getUserData() then
+			if b:getUserData().type == 'floor' then
+				onGround = false
 			end
 		end
+
 	end
 
 	function self.draw()
