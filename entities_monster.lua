@@ -23,7 +23,7 @@ function entities_monster.new(x, y, z)
 	-- ANIMATION
 	local animation = yama.animations.new()
 	animation.set("eyeball_walk_down")
-	animation.setTimescale(math.random(9, 11)/10)
+	animation.timescale = math.random(9, 11)/10
 
 	-- PATROL
 	local patrol = yama.patrols.new()
@@ -87,7 +87,7 @@ function entities_monster.new(x, y, z)
 
 		-- Animation updates
 		animation.update(dt, "eyeball_walk_"..yama.g.getRelativeDirection(direction))
-		sprite.quad = images.quads.data[tileset][animation.getFrame()]
+		sprite.quad = images.quads.data[tileset][animation.frame]
 	end
 
 	function self.addToBuffer()

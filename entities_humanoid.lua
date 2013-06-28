@@ -21,7 +21,7 @@ function entities_humanoid.new(x, y, z)
 	-- ANIMATION
 	local animation = yama.animations.new()
 	--animation.set("humanoid_stand_down")
-	animation.setTimescale(math.random(9, 11)/10)
+	animation.timescale = math.random(9, 11)/10
 
 	-- PATROL
 	--local patrol = yama.patrols.new(true, 20)
@@ -158,7 +158,7 @@ function entities_humanoid.new(x, y, z)
 	function self.update(dt)
 		brain.update(x, y)
 
-		if brain.getSpeed() > 0 or brain.getSpeed() < 0 then
+		if brain.speed > 0 or brain.speed < 0 then
 			local fx = velocity * math.cos(brain.direction) * brain.speed
 			local fy = velocity * math.sin(brain.direction) * brain.speed
 			anchor:getBody():applyForce(fx, fy)
@@ -171,8 +171,8 @@ function entities_humanoid.new(x, y, z)
 		buffer.setBatchPosition(bufferBatch, x, y + radius)
 
 		-- Animation updates
-		animation.setTimescale(brain.getSpeed())
-		if brain.getSpeed() > 0 then
+		animation.timescale = brain.speed
+		if brain.speed > 0 then
 			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.direction)) then
 				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end

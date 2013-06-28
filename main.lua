@@ -115,10 +115,10 @@ function love.draw()
 	love.graphics.setCanvas(yama.screen.canvas)
 
 	-- Check if the buffer has been reset 
-	--if next(buffer.data) == nil then
+	if next(buffer.data) == nil then
 		entities.addToBuffer()
 		yama.map.addToBuffer()
-	--end
+	end
 
 	-- Draw the buffer
 	buffer.draw()
@@ -133,5 +133,4 @@ function love.draw()
 	love.graphics.setCanvas()
 
 	love.graphics.draw(yama.screen.canvas, 1, 0, 0, yama.screen.sx, yama.screen.sy)
-	buffer.reset()
 end

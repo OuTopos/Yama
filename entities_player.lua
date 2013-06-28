@@ -159,7 +159,7 @@ function entities_player.new(x, y, z)
 			fy = velocity * vmultiplier * math.sin(direction)
 			anchor:getBody():setAngle(direction)
 			anchor:getBody():applyForce(fx, fy)
-			animation.setTimescale(vmultiplier)
+			animation.timescale = vmultiplier
 		end
 
 
