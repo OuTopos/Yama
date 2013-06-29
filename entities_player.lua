@@ -24,7 +24,7 @@ function entities_player.new(x, y, z)
 	local cooldown = 0
 
 	-- BUFFER BATCH
-	local bufferBatch = buffer.newBatch(x, y, z)
+	local bufferBatch = yama.buffers.newBatch(x, y, z)
 
 	-- ANIMATION
 	local animation = yama.animations.new()
@@ -32,15 +32,15 @@ function entities_player.new(x, y, z)
 	-- SPRITE
 	local tileset = "tilesets/lpcfemaletest"
 	images.quads.add(tileset, width, height)
-	local sprite = buffer.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y+radius, z, r, sx, sy, ox, oy)
+	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y+radius, z, r, sx, sy, ox, oy)
 	table.insert(bufferBatch.data, sprite)
 
 	tilesetArrow = "directionarrow"
-	images.load(tilesetArrow):setFilter("linear", "linear")
-	local spriteArrow = buffer.newDrawable(images.load(tilesetArrow), x, y-16, 1000, 1, sx, sy, -24, 12)
+	--images.load(tilesetArrow):setFilter("linear", "linear")
+	local spriteArrow = yama.buffers.newDrawable(images.load(tilesetArrow), x, y-16, 1000, 1, sx, sy, -24, 12)
 
 	local tilesetOversized = "tilesets/lpcfemaletest"
-	local spriteOversized = buffer.newSprite(images.load(tilesetOversized), images.quads.data[tilesetOversized][1], x-64, y+radius-64, z, r, sx, sy, ox, oy)
+	local spriteOversized = yama.buffers.newSprite(images.load(tilesetOversized), images.quads.data[tilesetOversized][1], x-64, y+radius-64, z, r, sx, sy, ox, oy)
 	
 	--table.insert(bufferBatch.data, spriteOversized)
 	
@@ -177,7 +177,7 @@ function entities_player.new(x, y, z)
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		anchor:getBody():setAngle(direction)
-		buffer.setBatchPosition(bufferBatch, x, y + radius)
+		yama.buffers.setBatchPosition(bufferBatch, self:getX(), self:getY() + radius)
 		spriteArrow.x = math.floor(x + 0.5)
 		spriteArrow.y = math.floor(y-16 + 0.5)
 		spriteArrow.r = aim
@@ -243,6 +243,11 @@ function entities_player.new(x, y, z)
 		buffer.add(spriteArrow)
 	end
 
+	function self.addToBuffer2(buffer)
+		buffer.add(bufferBatch)
+		buffer.add(spriteArrow)
+	end
+
 	-- Basic functions
 	function self.setPosition(x, y)
 		anchor.body:setPosition(x, y)
@@ -262,9 +267,11 @@ function entities_player.new(x, y, z)
 
 	-- Common functions
 	function self.getX()
+		--return x
 		return math.floor(x + 0.5)
 	end
 	function self.getY()
+		--return y
 		return math.floor(y + 0.5)
 	end
 	function self.getZ()

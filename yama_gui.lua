@@ -18,26 +18,26 @@ function gui.load()
 end
 function gui.draw()
 	if gui.enabled then
-		love.graphics.draw(gui.images.hp, yama.camera.x + 2,  yama.camera.y + 1)
-		--love.graphics.draw(gui.images.test, yama.camera.x + 2,  yama.camera.y + yama.camera.height - 66)
+		love.graphics.draw(gui.images.hp, camera.x + 2,  camera.y + 1)
+		--love.graphics.draw(gui.images.test, camera.x + 2,  camera.y + camera.height - 66)
 
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.print("FPS: "..love.timer.getFPS(), yama.camera.x + yama.camera.width - 39, yama.camera.y + 3)
-		--love.graphics.print("Skeleton: HELLO", yama.camera.x + 12 + 1, yama.camera.y + yama.camera.height - 55 +1)
-		--love.graphics.print("Princess: Aahh!", yama.camera.x + 12 + 1, yama.camera.y + yama.camera.height - 45 +1)
+		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 3)
+		--love.graphics.print("Skeleton: HELLO", camera.x + 12 + 1, camera.y + camera.height - 55 +1)
+		--love.graphics.print("Princess: Aahh!", camera.x + 12 + 1, camera.y + camera.height - 45 +1)
 
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("FPS: "..love.timer.getFPS(), yama.camera.x + yama.camera.width - 39, yama.camera.y + 2)
-		--love.graphics.print("Skeleton: HELLO", yama.camera.x + 12, yama.camera.y + yama.camera.height - 55)
-		--love.graphics.print("Princess: Aahh!", yama.camera.x + 12, yama.camera.y + yama.camera.height - 45)
+		love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 2)
+		--love.graphics.print("Skeleton: HELLO", camera.x + 12, camera.y + camera.height - 55)
+		--love.graphics.print("Princess: Aahh!", camera.x + 12, camera.y + camera.height - 45)
 
 		if yama.g.paused then
 			love.graphics.setColor(0, 0, 0, 234)
-			love.graphics.rectangle("fill", yama.camera.x, yama.camera.y, yama.camera.width, yama.camera.height)
+			love.graphics.rectangle("fill", camera.x, camera.y, camera.width, camera.height)
 			love.graphics.setColor(0, 0, 0, 255)
-			love.graphics.print("- PAUSE -", yama.camera.x + yama.camera.width/2 - 20, yama.camera.y + yama.camera.height/2 - 4)
+			love.graphics.print("- PAUSE -", camera.x + camera.width/2 - 20, camera.y + camera.height/2 - 4)
 			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.print("- PAUSE -", yama.camera.x + yama.camera.width/2 - 21, yama.camera.y + yama.camera.height/2 - 5)
+			love.graphics.print("- PAUSE -", camera.x + camera.width/2 - 21, camera.y + camera.height/2 - 5)
 		end
 	end
 end

@@ -18,7 +18,7 @@ function entities_monster.new(x, y, z)
 	local move = false
 
 	-- BUFFER BATCH
-	local bufferBatch = buffer.newBatch(x, y, z)
+	local bufferBatch = yama.buffers.newBatch(x, y, z)
 
 	-- ANIMATION
 	local animation = yama.animations.new()
@@ -34,7 +34,7 @@ function entities_monster.new(x, y, z)
 	-- SPRITE
 	local tileset = "eyeball"
 	images.quads.add(tileset, 32, 38)
-	local sprite = buffer.newSprite(images.load(tileset), images.quads.data[tileset][1], x, y+radius, z, r, sx, sy, ox, oy)
+	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], x, y+radius, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 
@@ -91,6 +91,10 @@ function entities_monster.new(x, y, z)
 	end
 
 	function self.addToBuffer()
+		buffer.add(bufferBatch)
+	end
+
+	function self.addToBuffer2(buffer)
 		buffer.add(bufferBatch)
 	end
 

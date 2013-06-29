@@ -1,7 +1,7 @@
 yama = require("yama")
 
 require "images"
-require "buffer"
+--require "buffer"
 require "physics"
 require "entities"
 require "game"
@@ -9,12 +9,17 @@ require "game"
 require "shaders"
 
 function love.load()
-	yama.screen.load()
+	--buffer = yama.buffers.new()
+	--camera = yama.cameras.new()
+	--yama.screen.load()
 	yama.gui.load()
 
 	--music = love.audio.newSource("sound/music.ogg", "static")
-	--music:setLooping(true)
-	--love.audio.play(music)
+	--music:setLooping(true) x, y, r, width, height, sx, sy, zoom
+	--love.audio.play(music) 
+	vp1 = yama.viewports.new("vp1", 0, 0, 0, yama.screen.width/2, yama.screen.height, 2, 2, true)
+	vp2 = yama.viewports.new("vp2", yama.screen.width/2, 0, 0, yama.screen.width/2, yama.screen.height, 2, 2, true)
+	--vp3 = yama.viewports.new("vp3", yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
 
 function love.keypressed(key)
@@ -50,7 +55,7 @@ function love.keypressed(key)
 		physics.world:setGravity(0, 90)
 	end
 	if key == "t" then
-		yama.camera.follow = entities.new("turret", player.getX(), player.getY())
+		camera.follow = entities.new("turret", player.getX(), player.getY())
 	end
 	if key == "b" then
 		if buffer.enabled then
@@ -82,7 +87,7 @@ function love.keypressed(key)
 	if key == "e" then
 		for i=1,10 do
 			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
-			--entities.new("coin", math.random(1, yama.camera.width), math.random(1, yama.camera.height), 0)
+			--entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
 			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
 
@@ -91,10 +96,11 @@ function love.keypressed(key)
 	end
 
 	if key == "1" then
-		yama.camera.follow = entities.data[1]
+		vp1.camera.setPosition(100, 100)
 	end
 	if key == "2" then
-		yama.camera.follow = entities.data[math.random(1, #entities.data)]
+		vp1.camera.follow = entities.data[math.random(1, #entities.data)]
+		--vp3.camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
 		yama.screen.scaleToggle()
@@ -104,33 +110,44 @@ end
 function love.update(dt)
 	if not yama.g.paused then
 		physics.update(dt)
-		entities.update(dt)
-		yama.camera.update(dt)
-		yama.map.update(dt)
+		--entities.update(dt)
+		--camera.update(dt)
+		--yama.map.update(dt)
+		vp1.update(dt)
+		vp2.update(dt)
+		--vp3.update(dt)
+
+		--vp3.r = vp3.r + (1 * dt)
+
+		entities.updated = false
 	end
 end
 
 function love.draw()
-	yama.camera.set()
-	love.graphics.setCanvas(yama.screen.canvas)
+	--camera.set()
+	--love.graphics.setCanvas(yama.screen.canvas)
 
 	-- Check if the buffer has been reset 
-	if next(buffer.data) == nil then
-		entities.addToBuffer()
-		yama.map.addToBuffer()
-	end
+	--if next(buffer.data) == nil then
+		--entities.addToBuffer()
+		--yama.map.addToBuffer()
+	--end
 
 	-- Draw the buffer
-	buffer.draw()
+	--buffer.draw()
 
 	-- Draw the GUI
-	yama.gui.draw()
+	--yama.gui.draw()
 
 	-- Draw the HUD
-	yama.hud.draw()
+	--yama.hud.draw()
 
-	yama.camera.unset()
-	love.graphics.setCanvas()
+	--camera.unset()
+	--love.graphics.setCanvas()
 
-	love.graphics.draw(yama.screen.canvas, 1, 0, 0, yama.screen.sx, yama.screen.sy)
+	--love.graphics.draw(yama.screen.canvas, 0, 0, 0, yama.screen.sx, yama.screen.sy)
+
+	vp1.draw()
+	vp2.draw()
+	--vp3.draw()
 end
