@@ -1,25 +1,27 @@
-entities_mplayer = {}
+entities_platform = {}
 
 
-function entities_mplayer.new(x, y, z)
+function entities_platform.new(x, y, z)
 	local self = {}
 
 	-- Common variables
-	local width, height = 32, 32
+	local width, height = 128, 32
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
 
+
 	self.type = "player"
 
+
 	local remove = false
+
 
 	--local x, y, z = xn, yn, 32
 	local xvel, yvel = 0, 0
 	local speed = 0
+	local friction = 0.99
 	local direction = 0
-	local onGround = false
-	local pContact = nil
 
 	-- BUFFER BATCH
 	local bufferBatch = buffer.newBatch(x, y, z)
@@ -28,7 +30,7 @@ function entities_mplayer.new(x, y, z)
 
 
 	-- SPRITE (PLAYER)
-	images.quads.add("crate", 32, 32)
+	images.quads.add("crate", 128, 32)
 	images.load("crate"):setFilter("linear", "linear")
 	local sprite = buffer.newSprite(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
 	
@@ -37,16 +39,16 @@ function entities_mplayer.new(x, y, z)
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
 	local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
-	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, -1, width, height-2) )
+
 
 	anchor:setUserData(self)
 	--anchor:setRestitution( 0 )
 	--anchor:getBody():setLinearDamping( 1 )
 	anchor:getBody():setFixedRotation( true )
 	anchor:getBody():setLinearDamping( 0 )
-	anchor:getBody():setMass( 1 )
-	anchor:getBody():setInertia( 1 )
-	anchor:getBody():setGravityScale( 9 )
+	anchor:getBody():setMass( 0 )
+	anchor:getBody():setInertia( 0 )
+	anchor:getBody():setGravityScale( 0 )
 
 	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
 	--hitbox:setUserData(self)
@@ -70,61 +72,6 @@ function entities_mplayer.new(x, y, z)
 
 	function self.updateInput(dt)
 		fx, fy = 0, 0
-
-		if love.keyboard.isDown("up") then
-			direction = 3.141592654
-			fy = 000
-		end
-		if love.keyboard.isDown("right") then
-			if onGround then
-				direction = 1.570796327
-				fx = 4500
-			else
-				direction = 1.570796327
-				fx = 1200
-			end
-		end
-		if love.keyboard.isDown("left") then
-			if onGround then
-				direction = 4.71238898
-				fx = -4500
-			else
-				direction = 4.71238898
-				fx = -1200
-			end
-		end
-		if love.keyboard.isDown("down") then
-			direction = 0
-			fy = 0
-		end
-
-
-		xv, yv = anchor:getBody():getLinearVelocity()
-		if onGround and xv <= 500 and xv >= -500 then
-			anchor:getBody():applyForce( fx, fy )
-		end
-		
-		if not onGround and xv <= 500 and xv >= -500 then
-			anchor:getBody():applyForce( fx, fy )
-		end
-
-		xv, yv = anchor:getBody():getLinearVelocity()
-		print(yv)
-
-		if allowjump and love.keyboard.isDown(" ") then
-			anchor:getBody():applyLinearImpulse( 0, -1200 )
-			allowjump = false
-		end
-		xv, yv = anchor:getBody():getLinearVelocity()
-		if not love.keyboard.isDown(" ") and onGround == true and yv == 0 then
-			allowjump = true
-		end
-
-		if pContact then
-			if not love.keyboard.isDown(" ") then
-				pContact:setFriction( 0.5 ) 
-			end
-		end
 
 	end
 
@@ -246,8 +193,7 @@ function entities_mplayer.new(x, y, z)
 		pContact = contact
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
-				onGround = true
-				contact:setFriction( 0.2 )
+
 			end
 		end
 	end
@@ -255,8 +201,7 @@ function entities_mplayer.new(x, y, z)
 	function self.endContact(a, b, contact)
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
-				onGround = false
-				allowjump = false
+
 			end
 		end
 

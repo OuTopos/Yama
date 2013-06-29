@@ -29,43 +29,75 @@
    <property name="z" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0bsJACAQREGx/y5s1FhN/CM4A5desC8EAABghxTL44zeffW4Y3RfPc7S4y2zPXRp1dus3s6fP9IDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAH2SGZEB1
+   eJzt0TEKwCAQRUHx/rfIRS0kkCJBLBY3OgOvFdxfCgAAAAAAAAAAEa7aIwd75GKPXOyRw73DsxVvnGB0m7c72iPO6D72iDdzY3vEO32Prz9JkqT/BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALCLBg0xdT8=
   </data>
  </layer>
  <objectgroup color="#ff0000" name="Ground" width="100" height="100">
   <properties>
    <property name="type" value="collision"/>
   </properties>
-  <object x="672" y="384" width="576" height="64"/>
-  <object type="floor" x="0" y="384" width="640" height="64"/>
-  <object x="1376" y="384"/>
-  <object x="1376" y="480"/>
-  <object x="864" y="224">
-   <polyline points="0,0 128,0"/>
-  </object>
-  <object x="992" y="352">
+  <object type="floor" x="-64" y="960" width="3264" height="160"/>
+  <object type="floor" x="1248" y="832">
    <polyline points="0,0 64,0"/>
   </object>
-  <object x="864" y="288">
+  <object type="floor" x="1312" y="864">
+   <polyline points="0,0 32,0"/>
+  </object>
+  <object type="floor" x="1504" y="832">
+   <polyline points="0,0 32,0"/>
+  </object>
+  <object type="floor" x="1536" y="800">
    <polyline points="0,0 64,0"/>
   </object>
-  <object type="wall" x="544" y="256" width="64" height="128"/>
+  <object type="floor" x="1600" y="672">
+   <polyline points="0,0 64,0"/>
+  </object>
+  <object type="floor" x="1664" y="800">
+   <polyline points="0,0 32,0"/>
+  </object>
+  <object type="floor" x="1152" y="896">
+   <polyline points="0,0 96,0"/>
+  </object>
+  <object type="floor" x="2080" y="800">
+   <polyline points="0,0 160,0"/>
+  </object>
  </objectgroup>
  <objectgroup name="Walls" width="100" height="100">
   <properties>
    <property name="type" value="collision"/>
   </properties>
-  <object x="864" y="224">
-   <polyline points="0,0 0,64"/>
-  </object>
-  <object x="992" y="224">
+  <object type="wall" x="1664" y="672">
    <polyline points="0,0 0,128"/>
   </object>
-  <object x="1056" y="352">
+  <object type="wall" x="1600" y="672">
+   <polyline points="0,0 0,128"/>
+  </object>
+  <object type="wall" x="1696" y="800">
+   <polyline points="0,0 0,160"/>
+  </object>
+  <object type="wall" x="2080" y="800">
+   <polyline points="0,0 0,160"/>
+  </object>
+  <object type="wall" x="2240" y="800">
+   <polyline points="0,0 0,160"/>
+  </object>
+  <object x="1344" y="864">
+   <polyline points="0,0 0,96"/>
+  </object>
+  <object type="wall" x="1248" y="832">
+   <polyline points="0,0 0,64"/>
+  </object>
+  <object type="wall" x="1312" y="832">
    <polyline points="0,0 0,32"/>
   </object>
-  <object x="928" y="288">
-   <polyline points="0,0 0,96"/>
+  <object type="wall" x="1152" y="896">
+   <polyline points="0,0 0,64"/>
+  </object>
+  <object type="wall" x="1536" y="800">
+   <polyline points="0,0 0,32"/>
+  </object>
+  <object type="wall" x="1504" y="832">
+   <polyline points="0,0 0,128"/>
   </object>
  </objectgroup>
 </map>
