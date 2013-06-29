@@ -17,7 +17,7 @@ function love.load()
 	--music = love.audio.newSource("sound/music.ogg", "static")
 	--music:setLooping(true) x, y, r, width, height, sx, sy, zoom
 	--love.audio.play(music) 
-	vp1 = yama.viewports.new("vp1", 0, 0, 0, yama.screen.width/2, yama.screen.height, 2, 2, true)
+	vp1 = yama.viewports.new("vp1", 0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, true)
 	vp2 = yama.viewports.new("vp2", yama.screen.width/2, 0, 0, yama.screen.width/2, yama.screen.height, 2, 2, true)
 	--vp3 = yama.viewports.new("vp3", yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
@@ -148,6 +148,6 @@ function love.draw()
 	--love.graphics.draw(yama.screen.canvas, 0, 0, 0, yama.screen.sx, yama.screen.sy)
 
 	vp1.draw()
-	vp2.draw()
+	--vp2.draw()
 	--vp3.draw()
 end

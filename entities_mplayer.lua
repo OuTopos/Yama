@@ -22,7 +22,7 @@ function entities_mplayer.new(x, y, z)
 	local pContact = nil
 
 	-- BUFFER BATCH
-	local bufferBatch = buffer.newBatch(x, y, z)
+	local bufferBatch = yama.buffers.newBatch(x, y, z)
 
 	--table.insert(bufferBatch.data, buffer.newDrawable(particle))
 
@@ -30,7 +30,7 @@ function entities_mplayer.new(x, y, z)
 	-- SPRITE (PLAYER)
 	images.quads.add("crate", 32, 32)
 	images.load("crate"):setFilter("linear", "linear")
-	local sprite = buffer.newSprite(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
+	local sprite = yama.buffers.newSprite(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
@@ -284,6 +284,10 @@ function entities_mplayer.new(x, y, z)
 	end
 
 	function self.addToBuffer()
+		buffer.add(bufferBatch)
+	end
+
+	function self.addToBuffer2(buffer)
 		buffer.add(bufferBatch)
 	end
 
