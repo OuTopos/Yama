@@ -30,7 +30,7 @@ function entities_humanoid.new(x, y, z)
 	--patrol.setRadius(32)
 
 	-- BUFFER BATCH
-	local bufferBatch = buffer.newBatch(x, y, z)
+	local bufferBatch = yama.buffers.newBatch(x, y, z)
 
 	-- SPRITE
 	local attributes = {}
@@ -77,53 +77,53 @@ function entities_humanoid.new(x, y, z)
 	-- Body
 	tilesets.body = "LPC/body/"..character.gender.."/"..character.body
 	images.quads.add(tilesets.body, width, height)
-	spr.body = buffer.newSprite(images.load(tilesets.body), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+	spr.body = yama.buffers.newSprite(images.load(tilesets.body), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 	table.insert(bufferBatch.data, spr.body)
 	if character.eyes then
 		tilesets.eyes = "LPC/body/"..character.gender.."/eyes/"..character.eyes
-		spr.eyes = buffer.newSprite(images.load(tilesets.eyes), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.eyes = yama.buffers.newSprite(images.load(tilesets.eyes), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.eyes)
 	end
 	-- Hair
 	if character.hair then
 		if character.haircolor then
 			tilesets.hair = "LPC/hair/"..character.gender.."/"..character.hair.."/"..character.haircolor
-			spr.hair = buffer.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 			table.insert(bufferBatch.data, spr.hair)
 		else
 			tilesets.hair = "LPC/hair/"..character.gender.."/"..character.hair
-			spr.hair = buffer.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 			table.insert(bufferBatch.data, spr.hair)
 		end
 	end
 	-- Torso
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.torso = "LPC/torso/white_shirt_male"
-		spr.torso = buffer.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.torso)
 	elseif character.gender == "female" then
 		tilesets.torso = "LPC/torso/pirate_shirt_female"
-		spr.torso = buffer.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.torso)
 	end
 	-- Legs
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.legs = "LPC/legs/green_pants_male"
-		spr.legs = buffer.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.legs)
 	elseif character.gender == "female" then
 		tilesets.legs = "LPC/legs/green_pants_female"
-		spr.legs = buffer.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.legs)
 	end
 	-- Feet
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.feet = "LPC/feet/brown_shoes_male"
-		spr.feet = buffer.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.feet)
 	elseif character.gender == "female" then
 		tilesets.feet = "LPC/feet/brown_shoes_female"
-		spr.feet = buffer.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
 		table.insert(bufferBatch.data, spr.feet)
 	end
 	--love.graphics.setCanvas()
@@ -150,7 +150,6 @@ function entities_humanoid.new(x, y, z)
 	local hp = 0.75
 
 	local brain = yama.ai.new()
-	print(brain.patrol)
 	brain.setBehaviour("patrol")
 	brain.patrol.set(""..math.random(1, 3).."")
 
@@ -168,23 +167,27 @@ function entities_humanoid.new(x, y, z)
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		anchor:getBody():setAngle(brain.direction)
-		buffer.setBatchPosition(bufferBatch, x, y + radius)
+		yama.buffers.setBatchPosition(bufferBatch, x, y + radius)
 
 		-- Animation updates
 		animation.timescale = brain.speed
 		if brain.speed > 0 then
 			if animation.update(dt, "humanoid_walk_"..yama.g.getRelativeDirection(brain.direction)) then
-				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
+				yama.buffers.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		else
 			if animation.update(dt, "humanoid_stand_"..yama.g.getRelativeDirection(brain.direction)) then
-				buffer.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
+				yama.buffers.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		end
 
 	end
 
 	function self.addToBuffer()
+		buffer.add(bufferBatch)
+	end
+
+	function self.addToBuffer2(buffer)
 		buffer.add(bufferBatch)
 	end
 

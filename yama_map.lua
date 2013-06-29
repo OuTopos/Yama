@@ -88,7 +88,10 @@ function map.load(path, spawn)
 			end
 
 			-- Setting camera boundaries
-			yama.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			--camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			vp1.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			vp2.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			--vp3.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
 
 			-- Entities
 			map.loaded.entities = {}
@@ -112,19 +115,22 @@ function map.load(path, spawn)
 	-- Scale the screen
 	map.loaded.properties.sx = tonumber(map.loaded.properties.sx) or 1
 	map.loaded.properties.sy = tonumber(map.loaded.properties.sy) or map.loaded.properties.sx or 1
-	yama.screen.setScale(map.loaded.properties.sx, map.loaded.properties.sy)
+	--yama.screen.setScale(map.loaded.properties.sx, map.loaded.properties.sy)
 
 	-- Set physics world
 	physics.setWorld(map.loaded.world)
 
 	--Setting sortmode
-	buffer.sortmode = tonumber(map.loaded.properties.sortmode) or 1
+	--buffer.sortmode = tonumber(map.loaded.properties.sortmode) or 1
 
 	-- Setting up map view
 	map.resetView()
 	-- Set camera to follow player
-	yama.camera.follow = map.loaded.player
-	--yama.camera.follow = nil
+	--camera.follow = map.loaded.player
+	vp1.camera.follow = map.loaded.player
+	vp2.camera.follow = map.loaded.player
+
+	--camera.follow = nil
 
 	map.optimize()
 	print("Map optimized. Tiles: "..map.loaded.optimized.tilecount)
@@ -174,8 +180,8 @@ function map.shape(object)
 end
 
 function map.resetView()
-	map.view.size.x = math.ceil(yama.camera.width / map.loaded.tilewidth) + 1
-	map.view.size.y = math.ceil(yama.camera.height / map.loaded.tileheight) + 1
+	--map.view.size.x = math.ceil(camera.width / map.loaded.tilewidth) + 1
+	--map.view.size.y = math.ceil(camera.height / map.loaded.tileheight) + 1
 end
 
 function map.loadPhysics()
@@ -186,7 +192,7 @@ function map.unload()
 	game.update()
 	map.loaded = nil
 	player = nil
-	yama.camera.follow = nil
+	camera.follow = nil
 	entities.destroy()
 	--physics.destroy()
 	buffer.reset()
@@ -207,8 +213,8 @@ end
 function map.update(dt)
 	if map.loaded then
 		-- Moving the map view to camera x,y
-		local xn = math.floor( yama.camera.x / map.loaded.tilewidth )
-		local yn = math.floor( yama.camera.y / map.loaded.tileheight )
+		local xn = math.floor( camera.x / map.loaded.tilewidth )
+		local yn = math.floor( camera.y / map.loaded.tileheight )
 		if xn ~= map.view.x or yn ~= map.view.y then
 			-- Camera moved to another tile
 			map.view.x = xn
@@ -217,6 +223,11 @@ function map.update(dt)
 			-- Trigger a buffer reset.
 			buffer.reset()	
 		end
+	end
+end
+
+function map.update2(compass, camera2, buffer2)
+	if map.loaded then
 	end
 end
 
@@ -237,7 +248,7 @@ function map.optimize()
 						map.loaded.optimized.tiles[i] = {}
 					end
 					local image, quad = map.getQuad(layer.data[i])
-					table.insert(map.loaded.optimized.tiles[i], buffer.newSprite(image, quad, map.getX(x), map.getY(y), map.getZ(z))) --, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
+					table.insert(map.loaded.optimized.tiles[i], yama.buffers.newSprite(image, quad, map.getX(x), map.getY(y), map.getZ(z))) --, 0, 1, 1, -(map.loaded.tilewidth/2), -(map.loaded.tileheight/2)))
 					map.loaded.optimized.tilecount = map.loaded.optimized.tilecount + 1
 				end
 			end
@@ -298,6 +309,59 @@ function map.addToBuffer()
 	end
 end
 
+function map.addToBuffer2(compass, buffer2)
+	if map.loaded then
+		map.tilecount = 0
+		local batches = {}
+
+		local xmin = compass.x
+		local xmax = compass.x+compass.width-1
+		local ymin = compass.y
+		local ymax = compass.y+compass.height-1
+
+		if xmin < 0 then
+			xmin = 0
+		end
+		if xmax > map.loaded.width-1 then
+			xmax = map.loaded.width-1
+		end
+
+		if ymin < 0 then
+			ymin = 0
+		end
+		if ymax > map.loaded.height-1 then
+			ymax = map.loaded.height-1
+		end
+
+		-- Iterate the y-axis.
+		for y=ymin, ymax do
+
+			-- Iterate the x-axis.
+			for x=xmin, xmax do
+
+				-- Set the tile
+				local tile = map.loaded.optimized.tiles[map.xy2index(x, y)]
+
+				-- Check so tile is not empty
+				if tile then
+
+					-- Iterate the layers
+					for i=1, #tile do
+						local sprite = tile[i]
+						local zy = sprite.z + sprite.y
+						if not batches[zy] then
+							batches[zy] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
+							buffer2.add(batches[zy])
+						end
+						table.insert(batches[zy].data, sprite)
+						map.tilecount = map.tilecount +1
+					end
+				end
+			end
+		end
+	end
+end
+
 function map.xy2index(x, y)
 	return y*map.loaded.width+x+1
 end
@@ -338,6 +402,41 @@ function map.index2X(x)
 end
 function map.index2Y(y)
 	return y * map.loaded.tileheight
+end
+
+map.compasses = {}
+
+function map.compasses.new()
+	local public = {}
+	local private = {}
+
+	public.map = ""
+	public.x = 0
+	public.y = 0
+	public.width = 0
+	public.height = 0
+
+	function public.update(camera2, buffer2)
+		if map.loaded then
+			public.width = math.ceil(camera2.width / map.loaded.tilewidth) + 1
+			public.height = math.ceil(camera2.height / map.loaded.tileheight) + 1
+
+			-- Moving the map view to camera x,y
+			local xn = math.floor( camera2.x / map.loaded.tilewidth )
+			local yn = math.floor( camera2.y / map.loaded.tileheight )
+			if xn ~= public.x or yn ~= public.y then
+				-- Camera moved to another tile
+				public.x = xn
+				public.y = yn
+
+				-- Trigger a buffer reset.
+				buffer2.reset()	
+			end
+		end
+	end
+
+
+	return public
 end
 
 return map
