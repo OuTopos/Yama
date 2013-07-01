@@ -20,6 +20,7 @@ function entities_mplayer.new(x, y, z)
 	local direction = 0
 	local onGround = false
 	local pContact = nil
+	local jumpTimer = 0
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
@@ -81,7 +82,11 @@ function entities_mplayer.new(x, y, z)
 				fx = 4500
 			else
 				direction = 1.570796327
-				fx = 1200
+				fx = 1900
+			end
+			xv, yv = anchor:getBody():getLinearVelocity()
+			if xv <= 500 then
+				anchor:getBody():applyForce( fx, fy )
 			end
 		end
 		if love.keyboard.isDown("left") then
@@ -90,7 +95,10 @@ function entities_mplayer.new(x, y, z)
 				fx = -4500
 			else
 				direction = 4.71238898
-				fx = -1200
+				fx = -1900
+			end
+			if xv >= -500 then
+				anchor:getBody():applyForce( fx, fy )
 			end
 		end
 		if love.keyboard.isDown("down") then
@@ -99,22 +107,29 @@ function entities_mplayer.new(x, y, z)
 		end
 
 
-		xv, yv = anchor:getBody():getLinearVelocity()
-		if onGround and xv <= 500 and xv >= -500 then
-			anchor:getBody():applyForce( fx, fy )
-		end
-		
-		if not onGround and xv <= 500 and xv >= -500 then
-			anchor:getBody():applyForce( fx, fy )
-		end
+		--xv, yv = anchor:getBody():getLinearVelocity()
+		--if xv <= 500 and xv >= -500 then
+		--	anchor:getBody():applyForce( fx, fy )
+		--end
+
+
+
 
 		xv, yv = anchor:getBody():getLinearVelocity()
 		print(yv)
 
 		if allowjump and love.keyboard.isDown(" ") then
-			anchor:getBody():applyLinearImpulse( 0, -1200 )
+			anchor:getBody():applyLinearImpulse( 0, -900 )
 			allowjump = false
 		end
+		if jumpTimer <= 0.1 and love.keyboard.isDown(" ") then
+			anchor:getBody():applyForce( 0, -1800 )
+			jumpTimer = jumpTimer + dt
+			if jumpTimer >= 0.1 then
+				jumptimer = 0
+			end
+		end	
+
 		xv, yv = anchor:getBody():getLinearVelocity()
 		if not love.keyboard.isDown(" ") and onGround == true and yv == 0 then
 			allowjump = true
@@ -246,6 +261,7 @@ function entities_mplayer.new(x, y, z)
 		pContact = contact
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
+				jumpTimer = 0
 				onGround = true
 				contact:setFriction( 0.2 )
 			end
