@@ -15,11 +15,11 @@ function love.load()
 	yama.gui.load()
 
 	--music = love.audio.newSource("sound/music.ogg", "static")
-	--music:setLooping(true) x, y, r, width, height, sx, sy, zoom
+	--music:setLooping(true)
 	--love.audio.play(music) 
-	vp1 = yama.viewports.new("vp1", 0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, true)
-	vp2 = yama.viewports.new("vp2", yama.screen.width/2, 0, 0, yama.screen.width/2, yama.screen.height, 2, 2, true)
-	--vp3 = yama.viewports.new("vp3", yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, false)
+	vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+	vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
 
 function love.keypressed(key)
@@ -100,7 +100,7 @@ function love.keypressed(key)
 	end
 	if key == "2" then
 		vp1.camera.follow = entities.data[math.random(1, #entities.data)]
-		--vp3.camera.follow = entities.data[math.random(1, #entities.data)]
+		vp3.camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
 		yama.screen.scaleToggle()
@@ -114,7 +114,7 @@ function love.update(dt)
 		--camera.update(dt)
 		--yama.map.update(dt)
 		vp1.update(dt)
-		vp2.update(dt)
+		--vp2.update(dt)
 		--vp3.update(dt)
 
 		--vp3.r = vp3.r + (1 * dt)
@@ -124,29 +124,6 @@ function love.update(dt)
 end
 
 function love.draw()
-	--camera.set()
-	--love.graphics.setCanvas(yama.screen.canvas)
-
-	-- Check if the buffer has been reset 
-	--if next(buffer.data) == nil then
-		--entities.addToBuffer()
-		--yama.map.addToBuffer()
-	--end
-
-	-- Draw the buffer
-	--buffer.draw()
-
-	-- Draw the GUI
-	--yama.gui.draw()
-
-	-- Draw the HUD
-	--yama.hud.draw()
-
-	--camera.unset()
-	--love.graphics.setCanvas()
-
-	--love.graphics.draw(yama.screen.canvas, 0, 0, 0, yama.screen.sx, yama.screen.sy)
-
 	vp1.draw()
 	--vp2.draw()
 	--vp3.draw()

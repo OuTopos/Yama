@@ -69,7 +69,7 @@ function entities_player.new(x, y, z)
 
 	-- PATROL
 	local patrol = yama.patrols.new(true, 32)
-	patrol.set("smooth")
+	patrol.set("1")
 
 
 	function self.update(dt)

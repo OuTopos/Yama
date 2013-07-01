@@ -1,14 +1,13 @@
 local viewports = {}
 
-function viewports.new(name, x, y, r, width, height, sx, sy, zoom)
+function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	local public = {}
 	local private = {}
 
-	function public.set(name, x, y, r, width, height, sx, sy, zoom)
+	function public.set(x, y, r, width, height, sx, sy, zoom)
 		-- Setting all the variables
-		private.name = name
-		private.x = x or 0
-		private.y = y or 0
+		public.x = x or 0
+		public.y = y or 0
 		public.r = r or 0
 		private.width = width or screen.width
 		private.height = height or screen.height
@@ -18,7 +17,7 @@ function viewports.new(name, x, y, r, width, height, sx, sy, zoom)
 
 
 		-- Create a camera and set the size
-		public.camera = yama.cameras.new(private.name)
+		public.camera = yama.cameras.new()
 		public.camera.setSize(private.width/private.sx, private.height/private.sy)
 
 		-- Create a canvas
@@ -33,7 +32,7 @@ function viewports.new(name, x, y, r, width, height, sx, sy, zoom)
 			public.canvas = love.graphics.newCanvas(private.width/private.sx, private.height/private.sy)
 		end
 
-		--public.canvas:setFilter("nearest", "nearest")
+		public.canvas:setFilter("nearest", "nearest")
 
 		-- Create a buffer
 		private.buffer = yama.buffers.new()
@@ -77,10 +76,10 @@ function viewports.new(name, x, y, r, width, height, sx, sy, zoom)
 		public.camera.unset()
 		love.graphics.setCanvas()
 
-		love.graphics.draw(public.canvas, private.x, private.y, public.r, private.sx, private.sy)
+		love.graphics.draw(public.canvas, public.x, public.y, public.r, private.sx, private.sy)
 	end
 
-	public.set(name, x, y, r, width, height, sx, sy, zoom)
+	public.set(x, y, r, width, height, sx, sy, zoom)
 
 	return public
 
