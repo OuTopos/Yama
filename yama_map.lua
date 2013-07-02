@@ -90,8 +90,8 @@ function map.load(path, spawn)
 			-- Setting camera boundaries
 			--camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
 			vp1.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
-			vp2.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
-			vp3.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			--vp2.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
+			--vp3.camera.setBoundaries(0, 0, map.loaded.width * map.loaded.tilewidth, map.loaded.height * map.loaded.tileheight)
 
 			-- Entities
 			map.loaded.entities = {}
@@ -124,11 +124,11 @@ function map.load(path, spawn)
 	--buffer.sortmode = tonumber(map.loaded.properties.sortmode) or 1
 
 	-- Setting up map view
-	map.resetView()
+	--map.resetView()
 	-- Set camera to follow player
 	--camera.follow = map.loaded.player
 	vp1.camera.follow = map.loaded.player
-	vp2.camera.follow = map.loaded.player
+	--vp2.camera.follow = map.loaded.player
 
 	--camera.follow = nil
 
@@ -416,21 +416,21 @@ function map.compasses.new()
 	public.width = 0
 	public.height = 0
 
-	function public.update(camera2, buffer2)
+	function public.update(camera, buffer)
 		if map.loaded then
-			public.width = math.ceil(camera2.width / map.loaded.tilewidth) + 1
-			public.height = math.ceil(camera2.height / map.loaded.tileheight) + 1
+			public.width = math.ceil(camera.width / map.loaded.tilewidth) + 1
+			public.height = math.ceil(camera.height / map.loaded.tileheight) + 1
 
 			-- Moving the map view to camera x,y
-			local xn = math.floor( camera2.x / map.loaded.tilewidth )
-			local yn = math.floor( camera2.y / map.loaded.tileheight )
+			local xn = math.floor(camera.x / map.loaded.tilewidth)
+			local yn = math.floor(camera.y / map.loaded.tileheight)
 			if xn ~= public.x or yn ~= public.y then
 				-- Camera moved to another tile
 				public.x = xn
 				public.y = yn
 
 				-- Trigger a buffer reset.
-				buffer2.reset()	
+				buffer.reset()	
 			end
 		end
 	end

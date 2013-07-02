@@ -1,7 +1,6 @@
 yama = require("yama")
 
 require "images"
---require "buffer"
 require "physics"
 require "entities"
 require "game"
@@ -18,8 +17,8 @@ function love.load()
 	--music:setLooping(true)
 	--love.audio.play(music) 
 	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, false)
-	vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
-	vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
+	--vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+	--vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
 
 function love.keypressed(key)
@@ -100,7 +99,7 @@ function love.keypressed(key)
 	end
 	if key == "2" then
 		vp1.camera.follow = entities.data[math.random(1, #entities.data)]
-		vp3.camera.follow = entities.data[math.random(1, #entities.data)]
+		--vp3.camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
 		yama.screen.scaleToggle()

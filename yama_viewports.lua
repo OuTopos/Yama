@@ -4,24 +4,32 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	local public = {}
 	local private = {}
 
-	function public.set(x, y, r, width, height, sx, sy, zoom)
-		-- Setting all the variables
-		public.x = x or 0
-		public.y = y or 0
-		public.r = r or 0
-		private.width = width or screen.width
-		private.height = height or screen.height
-		private.sx = sx or 1
-		private.sy = sy or 1
-		private.zoom = zoom or false
+	public.x = x or 0
+	public.y = y or 0
+	public.r = r or 0
+
+	private.width = width or screen.width
+	private.height = height or screen.height
+	private.sx = sx or 1
+	private.sy = sy or 1
+	private.zoom = zoom or false
+
+	-- Create the camera
+	public.camera = yama.cameras.new()
+
+	-- Create the buffer
+	private.buffer = yama.buffers.new()
+
+	-- Create the compass
+	private.compass = yama.map.compasses.new()
 
 
-		-- Create a camera and set the size
-		public.camera = yama.cameras.new()
+	function public.reSize()
 		public.camera.setSize(private.width/private.sx, private.height/private.sy)
 
 		-- Create a canvas
 		if private.zoom then
+			-- If zoom then scaling is done with the camera.
 			public.camera.setScale(private.sx, private.sy)
 
 			public.canvas = love.graphics.newCanvas(private.width, private.height)
@@ -29,15 +37,20 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 			private.sy = 1
 
 		else
+			-- Scaling is done with the canvas.
 			public.canvas = love.graphics.newCanvas(private.width/private.sx, private.height/private.sy)
 		end
 
 		public.canvas:setFilter("nearest", "nearest")
+	end
 
-		-- Create a buffer
-		private.buffer = yama.buffers.new()
-
-		private.compass = yama.map.compasses.new()
+	function public.setSize(width, height, sx, sy, zoom)
+		private.width = width or screen.width
+		private.height = height or screen.height
+		private.sx = sx or private.sx
+		private.sy = sy or private.sy
+		private.zoom = zoom or private.zoom
+		public.reSize()
 	end
 
 	function public.update(dt)
@@ -79,7 +92,7 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		love.graphics.draw(public.canvas, public.x, public.y, public.r, private.sx, private.sy)
 	end
 
-	public.set(x, y, r, width, height, sx, sy, zoom)
+	public.reSize()
 
 	return public
 
