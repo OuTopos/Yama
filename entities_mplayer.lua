@@ -1,7 +1,7 @@
 entities_mplayer = {}
 
 
-function entities_mplayer.new(x, y, z)
+function entities_mplayer.new(x, y, z, viewport)
 	local self = {}
 
 	-- Common variables
@@ -37,7 +37,7 @@ function entities_mplayer.new(x, y, z)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
 	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, -1, width, height-2) )
 
 	anchor:setUserData(self)
@@ -299,12 +299,8 @@ function entities_mplayer.new(x, y, z)
 		end
 	end
 
-	function self.addToBuffer()
-		buffer.add(bufferBatch)
-	end
-
-	function self.addToBuffer2(buffer)
-		buffer.add(bufferBatch)
+	function self.addToBuffer(viewport)
+		viewport.buffer.add(bufferBatch)
 	end
 
 	-- Basic functions

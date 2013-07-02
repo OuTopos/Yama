@@ -80,7 +80,9 @@ function love.keypressed(key)
 		yama.maps.load("test/platform", "test")	
 	end
 	if key == "z" then
-		yama.maps.load("test/gravityfall", "test")	
+		vp1.map.load("test/gravityfall", "test", vp1)
+		vp1.setSize(yama.screen.width, yama.screen.height, 1, 1, false)
+		vp2.x = yama.screen.width
 	end
 	if key == "a" then
 		if player then
