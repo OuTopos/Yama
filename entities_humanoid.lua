@@ -1,6 +1,6 @@
 entities_humanoid = {}
 
-function entities_humanoid.new(x, y, z)
+function entities_humanoid.new(x, y, z, viewport)
 	local self = {}
 
 	-- Sprite variables
@@ -133,7 +133,7 @@ function entities_humanoid.new(x, y, z)
 	--local image = love.graphics.newImage(canvas:getImageData())
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
+	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
@@ -151,7 +151,7 @@ function entities_humanoid.new(x, y, z)
 
 	local brain = yama.ai.new()
 	brain.setBehaviour("patrol")
-	brain.patrol.set(""..math.random(1, 3).."")
+	brain.patrol.set(""..math.random(1, 3).."", viewport.map)
 
 	-- Standard functions
 	function self.update(dt)
@@ -183,12 +183,8 @@ function entities_humanoid.new(x, y, z)
 
 	end
 
-	function self.addToBuffer()
-		buffer.add(bufferBatch)
-	end
-
-	function self.addToBuffer2(buffer)
-		buffer.add(bufferBatch)
+	function self.addToBuffer(viewport)
+		viewport.buffer.add(bufferBatch)
 	end
 
 	-- Monster functions

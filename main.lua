@@ -8,16 +8,21 @@ require "game"
 require "shaders"
 
 function love.load()
-	--buffer = yama.buffers.new()
-	--camera = yama.cameras.new()
-	--yama.screen.load()
+	love.graphics.setDefaultImageFilter(yama.c.imageFilter, yama.c.imageFilter)
+	scaleToggle = 1
+
+	test = {}
+	test.ettett = "jadå!!!!!"
+	lala = "ett"
+	print(test["ett"..lala])
+
 	yama.gui.load()
 
 	--music = love.audio.newSource("sound/music.ogg", "static")
 	--music:setLooping(true)
 	--love.audio.play(music) 
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, false)
-	--vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, false)
+	vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
 	--vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
 
@@ -65,16 +70,17 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		yama.map.load("test/arkanos", "door1")
+		vp1.map.load("test/arkanos", "door1", vp1)
+		vp2.map.load("test/house1_room1", "door1", vp2)
 	end
 	if key == "d" then
-		yama.map.load("test/house1_room1", "door1")
+		yama.maps.load("test/house1_room1", "door1")
 	end
 	if key == "x" then
-		yama.map.load("test/platform", "test")	
+		yama.maps.load("test/platform", "test")	
 	end
 	if key == "z" then
-		yama.map.load("test/gravityfall", "test")	
+		yama.maps.load("test/gravityfall", "test")	
 	end
 	if key == "a" then
 		if player then
@@ -90,8 +96,8 @@ function love.keypressed(key)
 			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
 
-		entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
-		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0)
+		entities.new("monster", math.random(100, 300), math.random(100, 300), 0, vp1)
+		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0, vp1)
 	end
 
 	if key == "1" then
@@ -102,28 +108,39 @@ function love.keypressed(key)
 		--vp3.camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
-		yama.screen.scaleToggle()
+		scaleToggle = scaleToggle + 1
+		if scaleToggle > 5 then
+			scaleToggle = 1
+		end
+		vp1.setScale(scaleToggle)
 	end
 end
 
 function love.update(dt)
 	if not yama.g.paused then
-		physics.update(dt)
+		--physics.update(dt)
 		--entities.update(dt)
 		--camera.update(dt)
 		--yama.map.update(dt)
 		vp1.update(dt)
-		--vp2.update(dt)
+		vp2.update(dt)
 		--vp3.update(dt)
 
 		--vp3.r = vp3.r + (1 * dt)
 
-		entities.updated = false
+		vp1.updated()
+		vp2.updated()
 	end
 end
 
 function love.draw()
 	vp1.draw()
-	--vp2.draw()
+	vp2.draw()
 	--vp3.draw()
+
+	love.graphics.setColor(0, 0, 0, 255)
+	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 3)
+
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 2)
 end

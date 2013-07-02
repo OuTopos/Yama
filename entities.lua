@@ -1,8 +1,6 @@
 entities = {}
 entities.data = {}
 
-entities.visible = {}
-
 entities.destroyQueue = {}
 
 require	"entitiesBase"
@@ -18,9 +16,12 @@ require	"entities_monster"
 require	"entities_humanoid"
 require "entities_mplayer"
 
-function entities.new(type, x, y, z)
-	local entity = _G["entities_"..type].new(x, y, z)
-	table.insert(entities.data, entity)
+function entities.new(type, x, y, z, viewport)
+	if not entities.data[viewport.map] then
+		entities.data[viewport.map] = {}
+	end
+	local entity = _G["entities_"..type].new(x, y, z, viewport)
+	table.insert(entities.data[viewport.map], entity)
 	entity.visible = {}
 	--buffer.reset()
 	return entity
@@ -33,43 +34,44 @@ function entities.destroy(entity)
 	end
 end
 
-function entities.update(dt, camera, buffer)
-	entities.visible[camera] = {}
+function entities.update(dt, viewport)
+	viewport.entities = {}
 
 	-- Destroy entities
-	local i1 = 1
-	while #entities.destroyQueue > 0 do
-		for i2=1, #entities.destroyQueue do
-			if entities.data[i1] == entities.destroyQueue[i2] then
-				entities.data[i1].destroy()
-				table.remove(entities.data, i1)
-				table.remove(entities.destroyQueue, i2)
-			end
-		end
-		i1 = i1 + 1
-	end
+	--local i1 = 1
+--	while #entities.destroyQueue > 0 do
+	--	for i2=1, #entities.destroyQueue do
+	--		if entities.data[i1] == entities.destroyQueue[i2] then
+	--			entities.data[i1].destroy()
+	--			table.remove(entities.data, i1)
+	--			table.remove(entities.destroyQueue, i2)
+	--		end
+	--	end
+	--	i1 = i1 + 1
+	--end
 
 	-- Update and add to buffer
-	for key=1, #entities.data do
-		if not entities.updated then
-			entities.data[key].update(dt)
-		end
-
-		local wasVisible = entities.data[key].visible[camera] or false
-		local isVisible = camera.isInside(entities.data[key].getOX(), entities.data[key].getOY(), entities.data[key].getWidth(), entities.data[key].getHeight())
+	for key=1, #entities.data[viewport.map] do
+		local entity = entities.data[viewport.map][key]
+		local wasVisible = entity.visible[viewport] or false
+		local isVisible = viewport.camera.isInside(entity.getOX(), entity.getOY(), entity.getWidth(), entity.getHeight())
 		
 		if wasVisible and isVisible then
-			table.insert(entities.visible[camera], entities.data[key])
+			table.insert(viewport.entities, entity)
 		elseif not wasVisible and isVisible then
-			table.insert(entities.visible[camera], entities.data[key])
-			entities.data[key].visible[camera] = true
-			buffer.reset()
+			table.insert(viewport.entities, entity)
+			entity.visible[viewport] = true
+			viewport.buffer.reset()
 		elseif wasVisible and not isVisible then
-			entities.data[key].visible[camera] = false
-			buffer.reset()
+			entity.visible[viewport] = false
+			viewport.buffer.reset()
+		end
+
+		if not entities.data[viewport.map].updated then
+			entity.update(dt)
 		end
 	end
-	entities.updated = true
+	entities.data[viewport.map].updated = true
 end
 
 --function entities.addToBuffer()
@@ -79,8 +81,8 @@ end
 --	end
 --end
 
-function entities.addToBuffer(camera, buffer)
-	for i = 1, #entities.visible[camera] do
-		entities.visible[camera][i].addToBuffer2(buffer)
+function entities.addToBuffer(viewport)
+	for i = 1, #viewport.entities do
+		viewport.entities[i].addToBuffer(viewport)
 	end
 end

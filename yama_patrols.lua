@@ -10,9 +10,9 @@ function patrols.new(loop, radius)
 	local radius = radius or 32
 	local order = nil
 
-	function self.set(name)
-		if yama.map.loaded.patrols[name] then
-			patrol = yama.map.loaded.patrols[name]
+	function self.set(name, map)
+		if map.data.patrols[name] then
+			patrol = map.data.patrols[name]
 			k = 0
 			self.next()
 		end

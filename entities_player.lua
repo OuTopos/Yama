@@ -1,6 +1,6 @@
 entities_player = {}
 
-function entities_player.new(x, y, z)
+function entities_player.new(x, y, z, viewport)
 	local self = {}
 
 	-- Sprite variables
@@ -45,15 +45,15 @@ function entities_player.new(x, y, z)
 	--table.insert(bufferBatch.data, spriteOversized)
 	
 	-- Physics
-	--local hitbox = physics.newObject(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius), mass)
+	--local hitbox = physics.newObject(love.physics.newBody(viewport.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
+	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
 	--anchor:setCategory(1)
-	--love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"),
-	local weapon = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
+	--love.physics.newBody(viewport.map.data.world, x, y-radius, "dynamic"),
+	local weapon = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y-radius, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
 	weapon:setUserData(self)
 	weapon:setSensor(true)
 	--weapon:getBody():setActive(false)
@@ -62,14 +62,14 @@ function entities_player.new(x, y, z)
 
 	--joint = love.physics.newDistanceJoint( anchor:getBody(), weapon:getBody(), -10, -10, 10, 10, false)
 
-	--local weapon2 = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--local weapon2 = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
 	--weapon2:getBody():setActive(false)
 	--hitbox:setUserData(self)
 	--weapon2:setSensor(true)
 
 	-- PATROL
-	local patrol = yama.patrols.new(true, 32)
-	patrol.set("1")
+	--local patrol = yama.patrols.new(true, 32)
+	--patrol.set("1")
 
 
 	function self.update(dt)
@@ -238,14 +238,9 @@ function entities_player.new(x, y, z)
 		end
 	end
 
-	function self.addToBuffer()
-		buffer.add(bufferBatch)
-		buffer.add(spriteArrow)
-	end
-
-	function self.addToBuffer2(buffer)
-		buffer.add(bufferBatch)
-		buffer.add(spriteArrow)
+	function self.addToBuffer(viewport)
+		viewport.buffer.add(bufferBatch)
+		viewport.buffer.add(spriteArrow)
 	end
 
 	-- Basic functions

@@ -1,6 +1,6 @@
 entities_monster = {}
 
-function entities_monster.new(x, y, z)
+function entities_monster.new(x, y, z, viewport)
 	local self = {}
 
 	-- Common variables
@@ -27,7 +27,7 @@ function entities_monster.new(x, y, z)
 
 	-- PATROL
 	local patrol = yama.patrols.new()
-	patrol.set("1")
+	patrol.set("1", viewport.map)
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 
@@ -39,7 +39,7 @@ function entities_monster.new(x, y, z)
 	table.insert(bufferBatch.data, sprite)
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(physics.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
+	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0.9 )
 	anchor:getBody():setLinearDamping( 1 )
@@ -90,12 +90,8 @@ function entities_monster.new(x, y, z)
 		sprite.quad = images.quads.data[tileset][animation.frame]
 	end
 
-	function self.addToBuffer()
-		buffer.add(bufferBatch)
-	end
-
-	function self.addToBuffer2(buffer)
-		buffer.add(bufferBatch)
+	function self.addToBuffer(viewport)
+		viewport.buffer.add(bufferBatch)
 	end
 
 	-- Monster functions

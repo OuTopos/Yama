@@ -19,9 +19,9 @@ function patrols.new()
 
 
 	-- Public Functions
-	function public.set(name)
-		if yama.map.loaded.patrols[name] then
-			private.current = yama.map.loaded.patrols[name]
+	function public.set(name, map)
+		if map.data.patrols[name] then
+			private.current = map.data.patrols[name]
 			private.k = 0
 			public.next()
 		end
