@@ -1,118 +1,120 @@
 local viewports = {}
 
 function viewports.new(x, y, r, width, height, sx, sy, zoom)
-	local public = {}
-	local private = {}
+	local self = {}
 
-	public.x = x or 0
-	public.y = y or 0
-	public.r = r or 0
+	self.x = x or 0
+	self.y = y or 0
+	self.r = r or 0
 
-	private.width = width or screen.width
-	private.height = height or screen.height
-	private.sx = sx or 1
-	private.sy = sy or 1
-	private.zoom = zoom or false
+	self.width = width or screen.width
+	self.height = height or screen.height
+	self.sx = sx or 1
+	self.sy = sy or 1
+	self.zoom = zoom or false
 
 
 	-- Create the camera
-	public.camera = yama.cameras.new()
+	self.camera = yama.cameras.new(self)
 
 	-- Create the buffer
-	public.buffer = yama.buffers.new()
+	self.buffer = yama.buffers.new(self)
 
 	-- Create the map
-	public.map = yama.maps.new()
+	self.map = yama.maps.new(self)
 
 	-- Create table to store visible entities	
-	public.entities = {}
+	self.entities = {}
 
-	function public.reSize()
-		public.camera.setSize(private.width/private.sx, private.height/private.sy)
+	function self.reSize()
+		self.camera.setSize(self.width/self.sx, self.height/self.sy)
 
 		-- Create a canvas
-		if private.zoom then
+		if self.zoom then
 			-- If zoom then scaling is done with the camera.
-			public.camera.setScale(private.sx, private.sy)
+			self.camera.setScale(self.sx, self.sy)
 
-			public.canvas = love.graphics.newCanvas(private.width, private.height)
-			private.sx = 1
-			private.sy = 1
+			self.canvas = love.graphics.newCanvas(self.width, self.height)
+			self.sx = 1
+			self.sy = 1
 
 		else
 			-- Scaling is done with the canvas.
-			public.canvas = love.graphics.newCanvas(private.width/private.sx, private.height/private.sy)
+			self.canvas = love.graphics.newCanvas(self.width/self.sx, self.height/self.sy)
 		end
 
-		public.canvas:setFilter("nearest", "nearest")
+		self.canvas:setFilter("nearest", "nearest")
 	end
 
-	function public.setSize(width, height, sx, sy, zoom)
-		private.width = width or screen.width
-		private.height = height or screen.height
-		private.sx = sx or private.sx
-		private.sy = sy or private.sy
-		private.zoom = zoom or private.zoom
-		public.reSize()
+	function self.setSize(width, height, sx, sy, zoom)
+		self.width = width or screen.width
+		self.height = height or screen.height
+		self.sx = sx or self.sx
+		self.sy = sy or self.sy
+		self.zoom = zoom or self.zoom
+		self.reSize()
 	end
 
-	function public.setScale(sx, sy, zoom)
-		private.sx = sx or private.sx
-		private.sy = sy or sx or private.sy
-		private.zoom = zoom or private.zoom
-		public.reSize()
+	function self.setScale(sx, sy, zoom)
+		self.sx = sx or self.sx
+		self.sy = sy or sx or self.sy
+		self.zoom = zoom or self.zoom
+		self.reSize()
 	end
 
-	function public.update(dt)
-		if public.map.data then
-			if not public.map.data.updated then
-				public.map.data.world:update(dt)
-				public.map.data.updated = true
+	function self.update(dt)
+		if self.map.data then
+			if not self.map.data.updated then
+				self.map.data.world:update(dt)
+				self.map.data.updated = true
 			end
-			entities.update(dt, public)
+			entities.update(dt, self)
 		end
-		public.camera.update(dt, public)
-		public.map.update(dt, public)
+		self.camera.update(dt)
+		self.map.update(dt)
 	end
 
-	function public.updated()
-		if public.map.data then
-			entities.data[public.map].updated = false
-			public.map.data.updated = false
+	function self.updated()
+		if self.map.data then
+			entities.data[self.map].updated = false
+			self.map.data.updated = false
 		end
 	end
 
 
-	function public.draw()
-		public.camera.set()
-		love.graphics.setCanvas(public.canvas)
+	function self.draw()
+		self.camera.set()
+		love.graphics.setCanvas(self.canvas)
 
 		-- Check if the buffer has been reset 
-		if next(public.buffer.data) == nil then
-			if public.map.data then
-				entities.addToBuffer(public)
-				public.map.addToBuffer(public)
+		if next(self.buffer.data) == nil then
+			if self.map.data then
+				entities.addToBuffer(self)
+				self.map.addToBuffer()
 			end
 		end
 
 		-- Draw the buffer
-		public.buffer.draw()
+		self.buffer.draw()
+
+		yama.hud.drawR(self)
 
 		-- Draw the GUI
 		--yama.gui.draw()
 
-		-- Draw the HUD
-		yama.hud.draw(public.camera, public.buffer, public.canvas)
-
-		public.camera.unset()
+		self.camera.unset()
+		yama.hud.draw(self)
 		love.graphics.setCanvas()
 
-		love.graphics.draw(public.canvas, public.x, public.y, public.r, private.sx, private.sy)
+		-- Draw the HUD
+		--yama.hud.draw(self)
+
+		love.graphics.draw(self.canvas, self.x, self.y, self.r, self.sx, self.sy)
 	end
 
-	public.reSize()
+	self.reSize()
 
-	return public
+	return self
 
 end
 

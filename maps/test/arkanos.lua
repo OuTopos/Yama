@@ -1705,6 +1705,53 @@ return {
           properties = {}
         }
       }
+    },
+    {
+      type = "objectgroup",
+      name = "Entities",
+      visible = true,
+      opacity = 1,
+      properties = {},
+      objects = {
+        {
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 640,
+          y = 448,
+          width = 0,
+          height = 0,
+          gid = 11,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "Plant",
+          type = "sprite",
+          shape = "rectangle",
+          x = 608,
+          y = 288,
+          width = 0,
+          height = 0,
+          gid = 11,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "Bag",
+          type = "sprite",
+          shape = "rectangle",
+          x = 530,
+          y = 333,
+          width = 0,
+          height = 0,
+          gid = 80,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        }
+      }
     }
   }
 }

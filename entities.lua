@@ -16,12 +16,12 @@ require	"entities_monster"
 require	"entities_humanoid"
 require "entities_mplayer"
 
-function entities.new(type, x, y, z, viewport)
-	if not entities.data[viewport.map] then
-		entities.data[viewport.map] = {}
+function entities.new(type, x, y, z, vp)
+	if not entities.data[vp.map] then
+		entities.data[vp.map] = {}
 	end
-	local entity = _G["entities_"..type].new(x, y, z, viewport)
-	table.insert(entities.data[viewport.map], entity)
+	local entity = _G["entities_"..type].new(x, y, z, vp)
+	table.insert(entities.data[vp.map], entity)
 	entity.visible = {}
 	--buffer.reset()
 	return entity
@@ -34,8 +34,8 @@ function entities.destroy(entity)
 	end
 end
 
-function entities.update(dt, viewport)
-	viewport.entities = {}
+function entities.update(dt, vp)
+	vp.entities = {}
 
 	-- Destroy entities
 	--local i1 = 1
@@ -51,27 +51,27 @@ function entities.update(dt, viewport)
 	--end
 
 	-- Update and add to buffer
-	for key=1, #entities.data[viewport.map] do
-		local entity = entities.data[viewport.map][key]
-		local wasVisible = entity.visible[viewport] or false
-		local isVisible = viewport.camera.isInside(entity.getOX(), entity.getOY(), entity.getWidth(), entity.getHeight())
+	for key=1, #entities.data[vp.map] do
+		local entity = entities.data[vp.map][key]
+		local wasVisible = entity.visible[vp] or false
+		local isVisible = vp.camera.isInside(entity.cx, entity.cy, entity.radius)
 		
 		if wasVisible and isVisible then
-			table.insert(viewport.entities, entity)
+			table.insert(vp.entities, entity)
 		elseif not wasVisible and isVisible then
-			table.insert(viewport.entities, entity)
-			entity.visible[viewport] = true
-			viewport.buffer.reset()
+			table.insert(vp.entities, entity)
+			entity.visible[vp] = true
+			vp.buffer.reset()
 		elseif wasVisible and not isVisible then
-			entity.visible[viewport] = false
-			viewport.buffer.reset()
+			entity.visible[vp] = false
+			vp.buffer.reset()
 		end
 
-		if not entities.data[viewport.map].updated then
+		if not entities.data[vp.map].updated then
 			entity.update(dt)
 		end
 	end
-	entities.data[viewport.map].updated = true
+	entities.data[vp.map].updated = true
 end
 
 --function entities.addToBuffer()
@@ -81,8 +81,8 @@ end
 --	end
 --end
 
-function entities.addToBuffer(viewport)
-	for i = 1, #viewport.entities do
-		viewport.entities[i].addToBuffer(viewport)
+function entities.addToBuffer(vp)
+	for i = 1, #vp.entities do
+		vp.entities[i].addToBuffer(vp)
 	end
 end

@@ -1,121 +1,132 @@
 local cameras = {}
 
-function cameras.new(name)
-	local public = {}
-	local private = {}
-	
-	public.name = name
+function cameras.new(vp)
+	local self = {}
 
-	public.x = 0
-	public.y = 0
-	public.width = 0
-	public.height = 0
-	public.sx = 1
-	public.sy = 1
-	public.boundaries = {}
-	public.boundaries.x = 0
-	public.boundaries.y = 0
-	public.boundaries.width = 0
-	public.boundaries.height = 0
-	public.round = false
-	public.follow = nil
+	self.x = 0
+	self.y = 0
+	self.r = 0
+	self.width = 0
+	self.height = 0
+	self.sx = 1
+	self.sy = 1
+	self.cx = 0
+	self.cy = 0
+	self.radius = 0
+	self.boundaries = {}
+	self.boundaries.x = 0
+	self.boundaries.y = 0
+	self.boundaries.width = 0
+	self.boundaries.height = 0
+	self.round = false
+	self.follow = nil
 
-	function public.set()
+	function self.set()
 		love.graphics.push()
-		love.graphics.scale(public.sx, public.sy)
-		love.graphics.translate(-public.x, -public.y)
+		love.graphics.translate(self.width/2*self.sx, self.height/2*self.sy)
+ 		love.graphics.rotate(-self.r)
+		love.graphics.translate(-self.width/2*self.sx, -self.height/2*self.sy)
+		love.graphics.scale(self.sx, self.sy)
+		love.graphics.translate(-self.x, -self.y)
 	end
 
-	function public.unset()
+	function self.unset()
 		love.graphics.pop()
 	end
 
-	function public.update(dt)
-		if public.follow then
-			public.center(public.follow.getX(), public.follow.getY())
-		else
-			local dx, dy = 0, 0
-			if love.keyboard.isDown("up") then
-				dy = -100 * dt
-			end
-			if love.keyboard.isDown("right") then
-				dx = 100 * dt
-			end
-			if love.keyboard.isDown("down") then
-				dy = 100 * dt
-			end
-			if love.keyboard.isDown("left") then
-				dx = -100 * dt
-			end
+	function self.update(dt)
+		if self.follow then
+			self.center(self.follow.getX(), self.follow.getY())
 		end
-		public.boundary()
+		if love.keyboard.isDown("k") then
+			self.r = 0
+		end
+		if love.keyboard.isDown("m") then
+			self.r = self.r + 1 * dt
+		end
+		if love.keyboard.isDown("n") then
+			self.r = self.r - 1 * dt
+		end
+		self.boundary()
+
+		self.cx = self.x + self.width / 2
+		self.cy = self.y + self.height / 2
+		self.radius = yama.g.getDistance(self.cx, self.cy, self.x, self.y)
 	end
 
-	function public.setPosition(x, y)
-		public.x = x
-		public.y = y
-		if public.round then
-			public.x = math.floor(public.x + 0.5)
-			public.y = math.floor(public.y + 0.5)
+	function self.setPosition(x, y)
+		self.x = x
+		self.y = y
+		if self.round then
+			self.x = math.floor(self.x + 0.5)
+			self.y = math.floor(self.y + 0.5)
 		end
 	end
 
-	function public.center(x, y)
-		public.setPosition(x - public.width / 2, y - public.height / 2)
+	function self.center(x, y)
+		self.setPosition(x - self.width / 2, y - self.height / 2)
 	end
 
-	function public.boundary()
-		if public.width <= public.boundaries.width then
-			if public.x < public.boundaries.x then
-				public.x = public.boundaries.x
-			elseif public.x > public.boundaries.width - public.width then
-				public.x = public.boundaries.width - public.width
-			end
-		else
-			public.x = public.boundaries.x - (public.width - public.boundaries.width) / 2
-		end
-
-		if public.height <= public.boundaries.height then
-			if public.y < public.boundaries.y then
-				public.y = public.boundaries.y
-			elseif public.y > public.boundaries.height - public.height then
-				public.y = public.boundaries.height - public.height
+	function self.boundary()
+		if self.width <= self.boundaries.width then
+			if self.x < self.boundaries.x then
+				self.x = self.boundaries.x
+			elseif self.x > self.boundaries.width - self.width then
+				self.x = self.boundaries.width - self.width
 			end
 		else
-			public.y = public.boundaries.y - (public.height - public.boundaries.height) / 2
+			self.x = self.boundaries.x - (self.width - self.boundaries.width) / 2
+		end
+
+		if self.height <= self.boundaries.height then
+			if self.y < self.boundaries.y then
+				self.y = self.boundaries.y
+			elseif self.y > self.boundaries.height - self.height then
+				self.y = self.boundaries.height - self.height
+			end
+		else
+			self.y = self.boundaries.y - (self.height - self.boundaries.height) / 2
 		end
 	end
 
-	function public.setSize(width, height, sx, sy)
-		public.sx = sx or public.sx
-		public.sy = sy or public.sy
-		public.width = width or public.width / public.sx
-		public.height = height or public.height / public.sy
+	function self.setSize(width, height, sx, sy)
+		self.sx = sx or self.sx
+		self.sy = sy or self.sy
+		self.width = width or self.width / self.sx
+		self.height = height or self.height / self.sy
 	end
 
 
 
-	function public.setScale(sx, sy)
-		public.sx = sx or public.sx
-		public.sy = sy or public.sy
+	function self.setScale(sx, sy)
+		self.sx = sx or self.sx
+		self.sy = sy or self.sy
 	end
 
-	function public.setBoundaries(x, y, width, height)
-		public.boundaries.x = x
-		public.boundaries.y = y
-		public.boundaries.width = width
-		public.boundaries.height = height
+	function self.setBoundaries(x, y, width, height)
+		self.boundaries.x = x
+		self.boundaries.y = y
+		self.boundaries.width = width
+		self.boundaries.height = height
 	end
 
-	function public.isInside(x, y, width, height)
-		if x+width > public.x and x < public.x+public.width and y+height > public.y and y < public.y+public.height then
+	function self.isInside2(x, y, width, height)
+		if x+width > self.x and x < self.x+self.width and y+height > self.y and y < self.y+self.height then
 			return true
 		else
 			return false
 		end
 	end
 
-	return public
+	function self.isInside(x, y, radius)
+		if yama.g.getDistance(self.cx, self.cy, x, y) < self.radius + radius then
+			return true
+		else
+			return false
+		end
+	end
+
+	return self
 end
 
 return cameras

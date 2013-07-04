@@ -15,10 +15,10 @@ function physics.update(dt)
 	end
 end
 
-function physics.draw()
+function physics.draw(world)
 	if physics.enabled then
-		if physics.world then
-			for i, body in ipairs(physics.world:getBodyList()) do
+		if world then
+			for i, body in ipairs(world:getBodyList()) do
 				--fixtures = body:getFixtureList()
 				for i, fixture in ipairs(body:getFixtureList()) do
 					physics.drawFixture(fixture)

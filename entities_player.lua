@@ -8,6 +8,8 @@ function entities_player.new(x, y, z, viewport)
 	local ox, oy = width/2, height
 	local sx, sy = 1, 1
 	local r = 0
+	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
+	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 
 	-- Movement variables
 	local scale = (sx + sy) / 2
@@ -88,6 +90,9 @@ function entities_player.new(x, y, z, viewport)
 			animation.update(dt, "humanoid_die")
 		end
 		sprite.quad = images.quads.data[tileset][animation.frame]
+
+		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
+		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 	end
 
 	function self.updateInput(dt)

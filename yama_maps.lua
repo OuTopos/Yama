@@ -1,24 +1,24 @@
 local maps = {}
 maps.data = {}
 
-function maps.new()
+function maps.new(vp)
 	local public = {}
 	local private = {}
 
 	public.path = ""
 
-	private.view = {}
-	private.view.x = 0
-	private.view.y = 0
-	private.view.width = 0
-	private.view.height = 0
+	public.view = {}
+	public.view.x = 0
+	public.view.y = 0
+	public.view.width = 0
+	public.view.height = 0
 
 	public.tilesInMap = 0
 	public.tilesInView = 0
 
 	public.data = nil
 
-	function public.load(path, spawn, viewport)
+	function public.load(path, spawn)
 		print("Loading map: "..path)
 
 		-- Unloading previous maps.
@@ -101,7 +101,7 @@ function maps.new()
 
 				-- Setting camera boundaries
 				--camera.setBoundaries(0, 0, public.data.width * public.data.tilewidth, public.data.height * public.data.tileheight)
-				viewport.camera.setBoundaries(0, 0, public.data.width * public.data.tilewidth, public.data.height * public.data.tileheight)
+				vp.camera.setBoundaries(0, 0, public.data.width * public.data.tilewidth, public.data.height * public.data.tileheight)
 				--vp2.camera.setBoundaries(0, 0, public.data.width * public.data.tilewidth, public.data.height * public.data.tileheight)
 				--vp3.camera.setBoundaries(0, 0, public.data.width * public.data.tilewidth, public.data.height * public.data.tileheight)
 
@@ -112,9 +112,9 @@ function maps.new()
 				public.data.properties.player_entity = public.data.properties.player_entity or "player"
 				print(public.data.properties.player_entity)
 				if public.data.spawns[spawn] then
-					public.data.player = entities.new(public.data.properties.player_entity, public.data.spawns[spawn].x + public.data.spawns[spawn].width / 2, public.data.spawns[spawn].y + public.data.spawns[spawn].height / 2, public.data.spawns[spawn].properties.z or 0, viewport)
+					public.data.player = entities.new(public.data.properties.player_entity, public.data.spawns[spawn].x + public.data.spawns[spawn].width / 2, public.data.spawns[spawn].y + public.data.spawns[spawn].height / 2, public.data.spawns[spawn].properties.z or 0, vp)
 				else
-					public.data.player = entities.new(public.data.properties.player_entity, 200, 200, 0, viewport)
+					public.data.player = entities.new(public.data.properties.player_entity, 200, 200, 0, vp)
 				end
 				
 			else
@@ -139,7 +139,7 @@ function maps.new()
 		--maps.resetView()
 		-- Set camera to follow player
 		--camera.follow = public.data.player
-		viewport.camera.follow = public.data.player
+		vp.camera.follow = public.data.player
 		--vp2.camera.follow = public.data.player
 
 		--camera.follow = nil
@@ -175,22 +175,22 @@ function maps.new()
 		return image, quad
 	end
 
-	function public.update(dt, viewport)
+	function public.update(dt)
 		if public.data then
-			private.view.width = math.ceil(viewport.camera.width / public.data.tilewidth) + 1
-			private.view.height = math.ceil(viewport.camera.height / public.data.tileheight) + 1
+			public.view.width = math.ceil(vp.camera.width / public.data.tilewidth) + 1
+			public.view.height = math.ceil(vp.camera.height / public.data.tileheight) + 1
 
 			-- Moving the map view to camera x,y
-			local x = math.floor( viewport.camera.x / public.data.tilewidth )
-			local y = math.floor( viewport.camera.y / public.data.tileheight )
+			local x = math.floor( vp.camera.x / public.data.tilewidth )
+			local y = math.floor( vp.camera.y / public.data.tileheight )
 
-			if x ~= private.view.x or y ~= private.view.y then
+			if x ~= public.view.x or y ~= public.view.y then
 				-- Camera moved to another tile
-				private.view.x = x
-				private.view.y = y
+				public.view.x = x
+				public.view.y = y
 
 				-- Trigger a buffer reset.
-				viewport.buffer.reset()	
+				vp.buffer.reset()	
 			end
 		end
 	end
@@ -220,15 +220,15 @@ function maps.new()
 		end
 	end
 
-	function public.addToBuffer(viewport)
+	function public.addToBuffer()
 		if public.data then
 			public.tilesInView = 0
 			local batches = {}
 
-			local xmin = private.view.x
-			local xmax = private.view.x+private.view.width-1
-			local ymin = private.view.y
-			local ymax = private.view.y+private.view.height-1
+			local xmin = public.view.x
+			local xmax = public.view.x+public.view.width-1
+			local ymin = public.view.y
+			local ymax = public.view.y+public.view.height-1
 
 			if xmin < 0 then
 				xmin = 0
@@ -262,7 +262,7 @@ function maps.new()
 							local zy = sprite.z + sprite.y
 							if not batches[zy] then
 								batches[zy] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
-								viewport.buffer.add(batches[zy])
+								vp.buffer.add(batches[zy])
 							end
 							table.insert(batches[zy].data, sprite)
 							public.tilesInView = public.tilesInView +1

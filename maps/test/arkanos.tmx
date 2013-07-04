@@ -274,4 +274,13 @@
    <polyline points="0,0 0,416 -96,480 -64,544 0,576 0,896 1088,896 1088,-512 832,-512"/>
   </object>
  </objectgroup>
+ <objectgroup name="Entities" width="40" height="40">
+  <object gid="11" x="640" y="448"/>
+  <object name="Plant" type="sprite" gid="11" x="608" y="288"/>
+  <object name="Bag" type="sprite" gid="80" x="530" y="333">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>
