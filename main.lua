@@ -15,10 +15,7 @@ function love.load()
 
 	--music = love.audio.newSource("sound/music.ogg", "static")
 	--music:setLooping(true)
-	--love.audio.play(music) 
-	vps = {}
-	vps["a"] = yama.viewports.new(0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, false)
-	vps["b"] = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+	--love.audio.play(music)
 	--vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
 end
 
@@ -66,8 +63,10 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		vps["a"].map.load("test/arkanos", "door1")
-		vps["b"].map.load("test/house1_room1", "door1")
+		yama.viewports.add("a", 0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, false)
+		yama.viewports.add("b", yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+		yama.viewports.list.a.map.load("test/arkanos", "door1")
+		yama.viewports.list.b.map.load("test/house1_room1", "door1")
 	end
 	if key == "d" then
 		yama.maps.load("test/house1_room1", "door1")
@@ -76,9 +75,8 @@ function love.keypressed(key)
 		yama.maps.load("test/platform", "test")	
 	end
 	if key == "z" then
-		vps["a"].map.load("test/gravityfall", "test")
-		vps["a"].setSize(yama.screen.width, yama.screen.height, 1, 1, false)
-		vps["b"].x = yama.screen.width
+		yama.viewports.add("a", 0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
+		yama.viewports.list.a.map.load("test/gravityfall", "test")
 	end
 	if key == "a" then
 		if player then
@@ -94,38 +92,33 @@ function love.keypressed(key)
 			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
 
-		entities.new("monster", math.random(100, 300), math.random(100, 300), 0, vps["a"])
-		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0, vps["a"])
+		entities.new("monster", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
+		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
 	end
 
 	if key == "1" then
-		vps["a"].camera.setPosition(100, 100)
+		yama.viewports.list.a.camera.setPosition(100, 100)
 	end
 	if key == "2" then
-		vps["a"].camera.follow = entities.data[math.random(1, #entities.data)]
+		yama.viewports.list.a.camera.follow = entities.data[math.random(1, #entities.data)]
 	end
 	if key == "0" then
 		scaleToggle = scaleToggle + 1
 		if scaleToggle > 5 then
 			scaleToggle = 1
 		end
-		vps["a"].setScale(scaleToggle)
+		yama.viewports.list.a.setScale(scaleToggle)
 	end
 end
 
 function love.update(dt)
 	if not yama.g.paused then
-		for i, vp in next, vps do
-			vp.update(dt)
-			vp.updated()
-		end
+		yama.viewports.update(dt)
 	end
 end
 
 function love.draw()
-	for i, vp in pairs(vps) do
-		vp.draw()
-	end
+	yama.viewports.draw()
 
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 3)

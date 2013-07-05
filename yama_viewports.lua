@@ -1,4 +1,5 @@
 local viewports = {}
+viewports.list = {}
 
 function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	local self = {}
@@ -116,6 +117,27 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 
 	return self
 
+end
+
+function viewports.add(name, x, y, r, width, height, sx, sy, zoom)
+	viewports.list[name] = yama.viewports.new(x, y, r, width, height, sx, sy, zoom)
+end
+
+function viewports.remove(name)
+	table.remove(viewports.list, name)
+end
+
+function viewports.update(dt)
+	for i, vp in next, viewports.list do
+		vp.update(dt)
+		vp.updated()
+	end
+end
+
+function viewports.draw()
+	for i, vp in next, viewports.list do
+		vp.draw()
+	end
 end
 
 return viewports
