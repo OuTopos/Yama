@@ -63,7 +63,7 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		yama.viewports.add("a", 0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, false)
+		yama.viewports.add("a", 0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
 		yama.viewports.add("b", yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
 		yama.viewports.list.a.map.load("test/arkanos", "door1")
 		yama.viewports.list.b.map.load("test/house1_room1", "door1")

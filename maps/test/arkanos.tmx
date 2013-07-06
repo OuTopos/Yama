@@ -20,7 +20,7 @@
    <property name="z" value="0"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1j8OgjAUx/H33HTTO+gNOIMxaoz/BsO1HRgcGBgYFD2Cr7HE2kBUQtrf8IZPWpqQfKEQYCLiDgYdzwsFvU8ppZRSCs2ZXv9QxgWgR/u0Dwlq35yx+za2L3HWksANvkwMZTIShcyvYPcvF2OZTMTd6XI9IvaVdmxrc8XqM/u55M+WhVkD6vPbVmLtNaL0bcXO2gP2ncRBHEUK2Fc3poTx/Jnx1tCI8v7O+Htj1XBuFqhvyu/jwuus7Bo711HLA+4v207T8Ov3reyx4x9I3982Md8J7evHEwjlOxw=
+   eJzt1b0OgjAUhuEeNt30HvQOuAZj1Bj/BsNtOzA4MDAwKHoJnsYSa0OjEihfzBmetDQheaH8kFKKGoganhcKep8QXYo8c/EfZH+FEF05qed3RTsD9Eif9CFB7ZsRdt/a9MXWWhy4wZWyAU+GLOf5Bez+ZWzEkzG7WV22e499hRl9bba++vR+Lui9Za7XgPrctiVbOY0ofRu2NXaAfUe2ZweWAPZVjYnCeP70eK1pRHl/p/S5saw5Nw3UN6HXce50lmaNrOuoZAH3l0ynbvj2/1a02PELpP+vT5/vhPS14wFZrTsg
   </data>
  </layer>
  <layer name="0" width="40" height="40">
@@ -275,12 +275,34 @@
   </object>
  </objectgroup>
  <objectgroup name="Entities" width="40" height="40">
-  <object gid="11" x="640" y="448"/>
-  <object name="Plant" type="sprite" gid="11" x="608" y="288"/>
-  <object name="Bag" type="sprite" gid="80" x="530" y="333">
+  <properties>
+   <property name="type" value="entities"/>
+  </properties>
+  <object type="monster" gid="11" x="288" y="320">
    <properties>
     <property name="z" value="1"/>
    </properties>
+  </object>
+  <object name="Plant" type="monster" gid="11" x="288" y="224">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Bag" type="monster" gid="80" x="192" y="224">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Bobby" type="monster" x="192" y="288" width="32" height="32">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="monster" x="224" y="288" width="32" height="32">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+   <ellipse/>
   </object>
  </objectgroup>
 </map>

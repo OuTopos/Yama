@@ -48,10 +48,6 @@ function cameras.new(vp)
 			self.r = self.r - 1 * dt
 		end
 		self.boundary()
-
-		self.cx = self.x + self.width / 2
-		self.cy = self.y + self.height / 2
-		self.radius = yama.g.getDistance(self.cx, self.cy, self.x, self.y)
 	end
 
 	function self.setPosition(x, y)
@@ -61,6 +57,9 @@ function cameras.new(vp)
 			self.x = math.floor(self.x + 0.5)
 			self.y = math.floor(self.y + 0.5)
 		end
+		self.cx = self.x + self.width / 2
+		self.cy = self.y + self.height / 2
+		self.radius = yama.g.getDistance(self.cx, self.cy, self.x, self.y)
 	end
 
 	function self.center(x, y)

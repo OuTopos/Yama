@@ -1,7 +1,7 @@
 entities_mplayer = {}
 
 
-function entities_mplayer.new(x, y, z, viewport)
+function entities_mplayer.new(x, y, z, vp)
 	local self = {}
 
 	-- Common variables
@@ -9,6 +9,8 @@ function entities_mplayer.new(x, y, z, viewport)
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
+	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
+	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 
 	self.type = "player"
 
@@ -37,7 +39,7 @@ function entities_mplayer.new(x, y, z, viewport)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody(vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
 	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, -1, width, height-2) )
 
 	anchor:setUserData(self)
@@ -62,8 +64,10 @@ function entities_mplayer.new(x, y, z, viewport)
 		--particle:start()
 		--particle:update(dt)
 
-		self.triggersupdate()
-		
+		--self.triggersupdate()
+
+		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
+		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 	end
 
 	local allowjump = true
@@ -116,7 +120,7 @@ function entities_mplayer.new(x, y, z, viewport)
 
 
 		xv, yv = anchor:getBody():getLinearVelocity()
-		print(yv)
+		--print(yv)
 
 		if allowjump and love.keyboard.isDown(" ") then
 			anchor:getBody():applyLinearImpulse( 0, -900 )
@@ -299,8 +303,8 @@ function entities_mplayer.new(x, y, z, viewport)
 		end
 	end
 
-	function self.addToBuffer(viewport)
-		viewport.buffer.add(bufferBatch)
+	function self.addToBuffer(vp)
+		vp.buffer.add(bufferBatch)
 	end
 
 	-- Basic functions

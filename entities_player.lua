@@ -267,12 +267,12 @@ function entities_player.new(x, y, z, viewport)
 
 	-- Common functions
 	function self.getX()
-		--return x
-		return math.floor(x + 0.5)
+		return x
+		--return math.floor(x + 0.5)
 	end
 	function self.getY()
-		--return y
-		return math.floor(y + 0.5)
+		return y
+		--return math.floor(y + 0.5)
 	end
 	function self.getZ()
 		return z
