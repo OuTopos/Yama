@@ -123,7 +123,6 @@ function entities_mplayer.new(x, y, z, vp)
 		--end
 
 		xv, yv = anchor:getBody():getLinearVelocity()
-		print(yv)
 
 		if allowjump and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
@@ -137,7 +136,6 @@ function entities_mplayer.new(x, y, z, vp)
 			jumpTimer = 0
 		end
 
-		xv, yv = anchor:getBody():getLinearVelocity()
 		if not love.keyboard.isDown(" ") and not love.joystick.isDown(1, 1) and onGround == true then
 			allowjump = true
 		end
