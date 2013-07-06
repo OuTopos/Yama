@@ -100,7 +100,7 @@ function love.keypressed(key)
 		yama.viewports.list.a.camera.setPosition(100, 100)
 	end
 	if key == "2" then
-		yama.viewports.list.a.camera.follow = entities.data[math.random(1, #entities.data)]
+		yama.viewports.list.a.camera.follow = entities.data[yama.viewports.list.a.map][math.random(1, #entities.data[yama.viewports.list.a.map])]
 	end
 	if key == "0" then
 		scaleToggle = scaleToggle + 1

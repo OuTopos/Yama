@@ -54,8 +54,8 @@ function cameras.new(vp)
 		self.x = x
 		self.y = y
 		if self.round then
-			self.x = math.floor(self.x + 0.5)
-			self.y = math.floor(self.y + 0.5)
+			--self.x = math.floor(self.x + 0.5)
+			--self.y = math.floor(self.y + 0.5)
 		end
 		self.cx = self.x + self.width / 2
 		self.cy = self.y + self.height / 2

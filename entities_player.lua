@@ -183,8 +183,8 @@ function entities_player.new(x, y, z, viewport)
 		y = anchor:getBody():getY()
 		anchor:getBody():setAngle(direction)
 		yama.buffers.setBatchPosition(bufferBatch, self:getX(), self:getY() + radius)
-		spriteArrow.x = math.floor(x + 0.5)
-		spriteArrow.y = math.floor(y-16 + 0.5)
+		spriteArrow.x = x --math.floor(x + 0.5)
+		spriteArrow.y = y-16 --math.floor(y-16 + 0.5)
 		spriteArrow.r = aim
 
 
