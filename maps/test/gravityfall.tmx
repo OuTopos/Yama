@@ -7,14 +7,17 @@
   <property name="sy" value="1"/>
   <property name="yg" value="10"/>
  </properties>
- <tileset firstgid="1" name="test" tilewidth="32" tileheight="32">
-  <image source="../../images/tilesets/test.png" width="512" height="512"/>
- </tileset>
- <tileset firstgid="257" name="goblin_cave" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="goblin_cave" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/lorestrome/goblin_cave.png" width="256" height="837"/>
+ </tileset>
+ <tileset firstgid="209" name="test" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/test.png" width="512" height="512"/>
  </tileset>
  <tileset firstgid="465" name="hyptosis_tile-art-batch-1" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/hyptosis_tile-art-batch-1.png" width="960" height="960"/>
+ </tileset>
+ <tileset firstgid="1365" name="goblin2" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/lorestrome/goblin2.png" width="256" height="837"/>
  </tileset>
  <layer name="Background" width="100" height="100">
   <properties>
@@ -29,7 +32,7 @@
    <property name="z" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0TEKwCAQRUHx/rfIRS0kkCJBLBY3OgOvFdxfCgAAAAAAAAAAEa7aIwd75GKPXOyRw73DsxVvnGB0m7c72iPO6D72iDdzY3vEO32Prz9JkqT/BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALCLBg0xdT8=
+   eJzt0TEKwCAQRUEb73+m3MxCAikSxGJxozPwWsH9pQAAAAAAAAAAEOGqPXKwRy72yMUeOdw7PFvxxglGt3m7oz3ijO5jj3gzN7ZHvNP3+PqTJEn6TwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC7aOqkv+I=
   </data>
  </layer>
  <objectgroup color="#ff0000" name="Ground" width="100" height="100">

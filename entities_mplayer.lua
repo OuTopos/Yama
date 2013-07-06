@@ -11,7 +11,6 @@ function entities_mplayer.new(x, y, z, vp)
 	local r = 0
 	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
-
 	self.type = "player"
 
 	local remove = false
@@ -23,6 +22,15 @@ function entities_mplayer.new(x, y, z, vp)
 	local onGround = false
 	local pContact = nil
 	local jumpTimer = 0
+	local jumpMaxTimer = 0.2
+	local jumpForce = 900
+	local jumpIncreaser = 1900
+	local xForce = 4500
+	local xJumpForce = 1900
+	local maxSpeed = 600
+	local friction = 0.2
+	local stopFriction = 0.7
+	local jumpFriction = 0.1
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
@@ -31,15 +39,16 @@ function entities_mplayer.new(x, y, z, vp)
 
 
 	-- SPRITE (PLAYER)
-	images.quads.add("crate", 32, 32)
-	images.load("crate"):setFilter("linear", "linear")
-	local sprite = yama.buffers.newSprite(images.load("crate"), images.quads.data["crate"][1], x, y, z, r, sx, sy, ox, oy)
+	images.quads.add("jumper", 32, 32)
+	images.load("jumper"):setFilter("linear", "linear")
+	local sprite = yama.buffers.newSprite(images.load("jumper"), images.quads.data["jumper"][1], x, y, z, r, sx, sy, ox, oy)
 	
 	table.insert(bufferBatch.data, sprite)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
+	--local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
 	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, -1, width, height-2) )
 
 	anchor:setUserData(self)
@@ -64,8 +73,7 @@ function entities_mplayer.new(x, y, z, vp)
 		--particle:start()
 		--particle:update(dt)
 
-		--self.triggersupdate()
-
+		self.triggersupdate()
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 	end
@@ -75,76 +83,75 @@ function entities_mplayer.new(x, y, z, vp)
 
 	function self.updateInput(dt)
 		fx, fy = 0, 0
-
-		if love.keyboard.isDown("up") then
-			direction = 3.141592654
-			fy = 000
+		relativeDirection = ""
+		if yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)) > 0.2 then
+			nx = love.joystick.getAxis(1, 1)
+			ny = love.joystick.getAxis(1, 2)
+			relativeDirection = yama.g.getRelativeDirection(math.atan2(ny, nx))
 		end
-		if love.keyboard.isDown("right") then
-			if onGround then
-				direction = 1.570796327
-				fx = 4500
+		
+		if love.keyboard.isDown("right") or relativeDirection == "right" then
+			direction = 1.570796327
+			if onGround then				
+				fx = xForce
 			else
-				direction = 1.570796327
-				fx = 1900
+				fx = xJumpForce
 			end
 			xv, yv = anchor:getBody():getLinearVelocity()
-			if xv <= 500 then
-				anchor:getBody():applyForce( fx, fy )
+			if xv <= maxSpeed then
+				applyForce( fx, fy )
 			end
 		end
-		if love.keyboard.isDown("left") then
+		if love.keyboard.isDown("left") or relativeDirection == "left" then
+			direction = 4.71238898
 			if onGround then
-				direction = 4.71238898
-				fx = -4500
-			else
-				direction = 4.71238898
-				fx = -1900
+				fx = -xForce
+			else	
+				fx = -xJumpForce
 			end
-			if xv >= -500 then
-				anchor:getBody():applyForce( fx, fy )
+			if xv >= -maxSpeed then
+				applyForce( fx, fy )
 			end
 		end
-		if love.keyboard.isDown("down") then
-			direction = 0
-			fy = 0
-		end
-
-
-		--xv, yv = anchor:getBody():getLinearVelocity()
-		--if xv <= 500 and xv >= -500 then
-		--	anchor:getBody():applyForce( fx, fy )
+		--if love.keyboard.isDown("down") then
+		--	direction = 0
+		--	fy = 0
+		--end
+		--if love.keyboard.isDown("up") then
+		--	direction = 3.141592654
+		--	fy = 0
 		--end
 
-
-
-
 		xv, yv = anchor:getBody():getLinearVelocity()
-		--print(yv)
+		print(yv)
 
-		if allowjump and love.keyboard.isDown(" ") then
-			anchor:getBody():applyLinearImpulse( 0, -900 )
+		if allowjump and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
+			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
-		if jumpTimer <= 0.1 and love.keyboard.isDown(" ") then
-			anchor:getBody():applyForce( 0, -1800 )
+		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
+			applyForce( 0, -jumpIncreaser )
 			jumpTimer = jumpTimer + dt
-			if jumpTimer >= 0.1 then
-				jumptimer = 0
-			end
-		end	
+		end
+		if jumpTimer > jumpMaxTimer and OnGround then
+			jumpTimer = 0
+		end
 
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if not love.keyboard.isDown(" ") and onGround == true and yv == 0 then
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown(1, 1) and onGround == true then
 			allowjump = true
 		end
 
 		if pContact then
-			if not love.keyboard.isDown(" ") then
-				pContact:setFriction( 0.5 ) 
+			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
+				pContact:setFriction( stopFriction ) 
 			end
 		end
 
+	end
+	
+	function applyForce( fx, fy )
+		anchor:getBody():applyForce( fx, fy )
 	end
 
 	function self.updatePosition(xn, yn)
@@ -260,14 +267,14 @@ function entities_mplayer.new(x, y, z, vp)
 		return false
 	end
 
-	-- CONTACT
+	-- CONTACT --
 	function self.beginContact(a, b, contact)
 		pContact = contact
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
 				jumpTimer = 0
 				onGround = true
-				contact:setFriction( 0.2 )
+				contact:setFriction( friction )
 			end
 		end
 	end
@@ -277,6 +284,7 @@ function entities_mplayer.new(x, y, z, vp)
 			if b:getUserData().type == 'floor' then
 				onGround = false
 				allowjump = false
+				contact:setFriction( stopFriction )
 			end
 		end
 
@@ -303,8 +311,12 @@ function entities_mplayer.new(x, y, z, vp)
 		end
 	end
 
-	function self.addToBuffer(vp)
+	function self.addToBuffer()
 		vp.buffer.add(bufferBatch)
+	end
+
+	function self.addToBuffer2(buffer)
+		buffer.add(bufferBatch)
 	end
 
 	-- Basic functions
