@@ -63,10 +63,10 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		yama.viewports.add("a", 0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
-		yama.viewports.add("b", yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+		yama.viewports.add("a", 0, 0, 0, yama.screen.width, yama.screen.height, 2, 2, true)
+		--yama.viewports.add("b", yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
 		yama.viewports.list.a.map.load("test/arkanos", "door1")
-		yama.viewports.list.b.map.load("test/house1_room1", "door1")
+		--yama.viewports.list.b.map.load("test/house1_room1", "door1")
 	end
 	if key == "d" then
 		yama.maps.load("test/house1_room1", "door1")
@@ -94,6 +94,9 @@ function love.keypressed(key)
 
 		entities.new("monster", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
 		entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
+	end
+	if key == "q" then
+		entities.new("fplayer", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
 	end
 
 	if key == "1" then
