@@ -1,42 +1,22 @@
-entities_mplayer = {}
+entities_bullet = {}
 
-
-function entities_mplayer.new(x, y, z, vp)
+function entities_bullet.new(x, y, z, vp)
 	local self = {}
 
 	-- Common variables
-	local width, height = 32, 32
+	local width, height = 4, 4
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
 	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
-	self.type = "player"
+	self.type = "brick"
 	
 	local aim = 0
-
-	local remove = false
-
-	--local x, y, z = xn, yn, 32
-	local xvel, yvel = 0, 0
-	local speed = 0
 	local direction = 0
-	local onGround = false
-	local pContact = nil
-	local jumpTimer = 0
-	local jumpMaxTimer = 0.2
-	local jumpForce = 900
-	local jumpIncreaser = 1900
-	local xForce = 4500
-	local xJumpForce = 1900
-	local maxSpeed = 600
-	local friction = 0.2
-	local stopFriction = 0.7
-	local jumpFriction = 0.1
-	local spawntimer = 0
-	local bulletCounter = 0
-	local bullet = nil
-	local bullets = {}
+	local remove = false
+	local speed = 0
+
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
@@ -44,137 +24,55 @@ function entities_mplayer.new(x, y, z, vp)
 	--table.insert(bufferBatch.data, buffer.newDrawable(particle))
 
 
-	-- SPRITE (PLAYER)
-	images.quads.add( "jumper", 32, 32 )
-	images.load( "jumper" ):setFilter( "linear", "linear" )
-	local sprite = yama.buffers.newSprite( images.load( "jumper" ), images.quads.data[ "jumper" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
+	-- SPRITE (PLAYER)	
+	images.quads.add("bullet", 4, 4 )
+	images.load( "bullet" ):setFilter( "linear", "linear" )
+	local bullet = yama.buffers.newSprite( images.load( "bullet" ), images.quads.data[ "bullet" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 	
-	tilesetArrow = "directionarrowshootah"
-	--images.load(tilesetArrow):setFilter("linear", "linear")
-	local spriteArrow = yama.buffers.newDrawable(images.load(tilesetArrow), x, y-8, 1000, 1, sx, sy, -12, 12)
 
-	table.insert( bufferBatch.data, sprite )
-	table.insert( bufferBatch.data, spriteArrow )
+	table.insert( bufferBatch.data, bullet )
 	
 	-- Physics
-	--local hitbox = physics.newObject(love.physics.newBody(map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	--local anchor = love.physics.newFixture(love.physics.newBody(yama.map.loaded.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width, height) )
-	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(-1, 0, width-2, height) )
-	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, -1, width, height-2) )
+	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newCircleShape( 2 ) )
 
 	anchor:setUserData(self)
-	--anchor:setRestitution( 0 )
-	anchor:getBody( ):setFixedRotation( true )
-	anchor:getBody( ):setLinearDamping( 1 )
-	anchor:getBody( ):setMass( 1 )
-	anchor:getBody( ):setInertia( 1 )
+	anchor:setRestitution( 0.7 )
+	anchor:getBody( ):setFixedRotation( false )
+	anchor:getBody( ):setLinearDamping( 0.1 )
+	anchor:getBody( ):setMass( 0.2 )
+	anchor:getBody( ):setInertia( 0.1 )
 	anchor:getBody( ):setGravityScale( 9 )
 
-	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, 24, 48))
-	--hitbox:setUserData(self)
-	--hitbox:setSensor(true)
+	function self.update(dt)
+		self.updateInput(dt)
+		self.updatePosition()
+		self.updateAnimation(dt)
 
-
-	function self.update( dt )
-		self.updateInput( dt )
-		self.updatePosition( )
-		self.updateAnimation( dt )
-
-		--particle:start()
-		--particle:update(dt)
-
-		self.triggersupdate( )
+		self.triggersupdate()
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
-
+		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+		
+		
+		
 	end
 
-	local allowjump = true
-	local jumping = false
-
-	function self.updateInput( dt )
+	function self.updateInput(dt)
 		fx, fy = 0, 0
-		relativeDirection = ""
-		if yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 1 ), love.joystick.getAxis( 1, 2 ) ) > 0.2 then
-			nx = love.joystick.getAxis( 1, 1 )
-			ny = love.joystick.getAxis( 1, 2 )
-			relativeDirection = yama.g.getRelativeDirection( math.atan2( ny, nx ))
-		end
 		
-		if love.keyboard.isDown( "right" ) or relativeDirection == "right" then
-			direction = 1.570796327
-			if onGround then				
-				fx = xForce
-			else
-				fx = xJumpForce
-			end
-			xv, yv = anchor:getBody():getLinearVelocity()
-			if xv <= maxSpeed then
-				applyForce( fx, fy )
-			end
-		end
-		if love.keyboard.isDown("left") or relativeDirection == "left" then
-			direction = 4.71238898
-			if onGround then
-				fx = -xForce
-			else	
-				fx = -xJumpForce
-			end
-			if xv >= -maxSpeed then
-				applyForce( fx, fy )
-			end
-		end
-		
-		if yama.g.getDistance( 0, 0, love.joystick.getAxis(1, 5 ), love.joystick.getAxis( 1, 4 ) ) > 0.2 then
-			local nx = love.joystick.getAxis( 1, 5 )
-			local ny = love.joystick.getAxis( 1, 4 )
-			aim = math.atan2( ny, nx )
-			
-			spawntimer = spawntimer - dt
-			if spawntimer <= 0 then
-				local leftover = math.abs( spawntimer )
-				spawntimer = 0.1 - leftover
-				bullet = entities.new( "bullet", x+16, y-16, 0, yama.viewports.list.a )
-				table.insert( bullets, bullet )
-				lenBullets = #bullets				
-				if lenBullets >= 60 then
-					entities.destroy( bullets[1] )
-					table.remove( bullets, 1 )
-			
-				end
-			end
-			
-		end
+		if yama.g.getDistance(0, 0, love.joystick.getAxis(1, 5), love.joystick.getAxis(1, 4)) > 0.2 then
+			local nx = love.joystick.getAxis(1, 5)
+			local ny = love.joystick.getAxis(1, 4)
+			aim = math.atan2(ny, nx)
+			fx = 100 * math.cos(aim)
+			fy = 100 * math.sin(aim)
+			applyImpulse( fx, fy )
 
-
-		xv, yv = anchor:getBody():getLinearVelocity()
-
-		if allowjump and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
-			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
-			allowjump = false
-		end
-		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
-			applyForce( 0, -jumpIncreaser )
-			jumpTimer = jumpTimer + dt
-		end
-		if jumpTimer > jumpMaxTimer and OnGround then
-			jumpTimer = 0
-		end
-
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) and onGround == true then
-			allowjump = true
-		end
-
-		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
-				pContact:setFriction( stopFriction ) 
-			end
 		end
 
 	end
 	
-	function applyForce( fx, fy )
-		anchor:getBody():applyForce( fx, fy )
+	function applyImpulse( fx, fy )
+		anchor:getBody():applyLinearImpulse( fx, fy )
 	end
 
 	function self.updatePosition(xn, yn)
@@ -184,18 +82,15 @@ function entities_mplayer.new(x, y, z, vp)
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		r = anchor:getBody():getAngle()
-		sprite.x = self.getX()
-		sprite.y = self.getY()
-		sprite.z = 100
-		sprite.r = r
+
 		bufferBatch.x = self.getX()
 		bufferBatch.y = self.getY()
 		bufferBatch.z = 100
 		bufferBatch.r = r
 		
-		spriteArrow.x = x --math.floor(x + 0.5)
-		spriteArrow.y = y --math.floor(y-16 + 0.5)
-		spriteArrow.r = aim
+		bullet.x = x --math.floor(x + 0.5)
+		bullet.y = y --math.floor(y-16 + 0.5)
+		bullet.r = aim
 
 		--particle:setPosition(self.getX(), self.getY()-oy/2)
 	end
@@ -299,9 +194,7 @@ function entities_mplayer.new(x, y, z, vp)
 		pContact = contact
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
-				jumpTimer = 0
-				onGround = true
-				contact:setFriction( friction )
+
 			end
 		end
 	end
@@ -309,9 +202,7 @@ function entities_mplayer.new(x, y, z, vp)
 	function self.endContact(a, b, contact)
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
-				onGround = false
-				allowjump = false
-				contact:setFriction( stopFriction )
+
 			end
 		end
 
