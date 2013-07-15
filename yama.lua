@@ -2,8 +2,9 @@ local yama = {}
 
 yama.c              = require("yama_c")
 yama.screen         = require("yama_screen")
-yama.buffers      	= require("yama_buffers")
 yama.cameras        = require("yama_cameras")
+yama.buffers      	= require("yama_buffers")
+yama.swarms         = require("yama_swarms")
 yama.viewports      = require("yama_viewports")
 yama.hooks          = require("yama_hooks")
 yama.maps           = require("yama_maps")
