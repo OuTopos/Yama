@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "木のゲーム  - Game of Trees"        -- The title of the window the game is in (string)
+    t.title = "Yama"            -- The title of the window the game is in (string)
     t.author = "OuTopos"        -- The author of the game (string)
     t.url = nil                 -- The website of the game (string)
     t.identity = nil            -- The name of the save directory (string)

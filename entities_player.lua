@@ -294,6 +294,7 @@ function entities_player.new(x, y, z, viewport)
 	end
 	function self.destroy()
 		anchor:getBody():destroy()
+		self.destroyed = true
 	end
 
 	return self

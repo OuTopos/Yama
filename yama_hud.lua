@@ -45,7 +45,7 @@ function hud.draw(vp)
 		love.graphics.print("FPS: "..love.timer.getFPS(), right - 39, top + 2)
 
 		-- Entities
-		love.graphics.print("Entities: "..#entities.data, left + 2, top + 2)
+		love.graphics.print("Entities: "..#entities.data[vp.map], left + 2, top + 2)
 		love.graphics.print("  Visible: "..#vp.entities, left + 2, top + 12)
 		-- Map
 		if vp.map.data then

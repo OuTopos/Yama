@@ -47,16 +47,16 @@ function cameras.new(vp)
 		if love.keyboard.isDown("n") then
 			self.r = self.r - 1 * dt
 		end
-		self.boundary()
 	end
 
 	function self.setPosition(x, y)
 		self.x = x
 		self.y = y
-		if self.round then
-			--self.x = math.floor(self.x + 0.5)
-			--self.y = math.floor(self.y + 0.5)
-		end
+		self.boundary()
+		--if self.round then
+		--	self.x = math.floor(self.x + 0.5)
+		--	self.y = math.floor(self.y + 0.5)
+		--end
 		self.cx = self.x + self.width / 2
 		self.cy = self.y + self.height / 2
 		self.radius = yama.g.getDistance(self.cx, self.cy, self.x, self.y)

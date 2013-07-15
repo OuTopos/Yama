@@ -29,7 +29,7 @@ function entities_monster.new(x, y, z, viewport)
 
 	-- PATROL
 	local patrol = yama.patrols.new()
-	patrol.set("1", viewport.map)
+	patrol.set("1", viewport.getMap())
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 
@@ -41,7 +41,7 @@ function entities_monster.new(x, y, z, viewport)
 	table.insert(bufferBatch.data, sprite)
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(viewport.map.data.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
+	local anchor = love.physics.newFixture(love.physics.newBody(viewport.getMap().data.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0.9 )
 	anchor:getBody():setLinearDamping( 1 )
@@ -129,6 +129,7 @@ function entities_monster.new(x, y, z, viewport)
 	end
 	function self.destroy()
 		anchor:getBody():destroy()
+		self.destroyed = true
 	end
 
 	return self

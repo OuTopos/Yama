@@ -1,78 +1,68 @@
 entities_sprite = {}
 
 function entities_sprite.new(x, y, z, vp)
-	local self = {}
+	local public = {}
+
+          name = "Plant",
+          type = "monster",
+          shape = "rectangle",
+          x = 288,
+          y = 224,
+          width = 0,
+          height = 0,
+          gid = 11,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
 
 	-- Common variables
-	local width, height = 32, 38
-	local ox, oy = width/2, height
-	local sx, sy = 1, 1
-	local r = 0
-	local cx, cy = x - ox + width / 2, y - oy + height / 2
-	local radius = yama.g.getDistance(cx, cy, x - ox, y - oy)
+	private.x, private.y, private.z = x, y, object.properties.z
+	private.width, private.height = vp.
+	private.ox, private.oy = width/2, height
+	private.sx, private.sy = 1, 1
+	private.r = 0
 
-	-- Movement variables
-	local scale = (sx + sy) / 2
-	local radius = 8 * scale
-	local mass = 1
-	local velocity = 10 * scale
-	local direction = math.atan2(math.random(-1, 1), math.random(-1, 1))
-	local move = false
-
-	-- BUFFER BATCH
-	local bufferBatch = yama.buffers.newBatch(x, y, z)
-
-	-- ANIMATION
-	local animation = yama.animations.new()
-	animation.set("eyeball_walk_down")
-	animation.timescale = math.random(9, 11)/10
-
-	-- PATROL
-	local patrol = yama.patrols.new()
-	patrol.set("1", vp.map)
-	--patrol.setLoop(false)
-	--patrol.setRadius(32)
+	local private.cx, private.cy = private.x - private.ox + private.width / 2, private.y - private.oy + private.height / 2
+	local private.radius = yama.g.getDistance(cx, cy, x - ox, y - oy)
 
 	-- SPRITE
-	local tileset = "eyeball"
-	images.quads.add(tileset, 32, 38)
-	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], x, y+radius, z, r, sx, sy, ox, oy)
-	
-	table.insert(bufferBatch.data, sprite)
+	public.tileset = "eyeball"
+	images.quads.add(public.tileset, public.width, public.height)
+	local public.sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], public.x, public.y, public.z, public.r, public.sx, public.sy, public.ox, public.oy)
 
 	-- Standard functions
-	function self.update(dt)
+	function public.update(dt)
 	end
 
-	function self.addToBuffer()
-		vp.buffer.add(bufferBatch)
+	function public.addToBuffer()
+		vp.buffer.add(sprite)
 	end
 
 	-- Common functions
-	function self.getX()
+	function public.getX()
 		return x
 	end
-	function self.getY()
+	function public.getY()
 		return y
 	end
-	function self.getZ()
+	function public.getZ()
 		return z
 	end
-	function self.getOX()
+	function public.getOX()
 		return x - ox * sx
 	end
-	function self.getOY()
+	function public.getOY()
 		return y - oy * sy + radius
 	end
-	function self.getWidth()
+	function public.getWidth()
 		return width * sx
 	end
-	function self.getHeight()
+	function public.getHeight()
 		return height * sy
 	end
-	function self.destroy()
-		anchor:getBody():destroy()
+	function public.destroy()
 	end
 
-	return self
+	return public
 end
