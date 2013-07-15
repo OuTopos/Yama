@@ -15,6 +15,7 @@ require("entities_projectile")
 require("entities_monster")
 require("entities_humanoid")
 require("entities_mplayer")
+require("entities_bullet")
 
 function entities.new(type, x, y, z, vp)
 	if not entities.data[vp.getMap()] then

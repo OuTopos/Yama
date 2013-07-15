@@ -280,7 +280,8 @@ function entities_bullet.new(x, y, z, vp)
 		return direction
 	end
 	function self.destroy( )
-		anchor:getBody():destroy( )
+		anchor:getBody():destroy()
+		self.destroyed = true
 	end
 
 	return self

@@ -134,11 +134,11 @@ function entities_mplayer.new(x, y, z, vp)
 			if spawntimer <= 0 then
 				local leftover = math.abs( spawntimer )
 				spawntimer = 0.1 - leftover
-				bullet = entities.new( "bullet", x+16, y-16, 0, yama.viewports.list.a )
+				bullet = entities.new( "bullet", x+16, y-16, 0, vp )
 				table.insert( bullets, bullet )
 				lenBullets = #bullets				
 				if lenBullets >= 60 then
-					entities.destroy( bullets[1] )
+					bullets[1].destroy()
 					table.remove( bullets, 1 )
 			
 				end
@@ -389,7 +389,8 @@ function entities_mplayer.new(x, y, z, vp)
 		return direction
 	end
 	function self.destroy( )
-		anchor:getBody():destroy( )
+		anchor:getBody():destroy()
+		self.destroyed = true
 	end
 
 	return self
