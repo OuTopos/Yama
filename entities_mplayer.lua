@@ -134,7 +134,8 @@ function entities_mplayer.new(x, y, z, vp)
 			if spawntimer <= 0 then
 				local leftover = math.abs( spawntimer )
 				spawntimer = 0.1 - leftover
-				bullet = entities.new( "bullet", x+16, y-16, 0, vp )
+				--bullet = entities.new( "bullet", x-math.cos(aim), y-math.sin(aim), 0, vp )
+				bullet = entities.new( "bullet", x, y-30, 0, vp )
 				table.insert( bullets, bullet )
 				lenBullets = #bullets				
 				if lenBullets >= 60 then

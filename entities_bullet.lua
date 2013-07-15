@@ -16,6 +16,7 @@ function entities_bullet.new(x, y, z, vp)
 	local direction = 0
 	local remove = false
 	local speed = 0
+	local bulletImpulse = 2
 
 
 	-- BUFFER BATCH
@@ -33,7 +34,7 @@ function entities_bullet.new(x, y, z, vp)
 	table.insert( bufferBatch.data, bullet )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newCircleShape( 2 ) )
+	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
 
 	anchor:setUserData(self)
 	anchor:setRestitution( 0.7 )
@@ -58,13 +59,14 @@ function entities_bullet.new(x, y, z, vp)
 
 	function self.updateInput(dt)
 		fx, fy = 0, 0
+		bulletImpulse = 2
 		
 		if yama.g.getDistance(0, 0, love.joystick.getAxis(1, 5), love.joystick.getAxis(1, 4)) > 0.2 then
 			local nx = love.joystick.getAxis(1, 5)
 			local ny = love.joystick.getAxis(1, 4)
 			aim = math.atan2(ny, nx)
-			fx = 100 * math.cos(aim)
-			fy = 100 * math.sin(aim)
+			fx = bulletImpulse * math.cos(aim)
+			fy = bulletImpulse * math.sin(aim)
 			applyImpulse( fx, fy )
 
 		end
