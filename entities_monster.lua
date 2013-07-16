@@ -1,7 +1,10 @@
 entities_monster = {}
 
-function entities_monster.new(x, y, z, viewport)
+function entities_monster.new(x, y, z, vp)
 	local self = {}
+
+	local private = {}
+	private.world = vp.getSwarm().getWorld()
 
 	-- Common variables
 	local width, height = 32, 38
@@ -29,7 +32,7 @@ function entities_monster.new(x, y, z, viewport)
 
 	-- PATROL
 	local patrol = yama.patrols.new()
-	patrol.set("1", viewport.getMap())
+	patrol.set("1", vp.getMap())
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 
@@ -41,7 +44,7 @@ function entities_monster.new(x, y, z, viewport)
 	table.insert(bufferBatch.data, sprite)
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(viewport.getMap().data.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
+	local anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0.9 )
 	anchor:getBody():setLinearDamping( 1 )
@@ -95,8 +98,8 @@ function entities_monster.new(x, y, z, viewport)
 		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
 	end
 
-	function self.addToBuffer(viewport)
-		viewport.buffer.add(bufferBatch)
+	function self.addToBuffer(vp)
+		vp.getBuffer().add(bufferBatch)
 	end
 
 	-- Monster functions

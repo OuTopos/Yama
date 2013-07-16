@@ -22,12 +22,16 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	-- Create the buffer
 	private.buffer = yama.buffers.new(private)
 
-	-- Create the map
-	private.map = yama.maps.new(private)
-
 	-- Create table to store visible entities
-	private.swarm = {}
-	private.entities = {}
+	private.swarm = yama.swarms.add(public)
+
+	-- Create the map
+	private.map = yama.maps.new(public)
+
+	--private.map = yama.maps.add(public)
+
+
+	public.entities = {}
 
 	function public.reSize()
 		private.camera.setSize(private.width/private.sx, private.height/private.sy)
@@ -66,20 +70,26 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	end
 
 	function public.update(dt)
-		if private.map.data then
-			if not private.map.data.updated then
-				private.map.data.world:update(dt)
-				private.map.data.updated = true
-			end
-			entities.update(dt, private)
-		end
-		private.camera.update(dt)
-		private.map.update(dt)
+		--if private.map.data then
+			--if not private.map.data.updated then
+				--private.map.data.world:update(dt)
+				--private.map.data.updated = true
+			--end
+		private.swarm.update(dt, public)
+		private.swarm.setUpdated(true)
+			--entities.update(dt, private)
+		--end
+		--update swarm (incl phys)
+		--private.swarm.update(dt, vp)
+		--update maps
+		--update 
+		private.camera.update(dt, public)
+		private.map.update(dt, public)
 	end
 
 	function public.updated()
 		if private.map.data then
-			entities.data[private.map].updated = false
+			private.swarm.setUpdated(false)
 			private.map.data.updated = false
 		end
 	end
@@ -93,21 +103,21 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		-- Check if the buffer has been reset 
 		if next(private.buffer.data) == nil then
 			if private.map.data then
-				entities.addToBuffer(private)
-				private.map.addToBuffer()
+				private.swarm.addToBuffer(public)
+				private.map.addToBuffer(public)
 			end
 		end
 
 		-- Draw the buffer
 		private.buffer.draw()
 
-		yama.hud.drawR(private)
+		yama.hud.drawR(public)
 
 		-- Draw the GUI
 		--yama.gui.draw()
 
 		private.camera.unset()
-		yama.hud.draw(private)
+		yama.hud.draw(public)
 		love.graphics.setCanvas()
 
 		-- Draw the HUD
@@ -117,20 +127,36 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		private.buffer.reset()
 	end
 
-	function public.getMap()
-		return private.map
-	end
-
-	function private.getMap()
-		return private.map
+	function public.getCamera()
+		return private.camera
 	end
 
 	function public.getBuffer()
 		return private.buffer
 	end
 
-	function public.getCamera()
-		return private.camera
+	function public.getMap()
+		return private.map
+	end
+
+	function public.getSwarm()
+		return private.swarm
+	end
+
+	function public.getWidth()
+		return private.width
+	end
+
+	function public.getHeight()
+		return private.height
+	end
+
+	function public.getSx()
+		return private.sx
+	end
+
+	function public.getSy()
+		return private.sy
 	end
 
 	public.reSize()

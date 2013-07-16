@@ -1605,17 +1605,17 @@ return {
           name = "2",
           type = "",
           shape = "polyline",
-          x = 308,
-          y = 313,
+          x = 459,
+          y = 268,
           width = 0,
           height = 0,
           visible = true,
           polyline = {
-            { x = 1, y = 31 },
-            { x = 27, y = 106 },
-            { x = 116, y = 106 },
-            { x = 146, y = 30 },
-            { x = 78, y = -22 }
+            { x = -404, y = -223 },
+            { x = -66, y = -190 },
+            { x = 437, y = -46 },
+            { x = -73, y = 169 },
+            { x = -399, y = 175 }
           },
           properties = {}
         },

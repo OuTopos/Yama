@@ -1,16 +1,13 @@
 entities_humanoid = {}
 
 function entities_humanoid.new(x, y, z, vp)
-	local self = entities.base.get()
-	print(self.test1)
-	self.test1 = math.random(1, 100)
-	print(self.test1)
-	print(test2)
+	local self = {}
 
-	local camera = {}
-	local buffer = {}
+	local camera = vp.getCamera()
+	local buffer = vp.getBuffer()
 	local map = vp.getMap()
-	local swarm = {}
+	local swarm = vp.getSwarm()
+	local world = swarm.getWorld()
 
 	-- Sprite variables
 	local width, height = 64, 64
@@ -42,7 +39,7 @@ function entities_humanoid.new(x, y, z, vp)
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
-
+	
 	-- SPRITE
 	local attributes = {}
 	attributes.gender = {"male", "female"}
@@ -144,7 +141,7 @@ function entities_humanoid.new(x, y, z, vp)
 	--local image = love.graphics.newImage(canvas:getImageData())
 
 	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(map.data.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
+	local anchor = love.physics.newFixture(love.physics.newBody(world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
@@ -196,7 +193,7 @@ function entities_humanoid.new(x, y, z, vp)
 	end
 
 	function self.addToBuffer(vp)
-		vp.buffer.add(bufferBatch)
+		buffer.add(bufferBatch)
 	end
 
 	-- Monster functions

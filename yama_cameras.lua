@@ -21,6 +21,8 @@ function cameras.new(vp)
 	self.round = false
 	self.follow = nil
 
+	self.view = {}
+
 	function self.set()
 		love.graphics.push()
 		love.graphics.translate(self.width/2*self.sx, self.height/2*self.sy)
@@ -34,7 +36,7 @@ function cameras.new(vp)
 		love.graphics.pop()
 	end
 
-	function self.update(dt)
+	function self.update(dt, vp)
 		if self.follow then
 			self.center(self.follow.getX(), self.follow.getY())
 		end
@@ -46,6 +48,22 @@ function cameras.new(vp)
 		end
 		if love.keyboard.isDown("n") then
 			self.r = self.r - 1 * dt
+		end
+
+		self.view.width = math.ceil(self.width/vp.getMap().getTilewidth()) + 1
+		self.view.height = math.ceil(self.height/vp.getMap().getTileheight()) + 1
+
+		-- Moving the map view to camera x,y
+		local x = math.floor(self.x/vp.getMap().getTilewidth())
+		local y = math.floor(self.y/vp.getMap().getTileheight())
+
+		if x ~= self.view.x or y ~= self.view.y then
+			-- Camera moved to another tile
+			self.view.x = x
+			self.view.y = y
+
+			-- Trigger a buffer reset.
+			vp.getBuffer().reset()	
 		end
 	end
 
