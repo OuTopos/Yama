@@ -76,7 +76,7 @@ function love.keypressed(key)
 	end
 	if key == "z" then
 		yama.viewports.add("a", 0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
-		yama.viewports.list.a.getMap().load("test/gravityfall", "test")
+		yama.viewports.list.a.getMap().load(yama.viewports.list.a, "test/gravityfall", "test")
 	end
 	if key == "a" then
 		if player then

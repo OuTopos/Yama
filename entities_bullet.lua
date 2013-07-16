@@ -3,6 +3,12 @@ entities_bullet = {}
 function entities_bullet.new( x, y, z, vp )
 	local self = {}
 
+	local camera = vp.getCamera()
+	local buffer = vp.getBuffer()
+	local map = vp.getMap()
+	local swarm = vp.getSwarm()
+	local world = swarm.getWorld()
+
 	-- Common variables
 	local width, height = 8, 8
 	local ox, oy = width/2, height/2
@@ -30,7 +36,7 @@ function entities_bullet.new( x, y, z, vp )
 	table.insert( bufferBatch.data, bullet )
 
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
+	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
 	anchor:setGroupIndex( -1 )
 
 	anchor:setUserData(self)
@@ -143,7 +149,7 @@ function entities_bullet.new( x, y, z, vp )
 	end
 
 	function self.addToBuffer( )
-		vp.buffer.add( bufferBatch )
+		buffer.add( bufferBatch )
 	end
 
 	function self.addToBuffer2( buffer )

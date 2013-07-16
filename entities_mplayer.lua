@@ -4,6 +4,12 @@ entities_mplayer = {}
 function entities_mplayer.new(x, y, z, vp)
 	local self = {}
 
+	local camera = vp.getCamera()
+	local buffer = vp.getBuffer()
+	local map = vp.getMap()
+	local swarm = vp.getSwarm()
+	local world = swarm.getWorld()
+
 	-- Common variables
 	local width, height = 32, 32
 	local ox, oy = width/2, height/2
@@ -54,12 +60,12 @@ function entities_mplayer.new(x, y, z, vp)
 	table.insert( bufferBatch.data, spriteArrow )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width-1, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width-1, height) )
 	anchor:setGroupIndex( -1 )
 	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, width, height-1) )
 	anchor2:setGroupIndex( -1 )
 	
-	--local leg1 = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y+32, "dynamic"), love.physics.newRectangleShape(0, 0, width, height), 1 )
+	--local leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+32, "dynamic"), love.physics.newRectangleShape(0, 0, width, height), 1 )
 	--leg1:setGroupIndex( -1 )
 	--leg1:getBody( ):setFixedRotation( true )
 	--joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
@@ -67,7 +73,7 @@ function entities_mplayer.new(x, y, z, vp)
 	--joint:setMaxMotorForce(100000)
 	--joint:setLowerLimit(0)
 	--joint:setUpperLimit(32)	
-	--local leg2 = love.physics.newFixture(love.physics.newBody( vp.map.data.world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
+	--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
 	--leg2:setGroupIndex( -1 )
 	--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
 
@@ -142,7 +148,8 @@ function entities_mplayer.new(x, y, z, vp)
 				
 				xPosBulletSpawn = 34*nx + x
 				yPosBulletSpawn = 34*ny + y
-				bullet = entities.new( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0, vp )
+				bullet = yama.entities.new( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0, vp )
+				swarm.insert(bullet)
 				fxbullet = bulletImpulse * nx
 				fybullet = bulletImpulse * ny				
 				
@@ -285,7 +292,7 @@ function entities_mplayer.new(x, y, z, vp)
 	end
 
 	function self.addToBuffer( )
-		vp.buffer.add( bufferBatch )
+		buffer.add( bufferBatch )
 	end
 
 	function self.addToBuffer2( buffer )
