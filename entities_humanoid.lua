@@ -1,7 +1,11 @@
 entities_humanoid = {}
 
 function entities_humanoid.new(x, y, z, vp)
-	local self = {}
+	local self = entities.base.get()
+	print(self.test1)
+	self.test1 = math.random(1, 100)
+	print(self.test1)
+	print(test2)
 
 	local camera = {}
 	local buffer = {}

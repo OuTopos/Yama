@@ -3,6 +3,7 @@ entities.data = {}
 
 entities.destroyQueue = {}
 
+entities.base = require("entitiesBase")
 -- Entity types
 require("entities_player")
 require("entities_fplayer")
