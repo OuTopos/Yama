@@ -64,7 +64,7 @@ function entities_mplayer.new(x, y, z, vp)
 	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width-1, height) )
 	--anchor:setGroupIndex( -1 )
 	anchor:setUserData(self)
-	--anchor:setRestitution( 0 )	
+	anchor:setRestitution( 0 )	
 	anchor:getBody( ):setFixedRotation( true )
 	anchor:getBody( ):setLinearDamping( 1 )
 	anchor:getBody( ):setMass( 1 )
@@ -155,11 +155,11 @@ function entities_mplayer.new(x, y, z, vp)
 		-- BULLETS --
 		local nx = love.joystick.getAxis( 1, 5 )
 		local ny = love.joystick.getAxis( 1, 4 )
-		if yama.g.getDistance( 0, 0, nx, ny ) > 0.2 then	
+		if yama.g.getDistance( 0, 0, nx, ny ) > 0.25 then	
 			spawntimer = spawntimer - dt
 			if spawntimer <= 0 then
 				local leftover = math.abs( spawntimer )
-				spawntimer = 0.05 - leftover
+				spawntimer = 0.09 - leftover
 
 				aim = math.atan2( ny, nx )
 				xrad = math.cos( aim )
@@ -185,12 +185,12 @@ function entities_mplayer.new(x, y, z, vp)
 
 		-- JUMPING NEW --
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
+		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 6 ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
 		
-		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
+		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1,6 ) ) then
 			applyForce( 0, -jumpIncreaser )
 			jumpTimer = jumpTimer + dt
 			if jumpTimer > jumpMaxTimer and OnGround then
@@ -198,12 +198,12 @@ function entities_mplayer.new(x, y, z, vp)
 			end
 		end
 
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) and onGround == true then
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 6 ) and onGround == true then
 			allowjump = true
 		end
 
 		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
+			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 6 ) then
 				pContact:setFriction( stopFriction ) 
 			end
 		end
@@ -245,7 +245,6 @@ function entities_mplayer.new(x, y, z, vp)
 		y = anchor:getBody():getY()
 		r = anchor:getBody():getAngle()
 
-
 		sprite.x = self.getX()
 		sprite.y = self.getY()
 		sprite.z = 100
@@ -259,7 +258,6 @@ function entities_mplayer.new(x, y, z, vp)
 		spriteArrow.y = y --math.floor(y-16 + 0.5)
 		spriteArrow.r = aim
 
-		--particle:setPosition(self.getX(), self.getY()-oy/2)
 	end
 
 	local animation = {}
@@ -305,40 +303,39 @@ function entities_mplayer.new(x, y, z, vp)
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
-
-
-
 		-- NEW JUMP --
-		contactNormal = math.atan2( contact:getNormal( ) )
-		contactNormal = math.deg( contactNormal )
+
 --		print( "normal!", contactNormal )
 		if a:getBody( ) == anchor:getBody( ) then
-			--contactNormal = math.abs( contactNormal )
-			print( "BAJS")
-		end
-		if contactNormal < 200 and contactNormal > 150 then
-			jumpTimer = 0
-			onGround = true
-			contact:setFriction( friction )
-			pContact = contact
+			contact:setRestitution( 0 )
+			--pContact = contact
+			--contactNormal = math.atan2( pContact:getNormal( ) )
+			--contactNormal = math.deg( contactNormal )
+			--if contactNormal < 190 and contactNormal > 170 then
+			--jumpTimer = 0
+			--onGround = true
+			--contact:setFriction( friction )
+			--end
 		end
 
+
 		-- JUMP STUFF --
-		--if b:getUserData() then
-		--	if b:getUserData().type == 'floor' then
-		--		jumpTimer = 0
-		--		onGround = true
-		--		contact:setFriction( friction )
-		--	end
-		--end
+		if b:getUserData() then
+			if b:getUserData().type == 'floor' then
+				jumpTimer = 0
+				onGround = true
+				contact:setFriction( friction )
+			end
+		end
 	end
 
 	function self.endContact(a, b, contact)
+	
+		-- JUMP STUFF --
 		if b:getUserData() then
 			if b:getUserData().type == 'floor' then
 				onGround = false
 				allowjump = false
-				contact:setFriction( stopFriction )
 			end
 		end
 	end
