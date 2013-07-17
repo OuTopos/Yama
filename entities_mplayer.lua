@@ -42,7 +42,7 @@ function entities_mplayer.new(x, y, z, vp)
 	local spawntimer = 0
 	local bullet = nil
 	local bullets = {}
-	local bulletImpulse = 1400
+	local bulletImpulse = 900
 	local nAllowedBullets = 60
 
 	-- BUFFER BATCH
@@ -53,19 +53,37 @@ function entities_mplayer.new(x, y, z, vp)
 	images.load( "jumper" ):setFilter( "linear", "linear" )
 	local sprite = yama.buffers.newSprite( images.load( "jumper" ), images.quads.data[ "jumper" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 	
-	tilesetArrow = "directionarrowshootah"
-	local spriteArrow = yama.buffers.newDrawable( images.load( tilesetArrow ), x, y-8, 1000, 1, sx, sy, -12, 12)
+	tilesetArrow = images.load( "directionarrowshootah" )
+	tilesetArrow:setFilter( "linear", "linear" )
+	local spriteArrow = yama.buffers.newDrawable( tilesetArrow, x, y, 1000, 1, sx, sy, 3, 3 )
 
 	table.insert( bufferBatch.data, sprite )
 	table.insert( bufferBatch.data, spriteArrow )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape(0, 0, width-1, height) )
-	anchor:setGroupIndex( -1 )
-	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape(0, 0, width, height-1) )
-	anchor2:setGroupIndex( -1 )
+	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width-1, height) )
+	--anchor:setGroupIndex( -1 )
+	anchor:setUserData(self)
+	--anchor:setRestitution( 0 )	
+	anchor:getBody( ):setFixedRotation( true )
+	anchor:getBody( ):setLinearDamping( 1 )
+	anchor:getBody( ):setMass( 1 )
+	anchor:getBody( ):setInertia( 1 )
+	anchor:getBody( ):setGravityScale( 9 )
+	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape( width, height-1 ) )
+	--anchor2:setGroupIndex( -1 )
 	
-	--local leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+32, "dynamic"), love.physics.newRectangleShape(0, 0, width, height), 1 )
+	--local canon = love.physics.newFixture(love.physics.newBody( world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
+	--canon:setGroupIndex( -1 )
+	--canonJoint = love.physics.newRevoluteJoint( canon:getBody(), anchor:getBody(), x, y, false )
+	--anchor:setUserData(self)
+	--anchor:setRestitution( 0 )	
+	--canon:getBody( ):setLinearDamping( 1 )
+	--canon:getBody( ):setMass( 0.0001 )
+	--canon:getBody( ):setInertia( 1 )
+	--canon:getBody( ):setGravityScale( 9 )
+	
+	--local leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+32, "dynamic"), love.physics.newRectangleShape(width, height), 1 )
 	--leg1:setGroupIndex( -1 )
 	--leg1:getBody( ):setFixedRotation( true )
 	--joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
@@ -134,20 +152,21 @@ function entities_mplayer.new(x, y, z, vp)
 			end
 		end
 
-		if yama.g.getDistance( 0, 0, love.joystick.getAxis(1, 5 ), love.joystick.getAxis( 1, 4 ) ) > 0.25 then	
+		-- BULLETS --
+		local nx = love.joystick.getAxis( 1, 5 )
+		local ny = love.joystick.getAxis( 1, 4 )
+		if yama.g.getDistance( 0, 0, nx, ny ) > 0.2 then	
 			spawntimer = spawntimer - dt
 			if spawntimer <= 0 then
 				local leftover = math.abs( spawntimer )
 				spawntimer = 0.05 - leftover
-				
-				local nx = love.joystick.getAxis( 1, 5 )
-				local ny = love.joystick.getAxis( 1, 4 )
+
 				aim = math.atan2( ny, nx )
-				--xrad = math.cos( aim )
-				--yrad = math.sin( aim )
+				xrad = math.cos( aim )
+				yrad = math.sin( aim )
 				
-				xPosBulletSpawn = 34*nx + x
-				yPosBulletSpawn = 34*ny + y
+				xPosBulletSpawn = x + 28*xrad 
+				yPosBulletSpawn = y + 28*yrad
 				bullet = yama.entities.new( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0, vp )
 				swarm.insert(bullet)
 				fxbullet = bulletImpulse * nx
@@ -162,21 +181,22 @@ function entities_mplayer.new(x, y, z, vp)
 				end
 			end
 		end
+		-- BULLETS END --
 
+		-- JUMPING NEW --
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if allowjump and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
+		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
 		
-		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown(" ") or love.joystick.isDown( 1, 1 ) ) then
+		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
 			applyForce( 0, -jumpIncreaser )
 			jumpTimer = jumpTimer + dt
 			if jumpTimer > jumpMaxTimer and OnGround then
 				jumpTimer = 0
 			end
 		end
-
 
 		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) and onGround == true then
 			allowjump = true
@@ -187,12 +207,33 @@ function entities_mplayer.new(x, y, z, vp)
 				pContact:setFriction( stopFriction ) 
 			end
 		end
-		
-		--print("Trigger:" .. love.joystick.getAxis(1, 3 ))
-		--if love.joystick.getAxis(1, 3 ) < -0.25 then
-		--	leg2:getBody():applyTorque(100000)
-			--joint:setUpperLimit(32 + love.joystick.getAxis(1, 3 ) * 32)
+
+
+		-- JUMPING --
+		--xv, yv = anchor:getBody():getLinearVelocity()
+		--if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
+		--	anchor:getBody():applyLinearImpulse( 0, -jumpForce )
+		--	allowjump = false
 		--end
+		
+		--if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
+		--	applyForce( 0, -jumpIncreaser )
+		--	jumpTimer = jumpTimer + dt
+		--	if jumpTimer > jumpMaxTimer and OnGround then
+		--		jumpTimer = 0
+		--	end
+		--end
+		--if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) and onGround == true then
+		--	allowjump = true
+		--end
+		--if pContact then
+		--	if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
+		--		pContact:setFriction( stopFriction ) 
+		--	end
+		--end
+		-- JUUMPING END --
+		
+
 	end
 	
 	function applyForce( fx, fy )
@@ -203,6 +244,8 @@ function entities_mplayer.new(x, y, z, vp)
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		r = anchor:getBody():getAngle()
+
+
 		sprite.x = self.getX()
 		sprite.y = self.getY()
 		sprite.z = 100
@@ -253,7 +296,7 @@ function entities_mplayer.new(x, y, z, vp)
 		end
 	end
 
-	function triggers.sort(a, b)
+	function triggers.sort( a, b )
 		if getDistance(a:getX(), a:getY(), x, y) < getDistance(b:getX(), b:getY(), x, y) then
 			return true
 		end
@@ -261,15 +304,33 @@ function entities_mplayer.new(x, y, z, vp)
 	end
 
 	-- CONTACT --
-	function self.beginContact(a, b, contact)
-		pContact = contact
-		if b:getUserData() then
-			if b:getUserData().type == 'floor' then
-				jumpTimer = 0
-				onGround = true
-				contact:setFriction( friction )
-			end
+	function self.beginContact( a, b, contact )
+
+
+
+		-- NEW JUMP --
+		contactNormal = math.atan2( contact:getNormal( ) )
+		contactNormal = math.deg( contactNormal )
+--		print( "normal!", contactNormal )
+		if a:getBody( ) == anchor:getBody( ) then
+			--contactNormal = math.abs( contactNormal )
+			print( "BAJS")
 		end
+		if contactNormal < 200 and contactNormal > 150 then
+			jumpTimer = 0
+			onGround = true
+			contact:setFriction( friction )
+			pContact = contact
+		end
+
+		-- JUMP STUFF --
+		--if b:getUserData() then
+		--	if b:getUserData().type == 'floor' then
+		--		jumpTimer = 0
+		--		onGround = true
+		--		contact:setFriction( friction )
+		--	end
+		--end
 	end
 
 	function self.endContact(a, b, contact)
