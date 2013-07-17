@@ -1,5 +1,6 @@
 local maps = {}
 maps.data = {}
+maps.list = {}
 
 function maps.new(vp)
 	local public = {}
@@ -365,7 +366,7 @@ function maps.new(vp)
 	function public.getTileheight()
 		return public.data.tileheight
 	end
-
+	
 	return public
 end
 

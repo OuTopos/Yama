@@ -22,6 +22,7 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	-- Create the buffer
 	private.buffer = yama.buffers.new(private)
 
+
 	-- Create table to store visible entities
 	private.swarm = yama.swarms.add(public)
 
@@ -161,12 +162,9 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 
 	public.reSize()
 
+	table.insert(viewports.list, public)
 	return public
 
-end
-
-function viewports.add(name, x, y, r, width, height, sx, sy, zoom)
-	viewports.list[name] = yama.viewports.new(x, y, r, width, height, sx, sy, zoom)
 end
 
 function viewports.remove(name)
@@ -174,15 +172,15 @@ function viewports.remove(name)
 end
 
 function viewports.update(dt)
-	for i, vp in next, viewports.list do
-		vp.update(dt)
-		vp.updated()
+	for i = 1, #viewports.list do
+		viewports.list[i].update(dt)
+		viewports.list[i].updated()
 	end
 end
 
 function viewports.draw()
-	for i, vp in next, viewports.list do
-		vp.draw()
+	for i = 1, #viewports.list do
+		viewports.list[i].draw()
 	end
 end
 

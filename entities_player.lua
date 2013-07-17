@@ -67,7 +67,8 @@ function entities_player.new(x, y, z, vp)
 
 	--joint = love.physics.newDistanceJoint( anchor:getBody(), weapon:getBody(), -10, -10, 10, 10, false)
 
-	--local weapon2 = love.physics.newFixture(love.physics.newBody(vp.map.data.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--local weapon2 = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+
 	--weapon2:getBody():setActive(false)
 	--hitbox:setUserData(self)
 	--weapon2:setSensor(true)

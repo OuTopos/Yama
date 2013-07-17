@@ -13,6 +13,8 @@ function swarms.new()
 	private.updated = false
 	private.random = math.random(1, 1000)
 
+	private.viewports = {}
+
 	function public.insert(entity)
 		table.insert(private.entities, entity)
 		entity.visible = {}
@@ -25,7 +27,6 @@ function swarms.new()
 		-- Update and add to buffer
 		for key=1, #private.entities do
 			local entity = private.entities[key]
-
 
 			if entity.destroyed then
 				table.remove(private.entities, key)
@@ -55,6 +56,7 @@ function swarms.new()
 
 	function public.setUpdated(updated)
 		private.updated = updated
+		private.viewports = {}
 	end
 
 	function public.addToBuffer(vp)
@@ -70,6 +72,10 @@ function swarms.new()
 
 	function public.getEntities()
 		return private.entities
+	end
+
+	function public.addViewport(vp)
+		table.insert(private.viewports, vp)
 	end
 
 	return public
