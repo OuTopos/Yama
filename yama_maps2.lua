@@ -36,6 +36,8 @@ function maps.load(path)
 		function public.load()
 			if private.data.orientation == "orthogonal" then
 
+				physics.setWorld(private.world)
+
 				-- Creating Physics World
 				private.data.properties.xg = private.data.properties.xg or 0
 				private.data.properties.yg = private.data.properties.yg or 0

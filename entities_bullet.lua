@@ -1,13 +1,13 @@
 entities_bullet = {}
 
-function entities_bullet.new( x, y, z, vp )
+function entities_bullet.new( map, x, y, z )
 	local self = {}
 
-	local camera = vp.getCamera()
-	local buffer = vp.getBuffer()
-	local map = vp.getMap()
-	local swarm = vp.getSwarm()
-	local world = swarm.getWorld()
+	--local camera = vp.getCamera()
+	--local buffer = vp.getBuffer()
+	--local map = vp.getMap()
+	--local swarm = vp.getSwarm()
+	local world = map.getWorld()
 
 	-- Common variables
 	local width, height = 8, 8
@@ -31,21 +31,23 @@ function entities_bullet.new( x, y, z, vp )
 	-- SPRITE (PLAYER)	
 	images.quads.add( "bullet", 8, 8 )
 	images.load( "bullet" ):setFilter( "linear", "linear" )
-	local bullet = yama.buffers.newSprite( images.load( "bullet" ), images.quads.data[ "bullet" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
+	local bulletsprite = yama.buffers.newSprite( images.load( "bullet" ), images.quads.data[ "bullet" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 
-	table.insert( bufferBatch.data, bullet )
+	table.insert( bufferBatch.data, bulletsprite )
 
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
-	anchor:setGroupIndex( -1 )
+	--local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
+	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
+	bullet:setGroupIndex( -1 )
 
-	anchor:setUserData(self)
-	anchor:setRestitution( 0.70 )
-	anchor:getBody( ):setFixedRotation( false )
-	anchor:getBody( ):setLinearDamping( 0.3 )
-	anchor:getBody( ):setMass( 0.4 )
-	anchor:getBody( ):setInertia( 0.2 )
-	anchor:getBody( ):setGravityScale( 1 )
+	bullet:setUserData(self)
+	bullet:setRestitution( 0.70 )
+	bullet:getBody( ):setFixedRotation( false )
+	bullet:getBody( ):setLinearDamping( 0.3 )
+	bullet:getBody( ):setMass( 0.4 )
+	bullet:getBody( ):setInertia( 0.2 )
+	bullet:getBody( ):setGravityScale( 1 )
+	bullet:getBody( ):setBullet( true )
 
 	function self.update( dt )
 		self.updatePosition( )
@@ -55,22 +57,22 @@ function entities_bullet.new( x, y, z, vp )
 	end
 	
 	function self.shoot( fx, fy )
-		anchor:getBody( ):applyLinearImpulse( fx, fy )
+		bullet:getBody( ):applyLinearImpulse( fx, fy )
 	end
 
 	function self.updatePosition( xn, yn )
-		x = anchor:getBody( ):getX( )
-		y = anchor:getBody( ):getY( )
-		r = anchor:getBody( ):getAngle( )
+		x = bullet:getBody( ):getX( )
+		y = bullet:getBody( ):getY( )
+		r = bullet:getBody( ):getAngle( )
 
 		bufferBatch.x = self.getX( )
 		bufferBatch.y = self.getY( )
 		bufferBatch.z = 100
 		bufferBatch.r = r
 		
-		bullet.x = x --math.floor(x + 0.5)
-		bullet.y = y --math.floor(y-16 + 0.5)
-		bullet.r = aim
+		bulletsprite.x = x --math.floor(x + 0.5)
+		bulletsprite.y = y --math.floor(y-16 + 0.5)
+		bulletsprite.r = aim
 
 	end
 
@@ -144,22 +146,19 @@ function entities_bullet.new( x, y, z, vp )
 		love.graphics.setBlendMode( "alpha" )
 
 		if hud.enabled then
-			physics.draw( anchor, { 0, 255, 0, 102 } )
+			physics.draw( bullet, { 0, 255, 0, 102 } )
 		end
 	end
 
-	function self.addToBuffer( )
-		buffer.add( bufferBatch )
+	function self.addToBuffer( vp )
+		vp.getBuffer( ).add( bufferBatch )
 	end
 
-	function self.addToBuffer2( buffer )
-		buffer.add( bufferBatch )
-	end
 
 	-- Basic functions
 	function self.setPosition( x, y )
-		anchor.body:setPosition( x, y )
-		anchor.body:setLinearVelocity( 0, 0 )
+		bullet.body:setPosition( x, y )
+		bullet.body:setLinearVelocity( 0, 0 )
 	end
 	
 	function self.getPosition( )
@@ -199,7 +198,7 @@ function entities_bullet.new( x, y, z, vp )
 		return direction
 	end
 	function self.destroy( )
-		anchor:getBody():destroy()
+		bullet:getBody():destroy()
 		self.destroyed = true
 	end
 

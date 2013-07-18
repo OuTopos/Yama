@@ -3,8 +3,8 @@ physics.enabled = true
 physics.world = nil
 
 function physics.setWorld(world)
-	physics.world = world
-	physics.world:setCallbacks(physics.beginContact, physics.endContact, nil, nil)
+	--physics.world = world
+	world:setCallbacks(physics.beginContact, physics.endContact, nil, nil)
 end
 
 function physics.update(dt)

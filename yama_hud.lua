@@ -10,8 +10,8 @@ function hud.drawR(vp)
 		local buffer = vp.getBuffer()
 		local entities = swarm.getEntities()
 
-		--if map.data then
-			physics.draw(swarm.getWorld())
+		--if map.getData() then
+			physics.draw(map.getWorld())
 		--end
 
 		-- Entities
@@ -60,9 +60,9 @@ function hud.draw(vp)
 		love.graphics.print("Entities: "..#entities, left + 2, top + 2)
 		love.graphics.print("  Visible: "..#vp.entities, left + 2, top + 12)
 		-- Map
-		if map.data then
-			love.graphics.print("Map: "..map.data.width.."x"..map.data.height.."x"..map.data.layercount, left + 2, top + 22)
-			love.graphics.print("  View: "..map.view.width.."x"..map.view.height.." ("..map.view.x..":"..map.view.y..")", left + 2, top + 32)
+		if map.getData() then
+			love.graphics.print("Map: "..map.getData().width.."x"..map.getData().height.."x"..map.getData().layercount, left + 2, top + 22)
+			--love.graphics.print("  View: "..map.view.width.."x"..map.view.height.." ("..map.view.x..":"..map.view.y..")", left + 2, top + 32)
 
 			love.graphics.print("  Tiles: "..map.tilesInView.."/"..map.tilesInMap, left + 2, top + 42)
 			-- Physics
@@ -70,8 +70,8 @@ function hud.draw(vp)
 				love.graphics.print("Physics: "..physics.world:getBodyCount(), left + 2, top + 52)
 			end
 			-- Player
-			if map.data.player then
-				local player = map.data.player
+			if map.getData().player then
+				local player = map.getData().player
 				love.graphics.print("Player: "..player.getX()..":"..player.getY(), left + 2, top + 62)
 				love.graphics.print("  Direction: "..player.getDirection().."   "..yama.g.getRelativeDirection(player.getDirection()), left + 2, top + 72)
 				love.graphics.print("  Stick: "..love.joystick.getAxis(1, 1), left + 2, top + 82)
@@ -101,8 +101,8 @@ function hud.draw(vp)
 		love.graphics.print("              sy: "..camera.sy, right-118, top + 62)
 		love.graphics.print("  x: "..camera.x, right-118, top + 72)
 		love.graphics.print("              y: "..camera.y, right-118, top + 72)
-		if map.data then
-		love.graphics.print("                          ("..math.floor( camera.x / map.data.tilewidth)..":"..math.floor( camera.y / map.data.tileheight)..")", right-118, top + 72)
+		if map.getData() then
+		love.graphics.print("                          ("..math.floor( camera.x / map.getData().tilewidth)..":"..math.floor( camera.y / map.getData().tileheight)..")", right-118, top + 72)
 
 		end
 
@@ -114,7 +114,7 @@ function hud.draw(vp)
 
 		-- 
 		if player then
-			love.graphics.print("Player: "..math.floor( player.getX() / map.data.tilewidth)..":"..math.floor( player.getY() / map.data.tileheight), left + 2, top + 152)
+			love.graphics.print("Player: "..math.floor( player.getX() / map.getData().tilewidth)..":"..math.floor( player.getY() / map.getData().tileheight), left + 2, top + 152)
 			love.graphics.print("  x = "..player.getX(), left + 2, top + 162)
 			love.graphics.print("  y = "..player.getY(), left + 2, top + 172)
 			love.graphics.print("  z = "..player.getZ(), left + 2, top + 182)
