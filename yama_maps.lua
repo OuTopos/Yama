@@ -73,9 +73,16 @@ function maps.load(path)
 		private.viewports = {}
 
 		function public.addViewport(vp)
+			-- Set camera boundaries for the viewport.
 			vp.getCamera().setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
+
+			-- Make the camera follow the player.
 			vp.getCamera().follow = private.player
+
+			-- Create a visible entities table for the viewport.
 			private.entities.visible[vp] = {}
+
+			-- Insert the viewport in the viewports table.
 			table.insert(private.viewports, vp)
 		end
 
@@ -92,6 +99,9 @@ function maps.load(path)
 		-- DEBUG
 		public.tilesInMap = 0
 		public.tilesInView = 0
+
+
+		-- INIT
 
 		function private.load()
 			if private.data.orientation == "orthogonal" then
