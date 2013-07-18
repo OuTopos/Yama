@@ -23,6 +23,8 @@ function cameras.new(vp)
 
 	self.view = {}
 
+	local poop = 0
+
 	function self.set()
 		love.graphics.push()
 		love.graphics.translate(self.width/2*self.sx, self.height/2*self.sy)

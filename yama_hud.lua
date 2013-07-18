@@ -6,9 +6,8 @@ function hud.drawR(vp)
 		local lh = 10
 		local camera = vp.getCamera()
 		local map = vp.getMap()
-		local swarm = map.getSwarm()
 		local buffer = vp.getBuffer()
-		local entities = swarm.getEntities()
+		local entities = map.getEntities()
 
 		--if map.getData() then
 			physics.draw(map.getWorld())
@@ -39,9 +38,8 @@ function hud.draw(vp)
 		
 		local camera = vp.getCamera()
 		local map = vp.getMap()
-		local swarm = map.getSwarm()
 		local buffer = vp.getBuffer()
-		local entities = swarm.getEntities()
+		local entities = map.getEntities()
 
 		-- Debug text.
 		
@@ -57,8 +55,8 @@ function hud.draw(vp)
 		love.graphics.print("FPS: "..love.timer.getFPS(), right - 39, top + 2)
 
 		-- Entities
-		love.graphics.print("Entities: "..#entities, left + 2, top + 2)
-		love.graphics.print("  Visible: "..#vp.entities, left + 2, top + 12)
+		love.graphics.print("Entities: "..#entities.list, left + 2, top + 2)
+		love.graphics.print("  Visible: "..#entities.visible[vp], left + 2, top + 12)
 		-- Map
 		if map.getData() then
 			love.graphics.print("Map: "..map.getData().width.."x"..map.getData().height.."x"..map.getData().layercount, left + 2, top + 22)

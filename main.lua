@@ -2,14 +2,12 @@ yama = require("yama")
 
 require "images"
 require "physics"
---entities = require "entities"
-require "game"
 
 require "shaders"
 
 function love.load()
 	love.graphics.setDefaultImageFilter(yama.c.imageFilter, yama.c.imageFilter)
-	--scaleToggle = 1
+	scaleToggle = 1
 
 	yama.gui.load()
 	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
@@ -83,14 +81,8 @@ function love.keypressed(key)
 		end
 	end
 	if key == "e" then
-		for i=1,10 do
-			--entities.new("tree", math.random(1, worldWidth), math.random(1, worldHeight))
-			--entities.new("coin", math.random(1, camera.width), math.random(1, camera.height), 0)
-			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
-		end
-
-		map1.getSwarm().insert(yama.entities.new(map1, "monster", math.random(100, 300), math.random(100, 300), 0))
-		map1.getSwarm().insert(yama.entities.new(map1, "humanoid", math.random(100, 300), math.random(100, 300), 0))
+		jonasMap.spawn("monster", math.random(100, 300), math.random(100, 300), 0)
+		jonasMap.spawn("humanoid", math.random(100, 300), math.random(100, 300), 0)
 	end
 	if key == "q" then
 		local ents = entities.data[yama.viewports.list.a.getMap()]
@@ -102,20 +94,21 @@ function love.keypressed(key)
 		yama.viewports.list.a.camera.setPosition(100, 100)
 	end
 	if key == "2" then
-		vp2.getCamera().follow = map1.getSwarm().getEntities()[math.random(1, #map1.getSwarm().getEntities())]
+		jonasMap.getCamera().follow = jonasMap.getSwarm().getEntities()[math.random(1, #map1.getSwarm().getEntities())]
 	end
 	if key == "0" then
 		scaleToggle = scaleToggle + 1
 		if scaleToggle > 5 then
 			scaleToggle = 1
 		end
-		yama.viewports.list.a.setScale(scaleToggle)
+		vp1.setScale(scaleToggle)
 	end
 end
 
 function love.update(dt)
+	local timescale = 1 - love.joystick.getAxis(1, 3)
 	if not yama.g.paused then
-		yama.maps.update(dt)
+		yama.maps.update(dt * timescale)
 	end
 end
 

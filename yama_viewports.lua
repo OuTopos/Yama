@@ -67,14 +67,6 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		private.camera.update(dt, public, map)
 	end
 
-	function public.updated()
-		--if private.map.data then
-		--	private.swarm.setUpdated(false)
-		--	private.map.data.updated = false
-		--end
-	end
-
-
 	function public.draw()
 		private.camera.set()
 		love.graphics.setCanvas(private.canvas)
@@ -92,6 +84,7 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		love.graphics.setCanvas()
 
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.sx, private.sy)
+		--private.buffer.reset()
 	end
 
 	function public.view(map)

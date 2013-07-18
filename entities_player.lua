@@ -162,7 +162,7 @@ function entities_player.new(map, x, y, z)
 
 		if state == "walk" then
 			if love.keyboard.isDown("lshift") or love.joystick.isDown(1, 5) then
-				vmultiplier = vmultiplier * 300
+				vmultiplier = vmultiplier * 3
 			end
 			fx = velocity * vmultiplier * math.cos(direction)
 			fy = velocity * vmultiplier * math.sin(direction)
