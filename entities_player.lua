@@ -1,10 +1,10 @@
 entities_player = {}
 
-function entities_player.new(x, y, z, vp)
+function entities_player.new(map, x, y, z)
 	local self = {}
 
 	local private = {}
-	private.world = vp.getSwarm().getWorld()
+	private.world = map.getWorld()
 
 	-- Sprite variables
 	local width, height = 64, 64
@@ -162,7 +162,7 @@ function entities_player.new(x, y, z, vp)
 
 		if state == "walk" then
 			if love.keyboard.isDown("lshift") or love.joystick.isDown(1, 5) then
-				vmultiplier = vmultiplier * 3
+				vmultiplier = vmultiplier * 300
 			end
 			fx = velocity * vmultiplier * math.cos(direction)
 			fy = velocity * vmultiplier * math.sin(direction)

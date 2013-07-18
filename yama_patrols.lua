@@ -11,8 +11,8 @@ function patrols.new(loop, radius)
 	local order = nil
 
 	function self.set(name, map)
-		if map.data.patrols[name] then
-			patrol = map.data.patrols[name]
+		if map.getData().patrols[name] then
+			patrol = map.getData().patrols[name]
 			k = 0
 			self.next()
 		end

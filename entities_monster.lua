@@ -1,10 +1,10 @@
 entities_monster = {}
 
-function entities_monster.new(x, y, z, vp)
+function entities_monster.new(map, x, y, z)
 	local self = {}
 
 	local private = {}
-	private.world = vp.getSwarm().getWorld()
+	private.world = map.getWorld()
 
 	-- Common variables
 	local width, height = 32, 38
@@ -32,7 +32,7 @@ function entities_monster.new(x, y, z, vp)
 
 	-- PATROL
 	local patrol = yama.patrols.new()
-	patrol.set("1", vp.getMap())
+	patrol.set("1", map)
 	--patrol.setLoop(false)
 	--patrol.setRadius(32)
 

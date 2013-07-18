@@ -9,14 +9,10 @@ require "shaders"
 
 function love.load()
 	love.graphics.setDefaultImageFilter(yama.c.imageFilter, yama.c.imageFilter)
-	scaleToggle = 1
+	--scaleToggle = 1
 
 	yama.gui.load()
-
-	--music = love.audio.newSource("sound/music.ogg", "static")
-	--music:setLooping(true)
-	--love.audio.play(music)
-	--vp3 = yama.viewports.new(yama.screen.width/2-100, 100, 0, 200, 200, 1, 1, true)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
 end
 
 function love.keypressed(key)
@@ -63,10 +59,11 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		vp1 = yama.viewports.new(0, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
-		vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
-		vp1.getMap().load(vp1, "test/arkanos", "door1")
-		vp2.getMap().load(vp2, "test/house1_room1", "door1")
+		jonasMap = yama.maps.load("test/arkanos")
+		vp1.view(jonasMap)
+
+		--vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
+		--vp2.view(map1)
 	end
 	if key == "d" then
 		yama.maps.load("test/house1_room1", "door1")
@@ -75,8 +72,8 @@ function love.keypressed(key)
 		yama.maps.load("test/platform", "test")	
 	end
 	if key == "z" then
-		vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
-		vp1.getMap().load(vp1, "test/gravityfall", "test")
+		matMap = yama.maps.load("test/gravityfall")
+		vp1.view(matMap)
 	end
 	if key == "a" then
 		if player then
@@ -92,8 +89,8 @@ function love.keypressed(key)
 			--entities.new("monster", math.random(100, 300), math.random(100, 300), 0)
 		end
 
-		vp1.getSwarm().insert(yama.entities.new("monster", math.random(100, 300), math.random(100, 300), 0, vp1))
-		vp1.getSwarm().insert(yama.entities.new("humanoid", math.random(100, 300), math.random(100, 300), 0, vp1))
+		map1.getSwarm().insert(yama.entities.new(map1, "monster", math.random(100, 300), math.random(100, 300), 0))
+		map1.getSwarm().insert(yama.entities.new(map1, "humanoid", math.random(100, 300), math.random(100, 300), 0))
 	end
 	if key == "q" then
 		local ents = entities.data[yama.viewports.list.a.getMap()]
@@ -105,7 +102,7 @@ function love.keypressed(key)
 		yama.viewports.list.a.camera.setPosition(100, 100)
 	end
 	if key == "2" then
-		yama.viewports.list.a.camera.follow = entities.data[yama.viewports.list.a.map][math.random(1, #entities.data[yama.viewports.list.a.map])]
+		vp2.getCamera().follow = map1.getSwarm().getEntities()[math.random(1, #map1.getSwarm().getEntities())]
 	end
 	if key == "0" then
 		scaleToggle = scaleToggle + 1
@@ -118,12 +115,12 @@ end
 
 function love.update(dt)
 	if not yama.g.paused then
-		yama.viewports.update(dt)
+		yama.maps.update(dt)
 	end
 end
 
 function love.draw()
-	yama.viewports.draw()
+	yama.maps.draw()
 
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 3)

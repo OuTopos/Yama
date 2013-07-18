@@ -15,8 +15,8 @@ require("entities_humanoid")
 require("entities_mplayer")
 require("entities_bullet")
 
-function entities.new(type, x, y, z, vp)
-	local entity = _G["entities_"..type].new(x, y, z, vp)
+function entities.new(map, type, x, y, z)
+	local entity = _G["entities_"..type].new(map, x, y, z)
 	return entity
 end
 

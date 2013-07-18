@@ -1,13 +1,9 @@
 entities_humanoid = {}
 
-function entities_humanoid.new(x, y, z, vp)
+function entities_humanoid.new(map, x, y, z)
 	local self = {}
-
-	local camera = vp.getCamera()
-	local buffer = vp.getBuffer()
-	local map = vp.getMap()
-	local swarm = vp.getSwarm()
-	local world = swarm.getWorld()
+	
+	local world = map.getWorld()
 
 	-- Sprite variables
 	local width, height = 64, 64
@@ -193,7 +189,7 @@ function entities_humanoid.new(x, y, z, vp)
 	end
 
 	function self.addToBuffer(vp)
-		buffer.add(bufferBatch)
+		vp.getBuffer().add(bufferBatch)
 	end
 
 	-- Monster functions

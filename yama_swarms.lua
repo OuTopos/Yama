@@ -11,7 +11,6 @@ function swarms.new()
 	private.entities = {}
 
 	private.updated = false
-	private.random = math.random(1, 1000)
 
 	private.viewports = {}
 
@@ -20,10 +19,7 @@ function swarms.new()
 		entity.visible = {}
 	end
 
-	function public.update(dt, vp)
-		if not private.updated then
-			private.world:update(dt)
-		end
+	function public.update(dt, map)
 		-- Update and add to buffer
 		for key=1, #private.entities do
 			local entity = private.entities[key]
@@ -32,22 +28,23 @@ function swarms.new()
 				table.remove(private.entities, key)
 				key = key - 1
 			else
-				local wasVisible = entity.visible[vp] or false
-				local isVisible = vp.getCamera().isInside(entity.cx, entity.cy, entity.radius)
-				
-				if wasVisible and isVisible then
-					table.insert(vp.entities, entity)
-				elseif not wasVisible and isVisible then
-					table.insert(vp.entities, entity)
-					entity.visible[vp] = true
-					vp.getBuffer().reset()
-				elseif wasVisible and not isVisible then
-					entity.visible[vp] = false
-					vp.getBuffer().reset()
-				end
-
-				if not private.updated then
-					entity.update(dt)
+				entity.update(dt)
+				local viewports = map.getViewports()
+				for i=1, #viewports do
+					local vp = viewports[i]
+					local wasVisible = entity.visible[vp] or false
+					local isVisible = vp.getCamera().isInside(entity.cx, entity.cy, entity.radius)
+					
+					if wasVisible and isVisible then
+						table.insert(vp.entities, entity)
+					elseif not wasVisible and isVisible then
+						table.insert(vp.entities, entity)
+						entity.visible[vp] = true
+						vp.getBuffer().reset()
+					elseif wasVisible and not isVisible then
+						entity.visible[vp] = false
+						vp.getBuffer().reset()
+					end
 				end
 			end
 		end
@@ -55,15 +52,14 @@ function swarms.new()
 	end
 
 	function public.setUpdated(updated)
-		private.updated = updated
-		private.viewports = {}
+		--private.updated = updated
+		--private.viewports = {}
 	end
 
 	function public.addToBuffer(vp)
 		for i = 1, #vp.entities do
 			vp.entities[i].addToBuffer(vp)
 		end
-		vp.entities = {}
 	end
 
 	function public.getWorld()
@@ -79,17 +75,6 @@ function swarms.new()
 	end
 
 	return public
-end
-
-function swarms.add()
-	local swarm = swarms.new()
-	table.insert(swarms.list, swarm)
-	return swarm
-end
-
-function swarms.update(dt)
-	for i = 1, #swarms.list do
-	end
 end
 
 return swarms

@@ -6,12 +6,12 @@ function hud.drawR(vp)
 		local lh = 10
 		local camera = vp.getCamera()
 		local map = vp.getMap()
-		local swarm = vp.getSwarm()
+		local swarm = map.getSwarm()
 		local buffer = vp.getBuffer()
 		local entities = swarm.getEntities()
 
 		--if map.data then
-			physics.draw(vp.getSwarm().getWorld())
+			physics.draw(swarm.getWorld())
 		--end
 
 		-- Entities
@@ -36,10 +36,10 @@ function hud.draw(vp)
 		local right = vp.getWidth() / vp.getSx()
 		local top = 0
 		local bottom = vp.getHeight() / vp.getSy()
-
+		
 		local camera = vp.getCamera()
 		local map = vp.getMap()
-		local swarm = vp.getSwarm()
+		local swarm = map.getSwarm()
 		local buffer = vp.getBuffer()
 		local entities = swarm.getEntities()
 

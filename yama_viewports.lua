@@ -22,15 +22,8 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 	-- Create the buffer
 	private.buffer = yama.buffers.new(private)
 
-
-	-- Create table to store visible entities
-	private.swarm = yama.swarms.add(public)
-
 	-- Create the map
-	private.map = yama.maps.new(public)
-
-	--private.map = yama.maps.add(public)
-
+	private.map = nil
 
 	public.entities = {}
 
@@ -70,44 +63,21 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		public.reSize()
 	end
 
-	function public.update(dt)
-		--if private.map.data then
-			--if not private.map.data.updated then
-				--private.map.data.world:update(dt)
-				--private.map.data.updated = true
-			--end
-		private.swarm.update(dt, public)
-		private.swarm.setUpdated(true)
-			--entities.update(dt, private)
-		--end
-		--update swarm (incl phys)
-		--private.swarm.update(dt, vp)
-		--update maps
-		--update 
-		private.camera.update(dt, public)
-		private.map.update(dt, public)
+	function public.update(dt, map)
+		private.camera.update(dt, public, map)
 	end
 
 	function public.updated()
-		if private.map.data then
-			private.swarm.setUpdated(false)
-			private.map.data.updated = false
-		end
+		--if private.map.data then
+		--	private.swarm.setUpdated(false)
+		--	private.map.data.updated = false
+		--end
 	end
 
 
 	function public.draw()
 		private.camera.set()
 		love.graphics.setCanvas(private.canvas)
-
-
-		-- Check if the buffer has been reset 
-		if next(private.buffer.data) == nil then
-			if private.map.data then
-				private.swarm.addToBuffer(public)
-				private.map.addToBuffer(public)
-			end
-		end
 
 		-- Draw the buffer
 		private.buffer.draw()
@@ -121,11 +91,23 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		yama.hud.draw(public)
 		love.graphics.setCanvas()
 
-		-- Draw the HUD
-		--yama.hud.draw(private)
-
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.sx, private.sy)
-		private.buffer.reset()
+	end
+
+	function public.view(map)
+		if map then
+			if private.map then
+				private.map.removeViewport(public)
+			end
+			private.map = map
+			private.map.addViewport(public)
+		else
+			if private.map then
+				private.map.removeViewport(public)
+			end
+			private.map = nil
+		end
+
 	end
 
 	function public.getCamera()
@@ -138,10 +120,6 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 
 	function public.getMap()
 		return private.map
-	end
-
-	function public.getSwarm()
-		return private.swarm
 	end
 
 	function public.getWidth()

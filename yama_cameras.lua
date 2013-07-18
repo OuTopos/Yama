@@ -36,7 +36,7 @@ function cameras.new(vp)
 		love.graphics.pop()
 	end
 
-	function self.update(dt, vp)
+	function self.update(dt, vp, map)
 		if self.follow then
 			self.center(self.follow.getX(), self.follow.getY())
 		end
@@ -50,12 +50,12 @@ function cameras.new(vp)
 			self.r = self.r - 1 * dt
 		end
 
-		self.view.width = math.ceil(self.width/vp.getMap().getTilewidth()) + 1
-		self.view.height = math.ceil(self.height/vp.getMap().getTileheight()) + 1
+		self.view.width = math.ceil(self.width/map.getTilewidth()) + 1
+		self.view.height = math.ceil(self.height/map.getTileheight()) + 1
 
 		-- Moving the map view to camera x,y
-		local x = math.floor(self.x/vp.getMap().getTilewidth())
-		local y = math.floor(self.y/vp.getMap().getTileheight())
+		local x = math.floor(self.x/map.getTilewidth())
+		local y = math.floor(self.y/map.getTileheight())
 
 		if x ~= self.view.x or y ~= self.view.y then
 			-- Camera moved to another tile
