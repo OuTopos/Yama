@@ -22,6 +22,7 @@ function entities_mplayer.new( map, x, y, z )
 	local aim = 0
 
 	local remove = false
+	local doLeg = 1
 
 	--local x, y, z = xn, yn, 32
 	local xvel, yvel = 0, 0
@@ -83,27 +84,7 @@ function entities_mplayer.new( map, x, y, z )
 	--canon:getBody( ):setMass( 0.0001 )
 	--canon:getBody( ):setInertia( 1 )
 	--canon:getBody( ):setGravityScale( 9 )
-	
-	local leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+32, "dynamic"), love.physics.newRectangleShape(width, height), 1 )
-	leg1:setGroupIndex( -1 )
-	leg1:getBody( ):setFixedRotation( true )
-	joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
-	--joint:enableMotor(true)
-	--joint:setMaxMotorForce(100000)
-	joint:setLowerLimit(0)
-	joint:setUpperLimit(32)	
-	--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
-	--leg2:setGroupIndex( -1 )
-	--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
 
-
-	anchor:setUserData(self)
-	--anchor:setRestitution( 0 )	
-	anchor:getBody( ):setFixedRotation( true )
-	anchor:getBody( ):setLinearDamping( 1 )
-	anchor:getBody( ):setMass( 1 )
-	anchor:getBody( ):setInertia( 1 )
-	anchor:getBody( ):setGravityScale( 9 )
 
 	function self.update( dt )
 		self.updateInput( dt )
@@ -119,8 +100,18 @@ function entities_mplayer.new( map, x, y, z )
 	local jumping = false
 
 	function self.updateInput( dt )
+
+		movement( dt )
+		bulletSpawn( dt )
+		jumping( dt )
+		legJump( dt )
+
+	end
+
+	function movement( dt )
 		fx, fy = 0, 0
 		relativeDirection = ""
+		xv, yv = anchor:getBody():getLinearVelocity()
 		if yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 1 ), love.joystick.getAxis( 1, 2 ) ) > 0.25 then
 			nx = love.joystick.getAxis( 1, 1 )
 			ny = love.joystick.getAxis( 1, 2 )
@@ -134,7 +125,6 @@ function entities_mplayer.new( map, x, y, z )
 			else
 				fx = xJumpForce
 			end
-			xv, yv = anchor:getBody():getLinearVelocity()
 			if xv <= maxSpeed then
 				applyForce( fx, fy )
 			end
@@ -150,7 +140,10 @@ function entities_mplayer.new( map, x, y, z )
 				applyForce( fx, fy )
 			end
 		end
+	end
 
+
+	function bulletSpawn(dt)
 		-- BULLETS --
 		local nx = love.joystick.getAxis( 1, 5 )
 		local ny = love.joystick.getAxis( 1, 4 )
@@ -166,8 +159,7 @@ function entities_mplayer.new( map, x, y, z )
 				
 				xPosBulletSpawn = x + 28*xrad 
 				yPosBulletSpawn = y + 28*yrad
-				bullet = yama.entities.new( map, "bullet", xPosBulletSpawn, yPosBulletSpawn, 0 )
-				map.getSwarm().insert(bullet)
+				bullet = map.spawn( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0 )
 				fxbullet = bulletImpulse * nx
 				fybullet = bulletImpulse * ny				
 				
@@ -180,9 +172,11 @@ function entities_mplayer.new( map, x, y, z )
 				end
 			end
 		end
-		-- BULLETS END --
+	end
 
-		-- JUMPING NEW --
+	function jumping(dt)
+
+		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
 		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 6 ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
@@ -207,53 +201,62 @@ function entities_mplayer.new( map, x, y, z )
 				pContact:setFriction( stopFriction ) 
 			end
 		end
+	end
 
-		 --JUMPING LEG  A BUTTON --
-		--xv, yv = anchor:getBody():getLinearVelocity()
-		--if love.joystick.isDown( 1, 1 ) then
-		--	leg1:getBody():applyLinearImpulse( 0, -jumpForce )
-		--end
+
+	function legJump( dt )
+		print( "legJump")
+
+		if doLeg == 1 then
+			print( "doLeg")
+			legSetup()
+		end
+
+		--JUMPING LEG  A BUTTON --
+		xv, yv = anchor:getBody():getLinearVelocity()
+		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 6 ) ) then
+			leg1:getBody():applyLinearImpulse( 0, -2000 )
+			allowjump = false
+		end
 		
 		--if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
-		--	applyForce( 0, -jumpIncreaser )
+		--	applyForce( 0, 0.001 )
 		--	jumpTimer = jumpTimer + dt
 		--	if jumpTimer > jumpMaxTimer and OnGround then
 		--		jumpTimer = 0
 		--	end
 		--end
 
-		--if pContact then
-		--	if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
-		--		pContact:setFriction( stopFriction ) 
-		--	end
-		--end
+		if pContact then
+			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
+				pContact:setFriction( stopFriction ) 
+			end
+		end
 		-- JUUMPING END --
 
-		-- JUMPING LEG  A BUTTON --
-		--xv, yv = anchor:getBody():getLinearVelocity()
-		--if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
-		--	anchor:getBody():applyLinearImpulse( 0, -jumpForce )
-		--	allowjump = false
-		--end
-		
-		--if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
-		--	applyForce( 0, -jumpIncreaser )
-		--	jumpTimer = jumpTimer + dt
-		--	if jumpTimer > jumpMaxTimer and OnGround then
-		--		jumpTimer = 0
-		--	end
-		--end
-		--if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) and onGround == true then
-		--	allowjump = true
-		--end
-		--if pContact then
-		--	if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
-		--		pContact:setFriction( stopFriction ) 
-		--	end
-		--end
-		-- JUUMPING END --
-		
+	end
+	function legSetup( )
+		doLeg = 0
 
+		leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+80, "dynamic"), love.physics.newRectangleShape( 6, 48 ) )
+		--leg1:setGroupIndex( -1 )
+		leg1:getBody( ):setFixedRotation( true )
+		leg1:setUserData(self)
+		leg1Joint = love.physics.newRevoluteJoint( leg1:getBody(), anchor:getBody(), x, y, false )
+	
+		
+		anchor:setUserData(self)
+		anchor:setRestitution( 00.1 )	
+		leg1:getBody( ):setLinearDamping( 1 )
+		leg1:getBody( ):setMass( 0.01 )
+		leg1:getBody( ):setInertia( 1 )
+		leg1:getBody( ):setGravityScale( 9 )
+
+		--joint:enableMotor(true)
+		--joint:setMaxMotorForce(100000)	
+		--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
+		--leg2:setGroupIndex( -1 )
+		--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
 	end
 	
 	function applyForce( fx, fy )
