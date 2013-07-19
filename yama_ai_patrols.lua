@@ -20,8 +20,8 @@ function patrols.new()
 
 	-- Public Functions
 	function public.set(name, map)
-		if map.getData().patrols[name] then
-			private.current = map.getData().patrols[name]
+		if map.getPatrol(name) then
+			private.current = map.getPatrol(name)
 			private.k = 0
 			public.next()
 		end
@@ -53,22 +53,22 @@ function patrols.new()
 
 	function public.next()
 		if private.order == "random" then
-			private.k = math.random(1, #private.current)
-			private.v = private.current[private.k]
+			private.k = math.random(1, #private.current.points)
+			private.v = private.current.points[private.k]
 		elseif private.order == "reverse" then
 			private.k = private.k - 1
 		else
 			private.k = private.k + 1
 		end
 
-		if private.current[private.k] then
-			private.v = private.current[private.k]
+		if private.current.points[private.k] then
+			private.v = private.current.points[private.k]
 		elseif private.loop and private.order == "reverse" then
-			private.k = #private.current
-			private.v = private.current[private.k]
+			private.k = #private.current.points
+			private.v = private.current.points[private.k]
 		elseif private.loop then
 			private.k = 1
-			private.v = private.current[private.k]
+			private.v = private.current.points[private.k]
 		else
 			private.v = nil
 

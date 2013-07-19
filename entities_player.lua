@@ -8,7 +8,7 @@ function entities_player.new(map, x, y, z)
 
 	-- Sprite variables
 	local width, height = 64, 64
-	local ox, oy = width/2, height
+	local ox, oy = width/2, height-8
 	local sx, sy = 1, 1
 	local r = 0
 	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
@@ -37,7 +37,7 @@ function entities_player.new(map, x, y, z)
 	-- SPRITE
 	local tileset = "tilesets/lpcfemaletest"
 	images.quads.add(tileset, width, height)
-	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y+radius, z, r, sx, sy, ox, oy)
+	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], x, y, z, r, sx, sy, ox, oy)
 	table.insert(bufferBatch.data, sprite)
 
 	tilesetArrow = "directionarrow"
@@ -51,14 +51,14 @@ function entities_player.new(map, x, y, z)
 	
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), self, true)
-	local anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius), mass)
+	local anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
 	--anchor:setCategory(1)
 	--love.physics.newBody(vp.map.data.world, x, y-radius, "dynamic"),
-	local weapon = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
+	local weapon = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
 	weapon:setUserData(self)
 	weapon:setSensor(true)
 	--weapon:getBody():setActive(false)
@@ -186,7 +186,7 @@ function entities_player.new(map, x, y, z)
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		anchor:getBody():setAngle(direction)
-		yama.buffers.setBatchPosition(bufferBatch, self:getX(), self:getY() + radius)
+		yama.buffers.setBatchPosition(bufferBatch, self:getX(), self:getY())
 		spriteArrow.x = x --math.floor(x + 0.5)
 		spriteArrow.y = y-16 --math.floor(y-16 + 0.5)
 		spriteArrow.r = aim
@@ -285,7 +285,7 @@ function entities_player.new(map, x, y, z)
 		return x - ox * sx
 	end
 	function self.getOY()
-		return y - oy * sy + radius
+		return y - oy * sy-- + radius
 	end
 	function self.getWidth()
 		return width * sx
@@ -297,6 +297,7 @@ function entities_player.new(map, x, y, z)
 		return direction
 	end
 	function self.destroy()
+		print("Destroying player")
 		anchor:getBody():destroy()
 		self.destroyed = true
 	end

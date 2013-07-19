@@ -11,8 +11,8 @@ function patrols.new(loop, radius)
 	local order = nil
 
 	function self.set(name, map)
-		if map.getData().patrols[name] then
-			patrol = map.getData().patrols[name]
+		if map.getPatrol(name) then
+			patrol = map.getPatrol(name)
 			k = 0
 			self.next()
 		end
@@ -36,22 +36,22 @@ function patrols.new(loop, radius)
 
 	function self.next()
 		if order == "random" then
-			k = math.random(1, #patrol)
-			v = patrol[k]
+			k = math.random(1, #patrol.points)
+			v = patrol.points[k]
 		elseif order == "reverse" then
 			k = k - 1
 		else
 			k = k + 1
 		end
 
-		if patrol[k] then
-			v = patrol[k]
+		if patrol.points[k] then
+			v = patrol.points[k]
 		elseif loop and order == "reverse" then
-			k = #patrol
-			v = patrol[k]
+			k = #patrol.points
+			v = patrol.points[k]
 		elseif loop then
 			k = 1
-			v = patrol[k]
+			v = patrol.points[k]
 		end
 	end
 

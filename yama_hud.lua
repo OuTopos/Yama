@@ -15,13 +15,13 @@ function hud.drawR(vp)
 
 		-- Entities
 
-		for i = 1, #entities do
-			if camera.isInside(entities[i].getOX(), entities[i].getOY(), entities[i].getWidth(), entities[i].getHeight()) then
+		for i = 1, #entities.list do
+			if camera.isInside(entities.list[i].getOX(), entities.list[i].getOY(), entities.list[i].getWidth(), entities.list[i].getHeight()) then
 				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(i, entities[i].getX(), entities[i].getY()+2)
-				love.graphics.circle("fill", entities[i].getX(), entities[i].getY(), 1)
+				love.graphics.print(i, entities.list[i].getX(), entities.list[i].getY()+2)
+				love.graphics.circle("fill", entities.list[i].getX(), entities.list[i].getY(), 1)
 				love.graphics.setColor(255, 0, 0, 255)
-				love.graphics.rectangle( "line", entities[i].getOX(), entities[i].getOY(), entities[i].getWidth(), entities[i].getHeight() )
+				love.graphics.rectangle( "line", entities.list[i].getOX(), entities.list[i].getOY(), entities.list[i].getWidth(), entities.list[i].getHeight() )
 			end
 		end
 

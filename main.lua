@@ -10,7 +10,7 @@ function love.load()
 	scaleToggle = 1
 
 	yama.gui.load()
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, true)
 end
 
 function love.keypressed(key)
@@ -85,8 +85,7 @@ function love.keypressed(key)
 		jonasMap.spawn("humanoid", math.random(100, 300), math.random(100, 300), 0)
 	end
 	if key == "q" then
-		local ents = entities.data[yama.viewports.list.a.getMap()]
-		ents[#ents].destroy()
+		jonasMap.getEntities().list[1].destroy()
 		--entities.new("fplayer", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
 	end
 

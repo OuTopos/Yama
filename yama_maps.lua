@@ -27,12 +27,12 @@ function maps.load(path)
 		end
 
 		function private.entities.update(dt)
-			for key=1, #private.entities.list do
+			for key=#private.entities.list, 1, -1 do
 				local entity = private.entities.list[key]
 
 				if entity.destroyed then
 					table.remove(private.entities.list, key)
-					key = key - 1
+					--vp.getBuffer().reset()
 				else
 					entity.update(dt)
 					for i=1, #private.viewports do
@@ -69,6 +69,7 @@ function maps.load(path)
 			return entity
 		end
 
+
 		-- VIEWPORTS
 		private.viewports = {}
 
@@ -87,8 +88,7 @@ function maps.load(path)
 		end
 
 		function public.removeViewport(vp)
-			-- W I P!
-			for i=1, #private.viewports do
+			for i=#private.viewports, 1, -1 do
 				if private.viewports[i] == vp then
 					private.entities.visible[private.viewports[i]] = nil
 					table.remove(private.viewports, i)
@@ -96,12 +96,97 @@ function maps.load(path)
 			end
 		end
 
-		-- DEBUG
-		public.tilesInMap = 0
-		public.tilesInView = 0
+		-- PATROLS
+		private.patrols = {}
+		function public.getPatrol(i)
+			return private.patrols[i]
+		end
+
+		-- SPAWNS
+		private.spawns = {}
 
 
-		-- INIT
+
+		-- LOAD - Physics
+		function private.loadPhysics()
+			private.data.properties.xg = private.data.properties.xg or 0
+			private.data.properties.yg = private.data.properties.yg or 0
+			private.data.properties.sleep = private.data.properties.sleep or true
+			private.data.properties.meter = private.data.properties.meter or private.data.tileheight
+
+			private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
+			love.physics.setMeter(private.data.properties.meter)
+			physics.setWorld(private.world)
+		end
+
+
+		-- LOAD - Tilesets
+		function private.loadTilesets()
+			for i,tileset in ipairs(private.data.tilesets) do
+				local name = string.match(tileset.image, "../../images/(.*).png")
+				images.quads.add(name, tileset.tilewidth, tileset.tileheight)
+			end
+		end
+
+
+		-- LOAD - Layers
+		function private.loadLayers()
+			for i = #private.data.layers, 1, -1 do
+				local layer = private.data.layers[i]
+				if layer.type == "objectgroup" then
+					if layer.properties.type == "collision" then
+						-- Block add to physics.
+						for i, object in ipairs(layer.objects) do
+							local fixture = public.shape(object)
+							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
+						end
+					elseif layer.properties.type == "entities" then
+						-- Block add to physics.
+						for i, object in ipairs(layer.objects) do
+							local entity = public.spawn(object.type, object.x, object.y, object.properties.z)
+							entity.name = object.name
+							entity.type = object.type
+							entity.properties = object.properties
+						end
+					elseif layer.properties.type == "patrols" then
+						-- Adding patrols to the patrols table
+						for i, object in ipairs(layer.objects) do
+							if object.shape == "polyline" then
+								local patrol = {}
+								patrol.name = object.name
+								patrol.type = object.type
+								patrol.properties = object.properties
+								patrol.points = {}
+								for k, vertice in ipairs(object.polyline) do
+									table.insert(patrol.points, {x = object.polyline[k].x+object.x, y = object.polyline[k].y+object.y})
+								end
+								private.patrols[patrol.name] = patrol
+							end
+						end
+					elseif layer.properties.type == "portals" then
+						-- Adding portals to physics objects
+						for i, object in ipairs(layer.objects) do
+							local fixture = public.shape(object)
+							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
+							fixture:setSensor(true)
+						end
+					elseif layer.properties.type == "spawns" then
+						-- Adding spawns to the spawns list
+						for i, object in ipairs(layer.objects) do
+							private.spawns[object.name] = object
+						end
+					end
+					table.remove(private.data.layers, layerkey)
+				elseif layer.properties.type == "quadmap" then
+					-- spritebatch backgrounds and stuff
+				end
+			end
+			private.data.layercount = #private.data.layers
+
+			-- Debug vars
+			public.tilesInMap = 0
+			public.tilesInView = 0
+		end
 
 		function private.load()
 			if private.data.orientation == "orthogonal" then
@@ -109,94 +194,15 @@ function maps.load(path)
 				private.sx = tonumber(private.data.properties.sx) or 1
 				private.sy = tonumber(private.data.properties.sy) or 1
 
-
-				-- Creating Physics World
-				private.data.properties.xg = private.data.properties.xg or 0
-				private.data.properties.yg = private.data.properties.yg or 0
-				private.data.properties.sleep = private.data.properties.sleep or true
-				private.data.properties.meter = private.data.properties.meter or private.data.tileheight
-
-
-
-				private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
-				love.physics.setMeter(private.data.properties.meter)
-				physics.setWorld(private.world)
+				private.loadPhysics()
+				private.loadTilesets()
+				private.loadLayers()
 				
 				-- Create Boundaries
 				if private.data.properties.boundaries ~= "false" then
 					private.data.boundaries = love.physics.newFixture(love.physics.newBody(private.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, private.data.width * private.data.tilewidth + 1, -1, private.data.width * private.data.tilewidth + 1, private.data.height * private.data.tileheight + 1, -1, private.data.height * private.data.tileheight))
 				end
 
-				-- Create table for patrols
-				private.data.patrols = {}
-				
-				-- Creating table the spawns
-				private.data.spawns = {}
-
-				-- Loading objects layers.
-				for i = #private.data.layers, 1, -1 do
-					local layer = private.data.layers[i]
-					if layer.type == "objectgroup" then
-						if layer.properties.type == "collision" then
-							-- Block add to physics.
-							for i, object in ipairs(layer.objects) do
-								local fixture = public.shape(object)
-								fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
-							end
-						elseif layer.properties.type == "entities" then
-							-- Block add to physics.
-							for i, object in ipairs(layer.objects) do
-								local entity = public.spawn(object.type, object.x, object.y, object.properties.z)
-								entity.name = object.name
-								entity.type = object.type
-								entity.properties = object.properties
-							end
-						elseif layer.properties.type == "patrols" then
-							-- Adding patrols to the patrols table
-							for i, object in ipairs(layer.objects) do
-								if object.shape == "polyline" then
-									private.data.patrols[object.name] = {}
-									for k, vertice in ipairs(object.polyline) do
-										table.insert(private.data.patrols[object.name], {x = object.polyline[k].x+object.x, y = object.polyline[k].y+object.y})
-									end
-								end
-							end
-						elseif layer.properties.type == "portals" then
-							-- Adding portals to physics objects
-							for i, object in ipairs(layer.objects) do
-								local fixture = public.shape(object)
-								fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
-								fixture:setSensor(true)
-							end
-						elseif layer.properties.type == "spawns" then
-							-- Adding spawns to the spawns list
-							for i, object in ipairs(layer.objects) do
-								private.data.spawns[object.name] = object
-							end
-						end
-						table.remove(private.data.layers, layerkey)
-					elseif layer.properties.type == "quadmap" then
-						-- spritebatch backgrounds and stuff
-					end
-
-				end
-				private.data.layercount = #private.data.layers
-
-				-- Loading tilesets
-				for i,tileset in ipairs(private.data.tilesets) do
-					local name = string.match(tileset.image, "../../images/(.*).png")
-					images.quads.add(name, tileset.tilewidth, tileset.tileheight)
-				end
-
-				-- Setting camera boundaries
-				--camera.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
-
-
-				--vp.getCamera().setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
-				
-
-				--vp2.camera.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
-				--vp3.camera.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
 
 				-- Spawning player
 				private.data.properties.player_entity = private.data.properties.player_entity or "player"

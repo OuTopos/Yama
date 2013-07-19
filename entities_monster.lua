@@ -131,6 +131,7 @@ function entities_monster.new(map, x, y, z)
 		return height * sy
 	end
 	function self.destroy()
+		print("Destroying monster")
 		anchor:getBody():destroy()
 		self.destroyed = true
 	end

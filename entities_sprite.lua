@@ -1,7 +1,17 @@
 entities_sprite = {}
 
-function entities_sprite.new(x, y, z, vp)
+function entities_sprite.new(map, x, y, z)
 	local public = {}
+	local private = {}
+
+	private.x, private.y, private.z = x, y, z
+	private.r = 0
+	private.width, private.height = 0, 0
+	private.sx, private.sy = 1, 1
+	private.ox, private.oy = 0, 0
+
+	private.tileset = nil
+	private.sprite = nil
 
           name = "Plant",
           type = "monster",
@@ -16,18 +26,10 @@ function entities_sprite.new(x, y, z, vp)
             ["z"] = "1"
           }
 
-	-- Common variables
-	private.x, private.y, private.z = x, y, object.properties.z
-	private.width, private.height = vp.
-	private.ox, private.oy = width/2, height
-	private.sx, private.sy = 1, 1
-	private.r = 0
-
-	local private.cx, private.cy = private.x - private.ox + private.width / 2, private.y - private.oy + private.height / 2
-	local private.radius = yama.g.getDistance(cx, cy, x - ox, y - oy)
+	
 
 	-- SPRITE
-	public.tileset = "eyeball"
+	private.tileset = "eyeball"
 	images.quads.add(public.tileset, public.width, public.height)
 	local public.sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], public.x, public.y, public.z, public.r, public.sx, public.sy, public.ox, public.oy)
 
@@ -35,33 +37,44 @@ function entities_sprite.new(x, y, z, vp)
 	function public.update(dt)
 	end
 
-	function public.addToBuffer()
+	function public.addToBuffer(vp)
 		vp.buffer.add(sprite)
 	end
 
 	-- Common functions
 	function public.getX()
-		return x
+		return private.x
 	end
 	function public.getY()
-		return y
+		return private.y
 	end
 	function public.getZ()
-		return z
+		return private.z
 	end
 	function public.getOX()
-		return x - ox * sx
+		return private.x - private.ox * private.sx
 	end
 	function public.getOY()
-		return y - oy * sy + radius
+		return private.y - private.oy * private.sy
 	end
 	function public.getWidth()
-		return width * sx
+		return private.width * private.sx
 	end
 	function public.getHeight()
-		return height * sy
+		return private.height * private.sy
 	end
+	function public.getCX()
+		return private.x - (private.ox + private.width / 2) * private.sx
+	end
+	function public.getCY()
+		return private.y - (private.oy + private.height / 2) * private.sx
+	end
+	function public.getRadius()
+		return yama.g.getDistance(private.cx, private.cy, private.x - private.ox, private.y - private.oy)
+	end
+	
 	function public.destroy()
+		self.destroyed = true
 	end
 
 	return public
