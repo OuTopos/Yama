@@ -26,9 +26,10 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- BUTTONS --
 
-	shoulderButtonRB = 6
-	faceButtonA = 1
-	lefStick = 1
+	buttonShoulderR = 6
+	buttunFaceA = 1
+	buttunTriggerR = 3
+
 
 	--local x, y, z = xn, yn, 32
 	local xvel, yvel = 0, 0
@@ -68,7 +69,7 @@ function entities_mplayer.new( map, x, y, z )
 	table.insert( bufferBatch.data, spriteArrow )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width-1, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width, height) )
 	anchor:setGroupIndex( -1 )
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )	
@@ -78,8 +79,8 @@ function entities_mplayer.new( map, x, y, z )
 	anchor:getBody( ):setInertia( 1 )
 	anchor:getBody( ):setGravityScale( 9 )
 	anchor:getBody( ):setBullet( true )
-	local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape( width, height-2 ) )
-	anchor2:setGroupIndex( -1 )
+	--local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape( width, height-2 ) )
+	--anchor2:setGroupIndex( -1 )
 	
 	--local canon = love.physics.newFixture(love.physics.newBody( world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
 	--canon:setGroupIndex( -1 )
@@ -102,7 +103,6 @@ function entities_mplayer.new( map, x, y, z )
 	function self.update( dt )
 		self.updateInput( dt )
 		self.updatePosition( )
-		self.triggersupdate( )
 		
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
@@ -116,8 +116,8 @@ function entities_mplayer.new( map, x, y, z )
 
 		movement( dt )
 		bulletSpawn( dt )
-		--jumping( dt )
-		legJump( dt )
+		jumping( dt )
+		--legJump( dt )
 
 	end
 
@@ -191,44 +191,56 @@ function entities_mplayer.new( map, x, y, z )
 
 		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, shoulderButtonRB ) ) then
+		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, buttonShoulderR ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
+		
+		jumpAccelerator( dt, buttonShoulderR, jumpMaxTimer, jumpIncreaser )
 
-		jumpAccelerator( dt, shoulderButtonRB, jumpMaxTimer, jumpIncreaser )
-
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, shoulderButtonRB ) and onGround == true then
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) and onGround == true then
 			allowjump = true
 		end
 
 		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, shoulderButtonRB ) then
+			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) then
 				pContact:setFriction( stopFriction ) 
 			end
 		end
 	end
 
 
+
 	function legJump( dt )
-		print( "legJump")
+		--print( "legJump")
 
 		if doLeg == 1 then
 			print( "doLeg")
 			legSetup()
 		end
+		
+		if allowjump and yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 3 ), love.joystick.getAxis( 1, 3 ) ) > 0.25 then
+			print( "JUMP!")
+			distance = math.abs(love.joystick.getAxis( 1, 3 ))
+			anchor:getBody():applyLinearImpulse( 0, -(jumpForce*distance) )
+			allowjump = false
+
+		end
+
+
+		
 
 		--JUMPING LEG  A BUTTON --
-		if allowjump and love.joystick.isDown( 1, faceButtonA ) then
-			leg1:getBody():applyLinearImpulse( 0, -jumpForce )
-			allowjump = false
+		if allowjump and love.joystick.isDown( 1, buttunFaceA ) then
+			--leg1:getBody():applyLinearImpulse( 0, -jumpForce )
+			--allowjump = false
 		end
 		
-		jumpAccelerator( dt, faceButtonA, jumpMaxTimer, jumpIncreaser )
+		jumpAccelerator( dt, 3, jumpMaxTimer, jumpIncreaser )
 			
 
 		if pContact then
-			if not love.keyboard.isDown( " " ) and not love.joystick.isDown( 1, faceButtonA ) then
+			if not love.keyboard.isDown( " " ) and not love.joystick.isDown( 1, buttunFaceA ) then
 				pContact:setFriction( stopFriction ) 
 			end
 		end
@@ -250,7 +262,7 @@ function entities_mplayer.new( map, x, y, z )
 	function legSetup( )
 		doLeg = 0
 
-		leg1 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape(width, height), 1 )
+		leg1 = love.physics.newFixture(love.physics.newBody( world, anchor:getBody():getX(), anchor:getBody():getY(), "dynamic"), love.physics.newRectangleShape(width, height), 1 )
 		leg1:setGroupIndex( -1 )
 		leg1:getBody( ):setFixedRotation( true )
 		joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
@@ -290,43 +302,6 @@ function entities_mplayer.new( map, x, y, z )
 	local animation = {}
 	animation.quad = 1
 	animation.dt = 0
-
-	-- TRIGGERS
-	local triggers = {}
-	triggers.data = {}
-	function triggers.add(entity)
-		table.insert(triggers.data, entity)
-		print("Trigger now added, legnth is: "..#triggers.data)
-	end
-
-	function triggers.remove(entity)
-		for i=1, #triggers.data do
-			if triggers.data[i] == entity then
-				print("removing "..#triggers.data)
-				triggers.data[i].active = false
-				table.remove(triggers.data, i)
-				print("gone! "..#triggers.data)
-			end
-		end
-	end
-
-	function self.triggersupdate()
-		table.sort(triggers.data, triggers.sort)
-
-		if triggers.data[1] then
-			triggers.data[1].active = true
-			for i=2, #triggers.data do
-				triggers.data[i].active = false
-			end
-		end
-	end
-
-	function triggers.sort( a, b )
-		if getDistance(a:getX(), a:getY(), x, y) < getDistance(b:getX(), b:getY(), x, y) then
-			return true
-		end
-		return false
-	end
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
@@ -423,10 +398,10 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- Common functions
 	function self.getX( )
-		return math.floor( x + 0.5 )
+		return x
 	end
 	function self.getY()
-		return math.floor( y + 0.5 )
+		return y
 	end
 	function self.getZ( )
 		return z

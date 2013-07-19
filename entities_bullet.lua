@@ -51,7 +51,6 @@ function entities_bullet.new( map, x, y, z )
 
 	function self.update( dt )
 		self.updatePosition( )
-		self.triggersupdate( )
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
 	end
@@ -79,46 +78,6 @@ function entities_bullet.new( map, x, y, z )
 	local animation = {}
 	animation.quad = 1
 	animation.dt = 0
-
-	-- TRIGGERS
-	local triggers = {}
-	triggers.data = {}
-	function triggers.add(entity)
-		table.insert( triggers.data, entity )
-		print("Trigger now added, legnth is: "..#triggers.data)
-	end
-
-	function triggers.remove( entity )
-		for i=1, #triggers.data do
-			if triggers.data[i] == entity then
-				print( "removing "..#triggers.data )
-				triggers.data[ i ].active = false
-				table.remove( triggers.data, i )
-				print( "gone! "..#triggers.data )
-			end
-		end
-	end
-
-	function self.triggersupdate( )
-		--print("updating")
-		table.sort( triggers.data, triggers.sort )
-
-		if triggers.data[ 1 ] then
-			triggers.data[ 1 ].active = true
-			for i=2, #triggers.data do
-				triggers.data[ i ].active = false
-			end
-		end
-	end
-
-	function triggers.sort(a, b)
-		--print("a = "..getDistance(a:getX(), a:getY(), x, y))
-		if getDistance(a:getX(), a:getY(), x, y) < getDistance(b:getX(), b:getY(), x, y) then
-			return true
-		end
-
-		return false
-	end
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
