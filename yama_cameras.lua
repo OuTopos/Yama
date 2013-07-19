@@ -137,6 +137,14 @@ function cameras.new(vp)
 		end
 	end
 
+	function self.isEntityInside(entity)
+		if yama.g.getDistance(self.x, self.y, entity.getCX(), entity.getCY()) < self.radius + entity.getRadius() then
+			return true
+		else
+			return false
+		end
+	end
+
 	function self.isInside(x, y, radius)
 		if yama.g.getDistance(self.cx, self.cy, x, y) < self.radius + radius then
 			return true

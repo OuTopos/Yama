@@ -1782,6 +1782,468 @@ return {
           properties = {
             ["z"] = "1"
           }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 32,
+          y = 64,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 99,
+          y = 116,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 111,
+          y = 129,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 131,
+          y = 113,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 117,
+          y = 100,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 137,
+          y = 128,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "2"
+          }
+        },
+        {
+          name = "Tunna",
+          type = "sprite",
+          shape = "rectangle",
+          x = 157,
+          y = 115,
+          width = 0,
+          height = 0,
+          gid = 13,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 174,
+          y = 146,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 247,
+          y = 122,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 189,
+          y = 513,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 287,
+          y = 513,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 325,
+          y = 319,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 208,
+          y = 403,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 322,
+          y = 226,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 329,
+          y = 244,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 340,
+          y = 264,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 333,
+          y = 280,
+          width = 0,
+          height = 0,
+          gid = 5,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 86,
+          y = 223,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 100,
+          y = 235,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 111,
+          y = 197,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 136,
+          y = 219,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 88,
+          y = 280,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 121,
+          y = 207,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 90,
+          y = 185,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 136,
+          y = 181,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 121,
+          y = 246,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 147,
+          y = 235,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 170,
+          y = 270,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 157,
+          y = 238,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 186,
+          y = 242,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 86,
+          y = 250,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 117,
+          y = 274,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 176,
+          y = 259,
+          width = 0,
+          height = 0,
+          gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
         }
       }
     }

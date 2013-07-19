@@ -38,7 +38,7 @@ function maps.load(path)
 					for i=1, #private.viewports do
 						local vp = private.viewports[i]
 						local wasVisible = entity.visible[vp] or false
-						local isVisible = vp.getCamera().isInside(entity.cx, entity.cy, entity.radius)
+						local isVisible = vp.getCamera().isEntityInside(entity)
 						
 						if wasVisible and isVisible then
 							table.insert(private.entities.visible[vp], entity)
@@ -147,6 +147,9 @@ function maps.load(path)
 							entity.name = object.name
 							entity.type = object.type
 							entity.properties = object.properties
+							if object.gid and entity.setGID then
+								entity.setGID(object.gid)
+							end
 						end
 					elseif layer.properties.type == "patrols" then
 						-- Adding patrols to the patrols table
@@ -239,6 +242,26 @@ function maps.load(path)
 			local image = images.load(imagename)
 			local quad = images.quads.data[imagename][quadnumber]
 			return image, quad
+		end
+
+		function public.getTileset(gid)
+			i = #private.data.tilesets
+			while private.data.tilesets[i] and gid < private.data.tilesets[i].firstgid do
+				i = i - 1
+			end
+			return private.data.tilesets[i]
+		end
+
+		function public.getSprite(gid, x, y, z, r, sx, sy, ox, oy, kx, ky)
+			i = #private.data.tilesets
+			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
+				i = i - 1
+			end
+			local imagename = string.match(private.data.tilesets[i].image, "../../images/(.*).png")
+			local quadnumber = quad-(private.data.tilesets[i].firstgid-1)
+			local image = images.load(imagename)
+			local quad = images.quads.data[imagename][quadnumber]
+			return yama.buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky)
 		end
 
 		function public.update(dt)

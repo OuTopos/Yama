@@ -304,5 +304,170 @@
    </properties>
    <ellipse/>
   </object>
+  <object name="Tunna" type="sprite" gid="13" x="32" y="64">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="99" y="116">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="111" y="129">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="131" y="113">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="117" y="100">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="137" y="128">
+   <properties>
+    <property name="z" value="2"/>
+   </properties>
+  </object>
+  <object name="Tunna" type="sprite" gid="13" x="157" y="115">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="174" y="146">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="247" y="122">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="189" y="513">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="287" y="513">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="325" y="319">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="208" y="403">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="322" y="226">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="329" y="244">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="340" y="264">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="5" x="333" y="280">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="86" y="223">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="100" y="235">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="111" y="197">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="136" y="219">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="88" y="280">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="121" y="207">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="90" y="185">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="136" y="181">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="121" y="246">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="147" y="235">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="170" y="270">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="157" y="238">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="186" y="242">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="86" y="250">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="117" y="274">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="3" x="176" y="259">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

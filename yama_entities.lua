@@ -2,6 +2,7 @@ local entities = {}
 
 entities.base = require("entitiesBase")
 -- Entity types
+require("entities_sprite")
 require("entities_player")
 require("entities_fplayer")
 require("entities_pplayer")

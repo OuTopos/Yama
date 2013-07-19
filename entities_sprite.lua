@@ -4,44 +4,44 @@ function entities_sprite.new(map, x, y, z)
 	local public = {}
 	local private = {}
 
+	-- SPRITE VARIABLES
 	private.x, private.y, private.z = x, y, z
 	private.r = 0
 	private.width, private.height = 0, 0
 	private.sx, private.sy = 1, 1
 	private.ox, private.oy = 0, 0
 
-	private.tileset = nil
 	private.sprite = nil
 
-          name = "Plant",
-          type = "monster",
-          shape = "rectangle",
-          x = 288,
-          y = 224,
-          width = 0,
-          height = 0,
-          gid = 11,
-          visible = true,
-          properties = {
-            ["z"] = "1"
-          }
+	function public.setGID(gid)
+		if gid then
+			local tileset = map.getTileset(gid)
+			local imagename = string.match(tileset.image, "../../images/(.*).png")
+			local image = images.load(imagename)
+			local quad = images.quads.data[imagename][gid-tileset.firstgid+1]
 
-	
+			private.y = private.y - tileset.tileheight
+			private.width, private.height = tileset.tilewidth, tileset.tileheight
+			--private.ox, private.oy = 16, 32
 
-	-- SPRITE
-	private.tileset = "eyeball"
-	images.quads.add(public.tileset, public.width, public.height)
-	local public.sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], public.x, public.y, public.z, public.r, public.sx, public.sy, public.ox, public.oy)
+			private.sprite = yama.buffers.newSprite(image, quad, private.x, private.y, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
+		end
+	end
 
-	-- Standard functions
+	-- DEFAULT FUNCTIONS
 	function public.update(dt)
 	end
 
 	function public.addToBuffer(vp)
-		vp.buffer.add(sprite)
+		if private.sprite then
+			vp.getBuffer().add(private.sprite)
+		end
 	end
 
-	-- Common functions
+	function public.destroy()
+		self.destroyed = true
+	end
+
 	function public.getX()
 		return private.x
 	end
@@ -64,17 +64,13 @@ function entities_sprite.new(map, x, y, z)
 		return private.height * private.sy
 	end
 	function public.getCX()
-		return private.x - (private.ox + private.width / 2) * private.sx
+		return private.x - private.ox + private.width / 2
 	end
 	function public.getCY()
-		return private.y - (private.oy + private.height / 2) * private.sx
+		return private.y - private.oy + private.height / 2
 	end
 	function public.getRadius()
-		return yama.g.getDistance(private.cx, private.cy, private.x - private.ox, private.y - private.oy)
-	end
-	
-	function public.destroy()
-		self.destroyed = true
+		return yama.g.getDistance(public.getCX(), public.getCY(), private.x - private.ox * private.sx, private.y - private.oy * private.sy)
 	end
 
 	return public
