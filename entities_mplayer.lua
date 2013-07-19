@@ -24,6 +24,12 @@ function entities_mplayer.new( map, x, y, z )
 	local remove = false
 	local doLeg = 1
 
+	-- BUTTONS --
+
+	shoulderButtonRB = 6
+	faceButtonA = 1
+	lefStick = 1
+
 	--local x, y, z = xn, yn, 32
 	local xvel, yvel = 0, 0
 	local speed = 0
@@ -62,7 +68,7 @@ function entities_mplayer.new( map, x, y, z )
 	table.insert( bufferBatch.data, spriteArrow )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width-2, height) )
+	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width-1, height) )
 	anchor:setGroupIndex( -1 )
 	anchor:setUserData(self)
 	anchor:setRestitution( 0 )	
@@ -85,6 +91,13 @@ function entities_mplayer.new( map, x, y, z )
 	--canon:getBody( ):setInertia( 1 )
 	--canon:getBody( ):setGravityScale( 9 )
 
+	anchor:setUserData(self)
+	--anchor:setRestitution( 0 )	
+	anchor:getBody( ):setFixedRotation( true )
+	anchor:getBody( ):setLinearDamping( 1 )
+	anchor:getBody( ):setMass( 1 )
+	anchor:getBody( ):setInertia( 1 )
+	anchor:getBody( ):setGravityScale( 9 )
 
 	function self.update( dt )
 		self.updateInput( dt )
@@ -103,7 +116,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		movement( dt )
 		bulletSpawn( dt )
-		jumping( dt )
+		--jumping( dt )
 		legJump( dt )
 
 	end
@@ -178,26 +191,19 @@ function entities_mplayer.new( map, x, y, z )
 
 		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 6 ) ) then
+		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, shoulderButtonRB ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
-		
-		if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1,6 ) ) then
-			applyForce( 0, -jumpIncreaser )
-			jumpTimer = jumpTimer + dt
-			if jumpTimer > jumpMaxTimer and OnGround then
-				print( "jumptiner reset!")
-				jumpTimer = 0
-			end
-		end
 
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 6 ) and onGround == true then
+		jumpAccelerator( dt, shoulderButtonRB, jumpMaxTimer, jumpIncreaser )
+
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, shoulderButtonRB ) and onGround == true then
 			allowjump = true
 		end
 
 		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 6 ) then
+			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, shoulderButtonRB ) then
 				pContact:setFriction( stopFriction ) 
 			end
 		end
@@ -213,47 +219,45 @@ function entities_mplayer.new( map, x, y, z )
 		end
 
 		--JUMPING LEG  A BUTTON --
-		xv, yv = anchor:getBody():getLinearVelocity()
-		if allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 6 ) ) then
-			leg1:getBody():applyLinearImpulse( 0, -2000 )
+		if allowjump and love.joystick.isDown( 1, faceButtonA ) then
+			leg1:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
 		
-		--if jumpTimer < jumpMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, 1 ) ) then
-		--	applyForce( 0, 0.001 )
-		--	jumpTimer = jumpTimer + dt
-		--	if jumpTimer > jumpMaxTimer and OnGround then
-		--		jumpTimer = 0
-		--	end
-		--end
+		jumpAccelerator( dt, faceButtonA, jumpMaxTimer, jumpIncreaser )
+			
 
 		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, 1 ) then
+			if not love.keyboard.isDown( " " ) and not love.joystick.isDown( 1, faceButtonA ) then
 				pContact:setFriction( stopFriction ) 
 			end
 		end
 		-- JUUMPING END --
-
 	end
+
+	function jumpAccelerator( dt, button, jMaxTimer, jIncreaser )
+
+		if jumpTimer < jMaxTimer and ( love.keyboard.isDown( " " ) or love.joystick.isDown( 1, button ) ) then
+			applyForce( 0, -jIncreaser )
+			jumpTimer = jumpTimer + dt
+			if jumpTimer > jMaxTimer and OnGround then
+				print( "jumptiner reset!")
+				jumpTimer = 0
+			end
+		end
+	end
+
 	function legSetup( )
 		doLeg = 0
 
-		leg1 = love.physics.newFixture(love.physics.newBody( world, x, y+80, "dynamic"), love.physics.newRectangleShape( 6, 48 ) )
-		--leg1:setGroupIndex( -1 )
+		leg1 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape(width, height), 1 )
+		leg1:setGroupIndex( -1 )
 		leg1:getBody( ):setFixedRotation( true )
-		leg1:setUserData(self)
-		leg1Joint = love.physics.newRevoluteJoint( leg1:getBody(), anchor:getBody(), x, y, false )
-	
-		
-		anchor:setUserData(self)
-		anchor:setRestitution( 00.1 )	
-		leg1:getBody( ):setLinearDamping( 1 )
-		leg1:getBody( ):setMass( 0.01 )
-		leg1:getBody( ):setInertia( 1 )
-		leg1:getBody( ):setGravityScale( 9 )
-
+		joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
 		--joint:enableMotor(true)
-		--joint:setMaxMotorForce(100000)	
+		--joint:setMaxMotorForce(100000)
+		joint:setLowerLimit(0)
+		joint:setUpperLimit(0)	
 		--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
 		--leg2:setGroupIndex( -1 )
 		--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
