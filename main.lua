@@ -10,7 +10,7 @@ function love.load()
 	scaleToggle = 1
 
 	yama.gui.load()
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, true)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
 end
 
 function love.keypressed(key)

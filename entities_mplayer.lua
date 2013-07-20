@@ -418,6 +418,15 @@ function entities_mplayer.new( map, x, y, z )
 	function self.getHeight( )
 		return height * sy
 	end
+	function self.getCX()
+		return x - ox + width / 2
+	end
+	function self.getCY()
+		return y - oy + height / 2
+	end
+	function self.getRadius()
+		return yama.g.getDistance(self.getCX(), self.getCY(), x - ox * sx, y - oy * sy)
+	end
 	function self.getDirection( )
 		return direction
 	end

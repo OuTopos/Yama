@@ -1,7 +1,12 @@
 entities_monster = {}
 
 function entities_monster.new(map, x, y, z)
-	local self = {}
+	local public = {}
+	local private = {}
+
+	private.name = "Unnamed"
+	private.type = "sprite"
+	private.properties = {}
 
 	local private = {}
 	private.world = map.getWorld()
@@ -11,8 +16,8 @@ function entities_monster.new(map, x, y, z)
 	local ox, oy = width/2, height
 	local sx, sy = 1, 1
 	local r = 0
-	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+	public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
+	public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
 
 	-- Movement variables
 	local scale = (sx + sy) / 2
@@ -45,12 +50,12 @@ function entities_monster.new(map, x, y, z)
 
 	-- Anchor variables
 	local anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newCircleShape(radius), mass)
-	anchor:setUserData(self)
+	anchor:setUserData(public)
 	anchor:setRestitution( 0.9 )
 	anchor:getBody():setLinearDamping( 1 )
 
 	-- Monster variables
-	self.monster = true
+	public.monster = true
 	local hp = 0.75
 
 	-- Destination
@@ -58,7 +63,7 @@ function entities_monster.new(map, x, y, z)
 
 
 	-- Standard functions
-	function self.update(dt)
+	function public.update(dt)
 		-- Patrol stuff
 		patrol.update(x, y)
 
@@ -83,67 +88,83 @@ function entities_monster.new(map, x, y, z)
 		-- Position updates
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
-		sprite.x = self.getX()
-		sprite.y = self.getY() + radius
+		sprite.x = public.getX()
+		sprite.y = public.getY() + radius
 		--sprite.z = z
-		bufferBatch.x = self.getX()
-		bufferBatch.y = self.getY() + radius
+		bufferBatch.x = public.getX()
+		bufferBatch.y = public.getY() + radius
 		--bufferBatch.z = z
 
 		-- Animation updates
 		animation.update(dt, "eyeball_walk_"..yama.g.getRelativeDirection(direction))
 		sprite.quad = images.quads.data[tileset][animation.frame]
 		
-		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+		public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
+		public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
 	end
 
-	function self.addToBuffer(vp)
+	function public.addToBuffer(vp)
 		vp.getBuffer().add(bufferBatch)
 	end
 
 	-- Monster functions
 
-	function self.hurt(p)
+	function public.hurt(p)
 
+	end
+
+	function public.setName(name)
+		private.name = name
+	end
+	function public.setProperties(properties)
+		private.properties = properties
+	end
+	function public.getName()
+		return private.name
+	end
+	function public.getType()
+		return private.type
+	end
+	function public.getProperties()
+		return private.name
 	end
 
 	-- Common functions
-	function self.getX()
+	function public.getX()
 		return x
 	end
-	function self.getY()
+	function public.getY()
 		return y
 	end
-	function self.getZ()
+	function public.getZ()
 		return z
 	end
-	function self.getOX()
+	function public.getOX()
 		return x - ox * sx
 	end
-	function self.getOY()
+	function public.getOY()
 		return y - oy * sy + radius
 	end
-	function self.getWidth()
+	function public.getWidth()
 		return width * sx
 	end
-	function self.getHeight()
+	function public.getHeight()
 		return height * sy
 	end
-	function self.getCX()
+	function public.getCX()
 		return x - ox + width / 2
 	end
-	function self.getCY()
+	function public.getCY()
 		return y - oy + height / 2
 	end
-	function self.getRadius()
-		return yama.g.getDistance(self.getCX(), self.getCY(), x - ox * sx, y - oy * sy)
+	function public.getRadius()
+		return yama.g.getDistance(public.getCX(), public.getCY(), x - ox * sx, y - oy * sy)
 	end
-	function self.destroy()
+	function public.destroy()
 		print("Destroying monster")
 		anchor:getBody():destroy()
-		self.destroyed = true
+		public.destroyed = true
 	end
 
-	return self
+	return public
 end

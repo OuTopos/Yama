@@ -14,6 +14,13 @@
    </properties>
   </tile>
  </tileset>
+ <tileset firstgid="361" name="smalltrees" tilewidth="96" tileheight="128">
+  <image source="../../images/gamegraphics/smalltrees.png" width="288" height="128"/>
+ </tileset>
+ <tileset firstgid="364" name="flowers" tilewidth="26" tileheight="20">
+  <tileoffset x="0" y="10"/>
+  <image source="../../images/gamegraphics/flowers.png" width="78" height="20"/>
+ </tileset>
  <layer name="0" width="40" height="40">
   <properties>
    <property name="priority" value="0"/>
@@ -465,6 +472,56 @@
    </properties>
   </object>
   <object type="sprite" gid="3" x="176" y="259">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="361" x="416" y="320">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="362" x="352" y="256">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="363" x="352" y="352">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="362" x="415" y="392">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="361" x="459" y="349">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="361" x="104" y="521">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="363" x="128" y="640">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="363" x="57" y="510">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="362" x="141" y="475">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+  </object>
+  <object type="sprite" gid="366" x="224" y="544">
    <properties>
     <property name="z" value="1"/>
    </properties>

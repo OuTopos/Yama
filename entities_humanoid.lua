@@ -1,7 +1,12 @@
 entities_humanoid = {}
 
 function entities_humanoid.new(map, x, y, z)
-	local self = {}
+	local public = {}
+	local private = {}
+
+	private.name = "Unnamed"
+	private.type = "humanoid"
+	private.properties = {}
 	
 	local world = map.getWorld()
 
@@ -10,8 +15,8 @@ function entities_humanoid.new(map, x, y, z)
 	local ox, oy = width/2, height
 	local sx, sy = 1, 1
 	local r = 0
-	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+	public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
+	public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
 
 	-- Movement variables
 	local radius = 10
@@ -138,19 +143,19 @@ function entities_humanoid.new(map, x, y, z)
 
 	-- Anchor variables
 	local anchor = love.physics.newFixture(love.physics.newBody(world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
-	anchor:setUserData(self)
+	anchor:setUserData(public)
 	anchor:setRestitution( 0 )
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
 
 	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -64, 192, -96, 192, 96, 32, 64), 0)
-	hitbox:setUserData(self)
+	hitbox:setUserData(public)
 	hitbox:setSensor(true)
 	hitbox:setCategory(2)
 
 
 	-- Monster variables
-	self.monster = true
+	public.monster = true
 	local hp = 0.75
 
 	local brain = yama.ai.new()
@@ -158,7 +163,7 @@ function entities_humanoid.new(map, x, y, z)
 	brain.patrol.set(""..math.random(1, 3).."", map)
 
 	-- Standard functions
-	function self.update(dt)
+	function public.update(dt)
 		brain.update(x, y)
 
 		if brain.speed > 0 or brain.speed < 0 then
@@ -184,17 +189,17 @@ function entities_humanoid.new(map, x, y, z)
 				yama.buffers.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		end
-		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-		self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+		public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
+		public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
 	end
 
-	function self.addToBuffer(vp)
+	function public.addToBuffer(vp)
 		vp.getBuffer().add(bufferBatch)
 	end
 
 	-- Monster functions
 
-	function self.hurt(p, dx, dy)
+	function public.hurt(p, dx, dy)
 		hp = hp - p
 
 		local d = math.atan2(y-dy, x-dx)
@@ -204,40 +209,65 @@ function entities_humanoid.new(map, x, y, z)
 
 		print("ittai!")
 		if hp < 0 then
-			--self.die()
+			--public.die()
 		end
 	end
 
-	function self.getTeam()
+	function public.getTeam()
 		return team
 	end
 
-	-- Common functions
-	function self.getX()
-		return x
+	function public.setName(name)
+		private.name = name
 	end
-	function self.getY()
-		return y
+	function public.setProperties(properties)
+		private.properties = properties
 	end
-	function self.getZ()
-		return z
+	function public.getName()
+		return private.name
 	end
-	function self.getOX()
-		return x - ox * sx
+	function public.getType()
+		return private.type
 	end
-	function self.getOY()
-		return y - oy * sy + radius
-	end
-	function self.getWidth()
-		return width * sx
-	end
-	function self.getHeight()
-		return height * sy
-	end
-	function self.destroy()
-		anchor:getBody():destroy()
-		self.destroyed = true
+	function public.getProperties()
+		return private.name
 	end
 
-	return self
+	-- Common functions
+	function public.getX()
+		return x
+	end
+	function public.getY()
+		return y
+	end
+	function public.getZ()
+		return z
+	end
+	function public.getOX()
+		return x - ox * sx
+	end
+	function public.getOY()
+		return y - oy * sy + radius
+	end
+	function public.getWidth()
+		return width * sx
+	end
+	function public.getHeight()
+		return height * sy
+	end
+	function public.getCX()
+		return x - ox + width / 2
+	end
+	function public.getCY()
+		return y - oy + height / 2
+	end
+	function public.getRadius()
+		return yama.g.getDistance(public.getCX(), public.getCY(), x - ox * sx, y - oy * sy)
+	end
+	function public.destroy()
+		anchor:getBody():destroy()
+		public.destroyed = true
+	end
+
+	return public
 end

@@ -143,12 +143,13 @@ function maps.load(path)
 					elseif layer.properties.type == "entities" then
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
-							local entity = public.spawn(object.type, object.x, object.y, object.properties.z)
-							entity.name = object.name
-							entity.type = object.type
-							entity.properties = object.properties
-							if object.gid and entity.setGID then
-								entity.setGID(object.gid)
+							if object.type and object.type ~= "" then
+								local entity = public.spawn(object.type, object.x, object.y, object.properties.z)
+								entity.setName(object.name)
+								entity.setProperties(object.properties)
+								if object.gid and entity.setGID then
+									entity.setGID(object.gid)
+								end
 							end
 						end
 					elseif layer.properties.type == "patrols" then

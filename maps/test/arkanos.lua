@@ -32,6 +32,32 @@ return {
           }
         }
       }
+    },
+    {
+      name = "smalltrees",
+      firstgid = 361,
+      tilewidth = 96,
+      tileheight = 128,
+      spacing = 0,
+      margin = 0,
+      image = "../../images/gamegraphics/smalltrees.png",
+      imagewidth = 288,
+      imageheight = 128,
+      properties = {},
+      tiles = {}
+    },
+    {
+      name = "flowers",
+      firstgid = 364,
+      tilewidth = 26,
+      tileheight = 20,
+      spacing = 0,
+      margin = 0,
+      image = "../../images/gamegraphics/flowers.png",
+      imagewidth = 78,
+      imageheight = 20,
+      properties = {},
+      tiles = {}
     }
   },
   layers = {
@@ -2240,6 +2266,146 @@ return {
           width = 0,
           height = 0,
           gid = 3,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 416,
+          y = 320,
+          width = 0,
+          height = 0,
+          gid = 361,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 352,
+          y = 256,
+          width = 0,
+          height = 0,
+          gid = 362,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 352,
+          y = 352,
+          width = 0,
+          height = 0,
+          gid = 363,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 415,
+          y = 392,
+          width = 0,
+          height = 0,
+          gid = 362,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 459,
+          y = 349,
+          width = 0,
+          height = 0,
+          gid = 361,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 104,
+          y = 521,
+          width = 0,
+          height = 0,
+          gid = 361,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 128,
+          y = 640,
+          width = 0,
+          height = 0,
+          gid = 363,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 57,
+          y = 510,
+          width = 0,
+          height = 0,
+          gid = 363,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 141,
+          y = 475,
+          width = 0,
+          height = 0,
+          gid = 362,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 224,
+          y = 544,
+          width = 0,
+          height = 0,
+          gid = 366,
           visible = true,
           properties = {
             ["z"] = "1"
