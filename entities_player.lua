@@ -4,9 +4,7 @@ function entities_player.new(map, x, y, z)
 	local public = {}
 	local private = {}
 
-	private.name = "Unnamed"
 	private.type = "player"
-	private.properties = {}
 
 	private.world = map.getWorld()
 
@@ -95,23 +93,6 @@ function entities_player.new(map, x, y, z)
 	--patrol.set("1")
 
 
-	function public.update(dt)
-		cooldown = cooldown - dt
-		public.updateInput(dt)
-		public.updatePosition()
-
-		if private.move then
-			a = "walk"
-		else
-			a = "stand"
-		end
-		if private.state == "walk" or private.state == "stand" or private.state == "sword" then
-			animation.update(dt, "humanoid_"..private.state.."_"..yama.g.getRelativeDirection(private.direction))
-		else
-			animation.update(dt, "humanoid_die")
-		end
-		sprite.quad = images.quads.data[tileset][animation.frame]
-	end
 
 	function public.updateInput(dt)
 		local nx, ny = 0, 0
@@ -262,11 +243,6 @@ function entities_player.new(map, x, y, z)
 		end
 	end
 
-	function public.addToBuffer(vp)
-		vp.getBuffer().add(bufferBatch)
-		vp.getBuffer().add(spriteArrow)
-	end
-
 	-- Basic functions
 	function public.setPosition(x, y)
 		private.anchor.body:setPosition(x, y)
@@ -283,23 +259,46 @@ function entities_player.new(map, x, y, z)
 	function public.getYvel()
 		return yvel
 	end
+	--function public.getDirection()
+	--	return private.direction
+	--end
 
 	-- DEFAULT FUNCTIONS
+	function initialize(object)
 
-	function public.setName(name)
-		private.name = name
 	end
-	function public.setProperties(properties)
-		private.properties = properties
+
+	function public.update(dt)
+		cooldown = cooldown - dt
+		public.updateInput(dt)
+		public.updatePosition()
+
+		if private.move then
+			a = "walk"
+		else
+			a = "stand"
+		end
+		if private.state == "walk" or private.state == "stand" or private.state == "sword" then
+			animation.update(dt, "humanoid_"..private.state.."_"..yama.g.getRelativeDirection(private.direction))
+		else
+			animation.update(dt, "humanoid_die")
+		end
+		sprite.quad = images.quads.data[tileset][animation.frame]
 	end
-	function public.getName()
-		return private.name
+
+	function public.addToBuffer(vp)
+		vp.getBuffer().add(bufferBatch)
+		vp.getBuffer().add(spriteArrow)
 	end
+
+	function public.destroy()
+		print("Destroying player")
+		private.anchor:getBody():destroy()
+		public.destroyed = true
+	end
+
 	function public.getType()
 		return private.type
-	end
-	function public.getProperties()
-		return private.name
 	end
 	function public.getX()
 		return private.x
@@ -311,10 +310,10 @@ function entities_player.new(map, x, y, z)
 		return private.z
 	end
 	function public.getOX()
-		return private.x - private.ox * private.sx
+		return private.x - (private.ox - private.oex) * private.sx
 	end
 	function public.getOY()
-		return private.y - private.oy * private.sy
+		return private.y - (private.oy - private.oey)  * private.sy
 	end
 	function public.getWidth()
 		return private.width * private.sx
@@ -330,14 +329,6 @@ function entities_player.new(map, x, y, z)
 	end
 	function public.getRadius()
 		return yama.g.getDistance(public.getCX(), public.getCY(), private.x - private.ox * private.sx, private.y - private.oy * private.sy)
-	end
-	function public.getDirection()
-		return private.direction
-	end
-	function public.destroy()
-		print("Destroying player")
-		private.anchor:getBody():destroy()
-		public.destroyed = true
 	end
 
 	return public

@@ -4,9 +4,7 @@ function entities_sprite.new(map, x, y, z)
 	local public = {}
 	local private = {}
 
-	private.name = "Unnamed"
 	private.type = "sprite"
-	private.properties = {}
 
 	-- SPRITE VARIABLES
 	private.x, private.y, private.z = x, y, z
@@ -18,14 +16,14 @@ function entities_sprite.new(map, x, y, z)
 
 	private.sprite = nil
 
-	function public.setGID(gid)
-		if gid then
-			local tileset = map.getTileset(gid)
+	-- DEFAULT FUNCTIONS
+	function public.initialize(object)
+		if object.gid then
+			local tileset = map.getTileset(object.gid)
 			local imagename = string.match(tileset.image, "../../images/(.*).png")
 			local image = images.load(imagename)
-			local quad = images.quads.data[imagename][gid-tileset.firstgid+1]
+			local quad = images.quads.data[imagename][object.gid-tileset.firstgid+1]
 
-			--private.y = private.y - tileset.tileheight
 			private.width, private.height = tileset.tilewidth, tileset.tileheight
 			private.oy = tileset.tileheight
 
@@ -33,7 +31,6 @@ function entities_sprite.new(map, x, y, z)
 		end
 	end
 
-	-- DEFAULT FUNCTIONS
 	function public.update(dt)
 	end
 
@@ -47,20 +44,8 @@ function entities_sprite.new(map, x, y, z)
 		self.destroyed = true
 	end
 
-	function public.setName(name)
-		private.name = name
-	end
-	function public.setProperties(properties)
-		private.properties = properties
-	end
-	function public.getName()
-		return private.name
-	end
 	function public.getType()
 		return private.type
-	end
-	function public.getProperties()
-		return private.name
 	end
 	function public.getX()
 		return private.x
@@ -72,10 +57,10 @@ function entities_sprite.new(map, x, y, z)
 		return private.z
 	end
 	function public.getOX()
-		return private.x - private.ox * private.sx
+		return private.x - (private.ox - private.oex) * private.sx
 	end
 	function public.getOY()
-		return private.y - private.oy * private.sy
+		return private.y - (private.oy - private.oey)  * private.sy
 	end
 	function public.getWidth()
 		return private.width * private.sx
@@ -92,8 +77,6 @@ function entities_sprite.new(map, x, y, z)
 	function public.getRadius()
 		return yama.g.getDistance(public.getCX(), public.getCY(), private.x - private.ox * private.sx, private.y - private.oy * private.sy)
 	end
-
-	public.setGID(public.gid)
 
 	return public
 end

@@ -68,7 +68,7 @@ return {
       y = 0,
       width = 40,
       height = 40,
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["priority"] = "0",
@@ -182,7 +182,7 @@ return {
       y = 0,
       width = 40,
       height = 40,
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["z"] = "1"
@@ -2410,6 +2410,55 @@ return {
           properties = {
             ["z"] = "1"
           }
+        },
+        {
+          name = "",
+          type = "humanoid",
+          shape = "rectangle",
+          x = 489,
+          y = 632,
+          width = 0,
+          height = 0,
+          gid = 362,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 1001,
+          y = 161,
+          width = 0,
+          height = 0,
+          gid = 364,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "ellipse",
+          x = 672,
+          y = 224,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "sprite",
+          shape = "rectangle",
+          x = 1088,
+          y = 192,
+          width = 0,
+          height = 0,
+          gid = 365,
+          visible = true,
+          properties = {}
         }
       }
     }

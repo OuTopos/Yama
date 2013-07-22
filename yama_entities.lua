@@ -15,6 +15,7 @@ require("entities_monster")
 require("entities_humanoid")
 require("entities_mplayer")
 require("entities_bullet")
+require("entities_planet")
 
 function entities.new(map, type, x, y, z)
 	local entity = _G["entities_"..type].new(map, x, y, z)

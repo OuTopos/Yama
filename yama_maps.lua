@@ -60,10 +60,10 @@ function maps.load(path)
 			return private.entities
 		end
 
-		function public.spawn(type, x, y ,z, player)
+		function public.spawn(type, x, y , z, object)
 			local entity = yama.entities.new(public, type, x, y, z)
-			if player then
-				private.player = entity
+			if entity.initialize then
+				entity.initialize(object)
 			end
 			private.entities.insert(entity)	
 			return entity
@@ -144,12 +144,7 @@ function maps.load(path)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
-								local entity = public.spawn(object.type, object.x, object.y, object.properties.z)
-								entity.setName(object.name)
-								entity.setProperties(object.properties)
-								if object.gid and entity.setGID then
-									entity.setGID(object.gid)
-								end
+								public.spawn(object.type, object.x, object.y, object.properties.z or 1, object)
 							end
 						end
 					elseif layer.properties.type == "patrols" then
@@ -211,7 +206,8 @@ function maps.load(path)
 				-- Spawning player
 				private.data.properties.player_entity = private.data.properties.player_entity or "player"
 				print(private.data.properties.player_entity)
-				public.spawn(private.data.properties.player_entity, 200, 200, 0, true)
+				private.player = public.spawn(private.data.properties.player_entity, 200, 200, 0)
+
 				
 			else
 				print("Map is not orthogonal. Gaaah boom crash or something!")
@@ -457,6 +453,50 @@ function maps.load(path)
 					table.insert(vertices, vertix.y)
 				end
 				local body = love.physics.newBody(private.world, object.x, object.y, "static")
+				local shape = love.physics.newChainShape(false, unpack(vertices))
+				return love.physics.newFixture(body, shape)
+			else
+				return nil
+			end
+		end
+
+		function public.createFixture(object, bodyType)
+			if object.shape == "rectangle" then
+				--Rectangle or Tile
+				if object.gid then
+					--Tile
+					local body = love.physics.newBody(private.world, object.x, object.y-private.data.tileheight, bodyType)
+					local shape = love.physics.newRectangleShape(private.data.tilewidth/2, private.data.tileheight/2, private.data.tilewidth, private.data.tileheight)
+					return love.physics.newFixture(body, shape)
+				else
+					--Rectangle
+					local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
+					local shape = love.physics.newRectangleShape(object.width/2, object.height/2, object.width, object.height)
+					return love.physics.newFixture(body, shape)
+				end
+			elseif object.shape == "ellipse" then
+				--Ellipse
+				local body = love.physics.newBody(private.world, object.x+object.width/2, object.y+object.height/2, bodyType)
+				local shape = love.physics.newCircleShape( (object.width + object.height) / 4 )
+				return love.physics.newFixture(body, shape)
+			elseif object.shape == "polygon" then
+				--Polygon
+				local vertices = {}
+				for i,vertix in ipairs(object.polygon) do
+					table.insert(vertices, vertix.x)
+					table.insert(vertices, vertix.y)
+				end
+				local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
+				local shape = love.physics.newPolygonShape(unpack(vertices))
+				return love.physics.newFixture(body, shape)
+			elseif object.shape == "polyline" then
+				--Polyline
+				local vertices = {}
+				for i,vertix in ipairs(object.polyline) do
+					table.insert(vertices, vertix.x)
+					table.insert(vertices, vertix.y)
+				end
+				local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
 				local shape = love.physics.newChainShape(false, unpack(vertices))
 				return love.physics.newFixture(body, shape)
 			else

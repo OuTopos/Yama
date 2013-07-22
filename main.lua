@@ -10,7 +10,7 @@ function love.load()
 	scaleToggle = 1
 
 	yama.gui.load()
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, false)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, true)
 end
 
 function love.keypressed(key)
@@ -74,11 +74,8 @@ function love.keypressed(key)
 		vp1.view(matMap)
 	end
 	if key == "a" then
-		if player then
-			entities.destroy(player)
-			player = nil
-			--collectgarbage()
-		end
+		spaceMap = yama.maps.load("space/planets")
+		vp1.view(spaceMap)
 	end
 	if key == "e" then
 		jonasMap.spawn("monster", math.random(100, 300), math.random(100, 300), 0)
