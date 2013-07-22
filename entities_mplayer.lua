@@ -53,6 +53,7 @@ function entities_mplayer.new( map, x, y, z )
 	local bulletImpulse = 900
 	local nAllowedBullets = 60
 
+
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
 	
@@ -91,14 +92,6 @@ function entities_mplayer.new( map, x, y, z )
 	--canon:getBody( ):setMass( 0.0001 )
 	--canon:getBody( ):setInertia( 1 )
 	--canon:getBody( ):setGravityScale( 9 )
-
-	anchor:setUserData(self)
-	--anchor:setRestitution( 0 )	
-	anchor:getBody( ):setFixedRotation( true )
-	anchor:getBody( ):setLinearDamping( 1 )
-	anchor:getBody( ):setMass( 1 )
-	anchor:getBody( ):setInertia( 1 )
-	anchor:getBody( ):setGravityScale( 9 )
 
 	function self.update( dt )
 		self.updateInput( dt )
@@ -204,8 +197,13 @@ function entities_mplayer.new( map, x, y, z )
 
 		if pContact then
 			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) then
-				pContact:setFriction( stopFriction ) 
+				pContact:setFriction( stopFriction )
 			end
+		end
+
+		if not pContact then
+			onGround = false
+			allowjump = false
 		end
 	end
 
@@ -221,22 +219,19 @@ function entities_mplayer.new( map, x, y, z )
 		
 		if allowjump and yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 3 ), love.joystick.getAxis( 1, 3 ) ) > 0.25 then
 			print( "JUMP!")
-			distance = math.abs(love.joystick.getAxis( 1, 3 ))
-			anchor:getBody():applyLinearImpulse( 0, -(jumpForce*distance) )
-			allowjump = false
-
+			--distance = math.abs(love.joystick.getAxis( 1, 3 ))
+			--leg1:getBody():applyLinearImpulse( 0, -(jumpForce*distance) )
+			--allowjump = false
 		end
 
-
-		
-
 		--JUMPING LEG  A BUTTON --
-		if allowjump and love.joystick.isDown( 1, buttunFaceA ) then
-			--leg1:getBody():applyLinearImpulse( 0, -jumpForce )
+		if love.joystick.isDown( 1, buttunFaceA ) then
+			print( "pressssaaaaaa")
+			leg1:getBody():applyForce( 0, 20000000 )
 			--allowjump = false
 		end
 		
-		jumpAccelerator( dt, 3, jumpMaxTimer, jumpIncreaser )
+		--jumpAccelerator( dt, 3, jumpMaxTimer, jumpIncreaser )
 			
 
 		if pContact then
@@ -245,6 +240,27 @@ function entities_mplayer.new( map, x, y, z )
 			end
 		end
 		-- JUUMPING END --
+	end
+
+	function legSetup( )
+		doLeg = 0
+
+		leg1 = love.physics.newFixture(love.physics.newBody( world, anchor:getBody():getX(), anchor:getBody():getY()+60, "dynamic"), love.physics.newRectangleShape(10, 55), 1 )
+		--leg1:setGroupIndex( -1 )
+		leg1:getBody( ):setFixedRotation( true )
+		--joint = love.physics.newPrismaticJoint( anchor:getBody(), leg1:getBody(), 0, 0, 0, 1 )
+		--joint = love.physics.newDistanceJoint( anchor:getBody(), leg1:getBody(),  anchor:getBody():getX(),  anchor:getBody():getY(), anchor:getBody():getX(), anchor:getBody():getX()+32 )
+		joint = love.physics.newRevoluteJoint( leg1:getBody( ), anchor:getBody( ), anchor:getBody():getX( ), anchor:getBody( ):getY( ), 1 )
+		
+		--joint:enableMotor(true)
+		--joint:setMaxMotorForce(100000)
+		--joint:setUpperLimit(0)	
+		--joint:setLowerLimit(0)
+		--joint:setLimits( 0, 1 )
+
+		--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
+		--leg2:setGroupIndex( -1 )
+		--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
 	end
 
 	function jumpAccelerator( dt, button, jMaxTimer, jIncreaser )
@@ -257,22 +273,6 @@ function entities_mplayer.new( map, x, y, z )
 				jumpTimer = 0
 			end
 		end
-	end
-
-	function legSetup( )
-		doLeg = 0
-
-		leg1 = love.physics.newFixture(love.physics.newBody( world, anchor:getBody():getX(), anchor:getBody():getY(), "dynamic"), love.physics.newRectangleShape(width, height), 1 )
-		leg1:setGroupIndex( -1 )
-		leg1:getBody( ):setFixedRotation( true )
-		joint = love.physics.newPrismaticJoint( leg1:getBody(), anchor:getBody(), 0, 0, 0, 1 )
-		--joint:enableMotor(true)
-		--joint:setMaxMotorForce(100000)
-		joint:setLowerLimit(0)
-		joint:setUpperLimit(0)	
-		--local leg2 = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape(32), 1 )
-		--leg2:setGroupIndex( -1 )
-		--joint2 = love.physics.newRevoluteJoint( leg2:getBody(), anchor:getBody(), x, y, false )
 	end
 	
 	function applyForce( fx, fy )
@@ -305,52 +305,74 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
-		print( "beginContact!", contactNormal )
+		print( "beginContact!" )
+
+		---[[
+		xc1, yc1, xc2, yc2 = contact:getPositions( )
+		print( "contactPos xc1", xc1 )
+		print( "contactPos yc1", yc1 )
+		print( "contactPos xc2", xc2 )
+		print( "contactPos yc2", yc2 )
+		print( "body x", anchor:getBody( ):getX() )
+		print( "body y", anchor:getBody( ):getY() )
+		print( "delta y", yc1 - anchor:getBody( ):getY()  )
+		--]]
+
 		
 		-- NEW JUMP --
 		if a:getBody( ) == anchor:getBody( ) then
-			contact:setRestitution( 0 )
-			pContact = contact
-			contactNormal = math.atan2( pContact:getNormal( ) )
+			
+
+			contactNormal = math.atan2( contact:getNormal( ) )
 			contactNormal = math.deg( contactNormal )
 			print( "normal!", contactNormal )
 			if contactNormal < 20 and contactNormal > - 20 then
 				contactNormal = contactNormal + 180
 			end
 			if contactNormal < 200 and contactNormal > 160 then
+				contact:setRestitution( 0 )
+				pContact = contact
+				xc1, yc1, xc2, yc2 = contact:getPositions( )
 				print( "YES", contactNormal )
 				jumpTimer = 0
 				onGround = true
 				contact:setFriction( friction )
+
 			end
 		end
 		-- JUMP STUFF --
-		--if b:getUserData() then
-		--	if b:getUserData().type == 'floor' then
-		--		jumpTimer = 0
-		--		onGround = true
-		--		contact:setFriction( friction )
-		--	end
-		--end
+		--[[
+		if b:getUserData() then
+			if b:getUserData().type == 'floor' then
+				jumpTimer = 0
+		 		onGround = true
+				contact:setFriction( friction )
+			end
+		end
+		--]]
 	end
 
 	function self.endContact(a, b, contact)
+		print( "endContact!" )
 
 		if a:getBody( ) == anchor:getBody( ) then
-			contact:setRestitution( 0 )
 
-			contactNormalLeave = math.atan2( contact:getNormal( ) )
-			contactNormalLeave = math.deg( contactNormalLeave )
-			print( "endContact!", contactNormalLeave )
-			--onGround = false
-			--allowjump = false
-			--if contactNormalLeave < 20 and contactNormalLeave > - 20 then
-			--	contactNormalLeave = contactNormalLeave + 180
+			contact:setRestitution( 0 )
+			contactNormalEnd = math.atan2( contact:getNormal( ) )
+			contactNormalEnd = math.deg( contactNormalEnd )
+			print( "contactEndNormal", contactNormalEnd )
+
+			--if yc1 == yc2 then
+			--	xc1, yc1, xc2, yc2 = contact:getPositions( )
+			--	print( "contact == pContact!" )
+			--	onGround = false
+			--	allowjump = false
 			--end
-			if contactNormalLeave < 100 and contactNormalLeave > 80 then
-				onGround = false
-				allowjump = false
-			end
+			--if contactNormalLeave < 100 and contactNormalLeave > 80 then
+			--	contactNormalLeave = contactNormalLeave + 180
+			--	onGround = false
+			--	allowjump = false
+			--end
 		end
 	
 		-- JUMP STUFF --
