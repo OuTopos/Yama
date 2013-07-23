@@ -187,7 +187,7 @@ function maps.load(path)
 			private.data.properties.meter = private.data.properties.meter or private.data.tileheight
 
 			private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
-			private.world:setCallbacks(private.beginContact, private.endContact, nil, nil)
+			private.world:setCallbacks(private.beginContact, private.endContact, private.preSolve, private.postSolve)
 			love.physics.setMeter(private.data.properties.meter)
 			--physics.setWorld(private.world)
 		end

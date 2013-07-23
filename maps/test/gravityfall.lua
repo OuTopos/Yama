@@ -530,7 +530,7 @@ return {
           x = 160,
           y = 704,
           width = 256,
-          height = 32,
+          height = 128,
           visible = true,
           properties = {}
         },
@@ -541,7 +541,7 @@ return {
           x = 384,
           y = 672,
           width = 320,
-          height = 32,
+          height = 224,
           visible = true,
           properties = {}
         },
@@ -729,6 +729,156 @@ return {
           polyline = {
             { x = 0, y = 0 },
             { x = 0, y = 128 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 2176,
+          y = 2208,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 160 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1344,
+          y = 2240,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 64 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1792,
+          y = 2208,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 160 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1600,
+          y = 2240,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 128 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1408,
+          y = 2240,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 32 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1760,
+          y = 2080,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 128 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1248,
+          y = 2304,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 64 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 1696,
+          y = 2080,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 128 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "polyline",
+          x = 1440,
+          y = 2272,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 96 }
+          },
+          properties = {}
+        },
+        {
+          name = "",
+          type = "wall",
+          shape = "polyline",
+          x = 2336,
+          y = 2208,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 160 }
           },
           properties = {}
         }

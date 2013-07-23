@@ -3,6 +3,12 @@ entities_bullet = {}
 function entities_bullet.new( map, x, y, z )
 	local self = {}
 
+	local userdata = {}
+	userdata.name = "Unnamed"
+	userdata.type = "bullet"
+	userdata.properties = {}
+	userdata.entity = self
+
 	--local camera = vp.getCamera()
 	--local buffer = vp.getBuffer()
 	--local map = vp.getMap()
@@ -40,7 +46,7 @@ function entities_bullet.new( map, x, y, z )
 	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
 	bullet:setGroupIndex( -1 )
 
-	bullet:setUserData(self)
+	bullet:setUserData( userdata )
 	bullet:setRestitution( 0.70 )
 	bullet:getBody( ):setFixedRotation( false )
 	bullet:getBody( ):setLinearDamping( 0.3 )
