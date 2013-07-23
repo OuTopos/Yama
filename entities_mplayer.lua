@@ -171,7 +171,7 @@ function entities_mplayer.new( map, x, y, z )
 				
 				xPosBulletSpawn = x + 28*xrad 
 				yPosBulletSpawn = y + 28*yrad
-				bullet = map.spawn( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0 )
+				bullet = map.spawnXYZ( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0 )
 				fxbullet = bulletImpulse * nx
 				fybullet = bulletImpulse * ny				
 				

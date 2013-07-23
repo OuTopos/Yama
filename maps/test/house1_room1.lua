@@ -95,7 +95,7 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 130, 52, 0,
+        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 0, 52, 0,
         0, 9, 180, 9, 9, 9, 9, 72, 9, 10, 55, 54, 0, 0, 0, 0,
         0, 25, 25, 25, 25, 25, 25, 25, 25, 26, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -419,15 +419,15 @@ return {
     },
     {
       type = "objectgroup",
-      name = "Doors",
+      name = "Portals",
       visible = true,
       opacity = 1,
       properties = {
-        ["type"] = "portal"
+        ["type"] = "portals"
       },
       objects = {
         {
-          name = "door",
+          name = "",
           type = "",
           shape = "rectangle",
           x = 64,
@@ -436,12 +436,12 @@ return {
           height = 16,
           visible = true,
           properties = {
-            ["map"] = "test/test1",
-            ["spawn"] = "spawn1"
+            ["map"] = "test/arkanos",
+            ["spawn"] = "house1"
           }
         },
         {
-          name = "room2",
+          name = "",
           type = "",
           shape = "rectangle",
           x = 416,
@@ -462,11 +462,11 @@ return {
       visible = true,
       opacity = 1,
       properties = {
-        ["type"] = "spawn"
+        ["type"] = "spawns"
       },
       objects = {
         {
-          name = "door",
+          name = "door1",
           type = "",
           shape = "rectangle",
           x = 64,
@@ -477,7 +477,7 @@ return {
           properties = {}
         },
         {
-          name = "room2",
+          name = "door2",
           type = "",
           shape = "rectangle",
           x = 416,
@@ -491,6 +491,28 @@ return {
           name = "behind_counter",
           type = "",
           shape = "rectangle",
+          x = 64,
+          y = 128,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Entities",
+      visible = true,
+      opacity = 1,
+      properties = {
+        ["type"] = "entities"
+      },
+      objects = {
+        {
+          name = "",
+          type = "humanoid",
+          shape = "ellipse",
           x = 128,
           y = 128,
           width = 32,

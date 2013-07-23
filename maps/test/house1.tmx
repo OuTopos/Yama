@@ -113,6 +113,8 @@
   <properties>
    <property name="type" value="spawns"/>
   </properties>
-  <object name="door1" x="64" y="240" width="32" height="32"/>
+  <object name="door1" x="64" y="240" width="32" height="32">
+   <ellipse/>
+  </object>
  </objectgroup>
 </map>

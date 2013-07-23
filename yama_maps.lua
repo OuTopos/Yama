@@ -103,7 +103,7 @@ function maps.load(path)
 
 				if entity.destroyed then
 					table.remove(private.entities.list, key)
-					--vp.getBuffer().reset()
+					public.resetViewports()
 				else
 					entity.update(dt)
 					for i=1, #private.viewports do
@@ -131,7 +131,21 @@ function maps.load(path)
 			return private.entities
 		end
 
-		function public.spawn(type, x, y , z, object)
+		function public.spawn(type, spawn, object)
+			if private.spawns[spawn] then
+				local entity = yama.entities.new(public, type, private.spawns[spawn].x, private.spawns[spawn].y, private.spawns[spawn].z)
+				if entity.initialize then
+					entity.initialize(object)
+				end
+				private.entities.insert(entity)	
+				return entity
+			else
+				print("Spawn ["..spawn.."] not found. Nothing spawned.")
+				return nil
+			end
+		end
+
+		function public.spawnXYZ(type, x, y, z, object)
 			local entity = yama.entities.new(public, type, x, y, z)
 			if entity.initialize then
 				entity.initialize(object)
@@ -164,6 +178,12 @@ function maps.load(path)
 					private.entities.visible[private.viewports[i]] = nil
 					table.remove(private.viewports, i)
 				end
+			end
+		end
+
+		function public.resetViewports()
+			for i=1, #private.viewports do
+				private.viewports[i].getBuffer().reset()
 			end
 		end
 
@@ -217,7 +237,7 @@ function maps.load(path)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
-								public.spawn(object.type, object.x, object.y, object.properties.z or 1, object)
+								public.spawnXYZ(object.type, object.x, object.y, object.properties.z or 1, object)
 							end
 						end
 					elseif layer.properties.type == "patrols" then
@@ -245,7 +265,15 @@ function maps.load(path)
 					elseif layer.properties.type == "spawns" then
 						-- Adding spawns to the spawns list
 						for i, object in ipairs(layer.objects) do
-							private.spawns[object.name] = object
+							local spawn = {}
+							spawn.name = object.name
+							spawn.type = object.type
+							spawn.properties = object.properties
+
+							spawn.x = object.x + object.width / 2
+							spawn.y = object.y + object.height / 2
+							spawn.z = object.properties.z or 1
+							private.spawns[spawn.name] = spawn
 						end
 					end
 					table.remove(private.data.layers, layerkey)
@@ -277,9 +305,9 @@ function maps.load(path)
 
 
 				-- Spawning player
-				private.data.properties.player_entity = private.data.properties.player_entity or "player"
-				print(private.data.properties.player_entity)
-				private.player = public.spawn(private.data.properties.player_entity, 200, 200, 0)
+				--private.data.properties.player_entity = private.data.properties.player_entity or "player"
+				--print(private.data.properties.player_entity)
+				--private.player = public.spawn(private.data.properties.player_entity, 200, 200, 0)
 
 				
 			else
@@ -336,6 +364,11 @@ function maps.load(path)
 
 		function public.update(dt)
 			if #private.viewports > 0 then
+				private.cooldown = 10
+			end
+			if private.cooldown > 0 then
+				private.cooldown = private.cooldown - dt
+
 				-- Update physics world
 				private.world:update(dt)
 

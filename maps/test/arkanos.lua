@@ -1047,9 +1047,20 @@ return {
           properties = {}
         },
         {
+          name = "start",
+          type = "",
+          shape = "ellipse",
+          x = 224,
+          y = 672,
+          width = 64,
+          height = 64,
+          visible = true,
+          properties = {}
+        },
+        {
           name = "house1",
           type = "",
-          shape = "rectangle",
+          shape = "ellipse",
           x = 128,
           y = 736,
           width = 32,
@@ -1112,7 +1123,7 @@ return {
           height = 32,
           visible = true,
           properties = {
-            ["map"] = "test/house1",
+            ["map"] = "test/house1_room1",
             ["spawn"] = "door1"
           }
         }

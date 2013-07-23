@@ -10,7 +10,7 @@ function love.load()
 	scaleToggle = 1
 
 	yama.gui.load()
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 1, 1, true)
+	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 4, 4, true)
 end
 
 function love.keypressed(key)
@@ -57,8 +57,15 @@ function love.keypressed(key)
 
 	end
 	if key == "s" then
-		jonasMap = yama.maps.load("test/arkanos")
-		vp1.view(jonasMap)
+		arkanos = yama.maps.load("test/arkanos")
+		if arkanosPlayer then
+			--vp1.view(arkanos)
+		else
+			local player = arkanos.spawn("player", "start")
+			vp1.view(arkanos, player)
+			arkanosPlayer = true
+		end
+		--vp1.follow(player)
 
 		--vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
 		--vp2.view(map1)
@@ -70,16 +77,22 @@ function love.keypressed(key)
 		yama.maps.load("test/platform", "test")	
 	end
 	if key == "z" then
-		matMap = yama.maps.load("test/gravityfall")
-		vp1.view(matMap)
+		gravityfall = yama.maps.load("test/gravityfall")
+		if gravityfallPlayer then
+
+		else
+			local player = gravityfall.spawn("mplayer", "start")
+			vp1.view(gravityfall, player)
+			gravityfallPlayer = true
+		end
 	end
 	if key == "a" then
 		spaceMap = yama.maps.load("space/planets")
 		vp1.view(spaceMap)
 	end
 	if key == "e" then
-		jonasMap.spawn("monster", math.random(100, 300), math.random(100, 300), 0)
-		jonasMap.spawn("humanoid", math.random(100, 300), math.random(100, 300), 0)
+		arkanos.spawnXYZ("monster", math.random(100, 300), math.random(100, 300), 1)
+		arkanos.spawnXYZ("humanoid", math.random(100, 300), math.random(100, 300), 1)
 	end
 	if key == "q" then
 		jonasMap.getEntities().list[1].destroy()

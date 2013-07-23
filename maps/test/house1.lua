@@ -432,7 +432,7 @@ return {
         {
           name = "door1",
           type = "",
-          shape = "rectangle",
+          shape = "ellipse",
           x = 64,
           y = 240,
           width = 32,

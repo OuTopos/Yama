@@ -98,17 +98,17 @@
   <object x="352" y="0" width="64" height="128"/>
   <object x="464" y="128" width="16" height="16"/>
  </objectgroup>
- <objectgroup color="#00ffff" name="Doors" width="16" height="9">
+ <objectgroup color="#00ffff" name="Portals" width="16" height="9">
   <properties>
-   <property name="type" value="portal"/>
+   <property name="type" value="portals"/>
   </properties>
-  <object name="door" x="64" y="272" width="32" height="16">
+  <object x="64" y="272" width="32" height="16">
    <properties>
-    <property name="map" value="test/test1"/>
-    <property name="spawn" value="spawn1"/>
+    <property name="map" value="test/arkanos"/>
+    <property name="spawn" value="house1"/>
    </properties>
   </object>
-  <object name="room2" x="416" y="64" width="32" height="32">
+  <object x="416" y="64" width="32" height="32">
    <properties>
     <property name="map" value="test/house1_room2"/>
     <property name="spawn" value="door1"/>
@@ -117,10 +117,18 @@
  </objectgroup>
  <objectgroup color="#ffff00" name="Spawn" width="16" height="9">
   <properties>
-   <property name="type" value="spawn"/>
+   <property name="type" value="spawns"/>
   </properties>
-  <object name="door" x="64" y="240" width="32" height="32"/>
-  <object name="room2" x="416" y="96" width="32" height="32"/>
-  <object name="behind_counter" x="128" y="128" width="32" height="32"/>
+  <object name="door1" x="64" y="240" width="32" height="32"/>
+  <object name="door2" x="416" y="96" width="32" height="32"/>
+  <object name="behind_counter" x="64" y="128" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="Entities" width="16" height="9">
+  <properties>
+   <property name="type" value="entities"/>
+  </properties>
+  <object type="humanoid" x="128" y="128" width="32" height="32">
+   <ellipse/>
+  </object>
  </objectgroup>
 </map>

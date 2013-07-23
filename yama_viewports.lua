@@ -87,7 +87,7 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 		--private.buffer.reset()
 	end
 
-	function public.view(map)
+	function public.view(map, entity)
 		if map then
 			if private.map then
 				private.map.removeViewport(public)
@@ -101,6 +101,9 @@ function viewports.new(x, y, r, width, height, sx, sy, zoom)
 			private.map = nil
 		end
 
+		if entity then
+			private.camera.follow = entity
+		end
 	end
 
 	function public.getCamera()

@@ -7,7 +7,7 @@ function entities_player.new(map, x, y, z)
 	private.type = "player"
 
 	private.userdata = {}
-	private.userdata.name = "Unnamed"
+	private.userdata.name = "Moe"
 	private.userdata.type = "player"
 	private.userdata.properties = {}
 	private.userdata.entity = public
@@ -202,7 +202,7 @@ function entities_player.new(map, x, y, z)
 		local userdata = b:getUserData()
 		if userdata then
 			if userdata.type == "portal" then
-				public.teleport()
+				public.teleport(userdata.properties.map, userdata.properties.spawn)
 			end
 		end
 
@@ -267,12 +267,13 @@ function entities_player.new(map, x, y, z)
 
 
 	function public.teleport(mapname, spawn)
-		--if public.follower then
-		--end
-		--local newMap = yama.maps.load(mapname)
-		--newMap.spawn(private.type, spawn)
-		--public.destroy()
-		print("teleport!")
+		print("["..private.userdata.name.. "] is teleporting to ["..mapname.."] and spawning at ["..spawn.."]")
+		local newMap = yama.maps.load(mapname)
+		local newEntity = newMap.spawn(private.type, spawn)
+		public.destroy()
+
+		vp1.view(newMap, newEntity)
+
 	end
 
 	-- DEFAULT FUNCTIONS

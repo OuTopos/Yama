@@ -883,6 +883,28 @@ return {
           properties = {}
         }
       }
+    },
+    {
+      type = "objectgroup",
+      name = "Spawns",
+      visible = true,
+      opacity = 1,
+      properties = {
+        ["type"] = "spawns"
+      },
+      objects = {
+        {
+          name = "start",
+          type = "",
+          shape = "ellipse",
+          x = 256,
+          y = 160,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        }
+      }
     }
   }
 }
