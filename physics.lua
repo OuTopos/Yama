@@ -1,13 +1,11 @@
 physics = {}
 
 function physics.draw(world)
-	if physics.enabled then
-		if world then
-			for i, body in ipairs(world:getBodyList()) do
-				--fixtures = body:getFixtureList()
-				for i, fixture in ipairs(body:getFixtureList()) do
-					physics.drawFixture(fixture)
-				end
+	if world then
+		for i, body in ipairs(world:getBodyList()) do
+			--fixtures = body:getFixtureList()
+			for i, fixture in ipairs(body:getFixtureList()) do
+				physics.drawFixture(fixture)
 			end
 		end
 	end
