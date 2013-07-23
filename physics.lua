@@ -1,19 +1,4 @@
 physics = {}
-physics.enabled = true
-physics.world = nil
-
-function physics.setWorld(world)
-	--physics.world = world
-	world:setCallbacks(physics.beginContact, physics.endContact, nil, nil)
-end
-
-function physics.update(dt)
-	if physics.enabled then
-		if physics.world then
-			physics.world:update(dt)
-		end
-	end
-end
 
 function physics.draw(world)
 	if physics.enabled then
@@ -69,60 +54,3 @@ function physics.drawFixture(fixture, color)
 	end
 	love.graphics.setColor(255, 255, 255, 255)
 end
-
-function physics.beginContact(a, b, contact)
-	if a:getUserData() then
-		if a:getUserData().beginContact then
-			a:getUserData().beginContact(a, b, contact)
-		end
-	end
-	if b:getUserData() then
-		if b:getUserData().beginContact then
-			b:getUserData().beginContact(b, a, contact)
-		end
-	end
-end
-
-function physics.endContact(a, b, contact)
-	if a:getUserData() then
-		if a:getUserData().endContact then
-			a:getUserData().endContact(a, b, contact)
-		end
-	end
-	if b:getUserData() then
-		if b:getUserData().endContact then
-			b:getUserData().endContact(b, a, contact)
-		end
-	end
-end
-
-function physics.preSolve(a, b, contact)
-	if a:getUserData() then
-		if a:getUserData().preSolve then
-			a:getUserData().preSolve(a, b, contact)
-		end
-	end
-	if b:getUserData() then
-		if b:getUserData().preSolve then
-			b:getUserData().preSolve(b, a, contact)
-		end
-	end
-end
-
-function physics.postSolve(a, b, contact)
-	if a:getUserData() then
-		if a:getUserData().postSolve then
-			a:getUserData().postSolve(a, b, contact)
-		end
-	end
-	if b:getUserData() then
-		if b:getUserData().postSolve then
-			b:getUserData().postSolve(b, a, contact)
-		end
-	end
-end
-
-physics.catagories = {}
-
-physics.catagories["player"] = 1
-physics.catagories["sensors"] = 2

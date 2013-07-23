@@ -202,10 +202,12 @@ return {
     },
     {
       type = "objectgroup",
-      name = "block",
+      name = "Collision",
       visible = true,
       opacity = 1,
-      properties = {},
+      properties = {
+        ["type"] = "collision"
+      },
       objects = {
         {
           name = "",
@@ -381,10 +383,12 @@ return {
     },
     {
       type = "objectgroup",
-      name = "portals",
+      name = "Portals",
       visible = true,
       opacity = 1,
-      properties = {},
+      properties = {
+        ["type"] = "portals"
+      },
       objects = {
         {
           name = "",
@@ -395,14 +399,42 @@ return {
           width = 32,
           height = 16,
           visible = true,
-          properties = {}
+          properties = {
+            ["map"] = "test/arkanos",
+            ["spawn"] = "house1"
+          }
         },
         {
-          name = "",
+          name = "room2",
           type = "",
           shape = "rectangle",
           x = 416,
           y = 64,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["map"] = "test/house1_room2",
+            ["spawn"] = "door1"
+          }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Spawns",
+      visible = true,
+      opacity = 1,
+      properties = {
+        ["type"] = "spawns"
+      },
+      objects = {
+        {
+          name = "door1",
+          type = "",
+          shape = "rectangle",
+          x = 64,
+          y = 240,
           width = 32,
           height = 32,
           visible = true,

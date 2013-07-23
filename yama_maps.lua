@@ -10,11 +10,82 @@ function maps.load(path)
 		local public = {}
 		local private = {}
 
+
 		-- MAP DATA
 		private.data = require("/maps/"..path)
 
+
 		-- PHYSICS WORLD
 		private.world = love.physics.newWorld()
+
+		function private.beginContact(a, b, contact)
+			if a:getUserData() then
+				if a:getUserData().entiy then
+					if a:getUserData().entity.beginContact then
+						a:getUserData().entity.beginContact(a, b, contact)
+					end
+				end
+			end
+			if b:getUserData() then
+				if b:getUserData().entity then
+					if b:getUserData().entity.beginContact then
+						b:getUserData().entity.beginContact(b, a, contact)
+					end
+				end
+			end
+		end
+
+		function private.endContact(a, b, contact)
+			if a:getUserData() then
+				if a:getUserData().entity then
+					if a:getUserData().entity.endContact then
+						a:getUserData().entity.endContact(a, b, contact)
+					end
+				end
+			end
+			if b:getUserData() then
+				if b:getUserData().entity then
+					if b:getUserData().entity.endContact then
+						b:getUserData().entity.endContact(b, a, contact)
+					end
+				end
+			end
+		end
+
+		function private.preSolve(a, b, contact)
+			if a:getUserData() then
+				if a:getUserData().entity then
+					if a:getUserData().entity.preSolve then
+						a:getUserData().entity.preSolve(a, b, contact)
+					end
+				end
+			end
+			if b:getUserData() then
+				if b:getUserData().entity then
+					if b:getUserData().entity.preSolve then
+						b:getUserData().entity.preSolve(b, a, contact)
+					end
+				end
+			end
+		end
+
+		function private.postSolve(a, b, contact)
+			if a:getUserData() then
+				if a:getUserData().entity then
+					if a:getUserData().entity.postSolve then
+						a:getUserData().entity.postSolve(a, b, contact)
+					end
+				end
+			end
+			if b:getUserData() then
+				if b:getUserData().entity then
+					if b:getUserData().entity.postSolve then
+						b:getUserData().entity.postSolve(b, a, contact)
+					end
+				end
+			end
+		end
+
 
 		-- ENTITIES
 		private.entities = {}
@@ -96,15 +167,16 @@ function maps.load(path)
 			end
 		end
 
+
 		-- PATROLS
 		private.patrols = {}
 		function public.getPatrol(i)
 			return private.patrols[i]
 		end
 
+
 		-- SPAWNS
 		private.spawns = {}
-
 
 
 		-- LOAD - Physics
@@ -115,8 +187,9 @@ function maps.load(path)
 			private.data.properties.meter = private.data.properties.meter or private.data.tileheight
 
 			private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
+			private.world:setCallbacks(private.beginContact, private.endContact, nil, nil)
 			love.physics.setMeter(private.data.properties.meter)
-			physics.setWorld(private.world)
+			--physics.setWorld(private.world)
 		end
 
 
@@ -137,7 +210,7 @@ function maps.load(path)
 					if layer.properties.type == "collision" then
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
-							local fixture = public.shape(object)
+							local fixture = public.createFixture(object, "static")
 							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
 						end
 					elseif layer.properties.type == "entities" then
@@ -165,8 +238,8 @@ function maps.load(path)
 					elseif layer.properties.type == "portals" then
 						-- Adding portals to physics objects
 						for i, object in ipairs(layer.objects) do
-							local fixture = public.shape(object)
-							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
+							local fixture = public.createFixture(object, static)
+							fixture:setUserData({name = object.name, type = "portal", properties = object.properties})
 							fixture:setSensor(true)
 						end
 					elseif layer.properties.type == "spawns" then

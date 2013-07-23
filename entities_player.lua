@@ -6,6 +6,12 @@ function entities_player.new(map, x, y, z)
 
 	private.type = "player"
 
+	private.userdata = {}
+	private.userdata.name = "Unnamed"
+	private.userdata.type = "player"
+	private.userdata.properties = {}
+	private.userdata.entity = public
+
 	private.world = map.getWorld()
 
 	-- ANCHOR/POSITION/SPRITE VARIABLES
@@ -24,10 +30,10 @@ function entities_player.new(map, x, y, z)
 
 	-- PHYSICS OBJECT
 	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
-	private.anchor:setUserData(public)
 	private.anchor:setRestitution(0)
 	private.anchor:getBody():setLinearDamping(10)
 	private.anchor:getBody():setFixedRotation(true)
+	private.anchor:setUserData(private.userdata)
 
 	-- Movement variables
 	private.velocity = 250 * private.scale
@@ -193,16 +199,10 @@ function entities_player.new(map, x, y, z)
 
 	-- CONTACT
 	function public.beginContact(a, b, contact)
-		--print("beginContact for player")
-		--if b:isSensor() then
-		if b:getUserData() then
-			local entity = b:getUserData()
-
-			if entity.getTeam then
-				if entity.getTeam() ~= team then
-					--table.insert(targets, entity)
-					targets = {entity}
-				end
+		local userdata = b:getUserData()
+		if userdata then
+			if userdata.type == "portal" then
+				public.teleport()
 			end
 		end
 
@@ -263,8 +263,20 @@ function entities_player.new(map, x, y, z)
 	--	return private.direction
 	--end
 
+
+
+
+	function public.teleport(mapname, spawn)
+		--if public.follower then
+		--end
+		--local newMap = yama.maps.load(mapname)
+		--newMap.spawn(private.type, spawn)
+		--public.destroy()
+		print("teleport!")
+	end
+
 	-- DEFAULT FUNCTIONS
-	function initialize(object)
+	function public.initialize(object)
 
 	end
 

@@ -92,14 +92,14 @@
    <ellipse/>
   </object>
  </objectgroup>
- <objectgroup color="#00ffff" name="Doors" width="16" height="9">
+ <objectgroup color="#00ffff" name="Portals" width="16" height="9">
   <properties>
    <property name="type" value="portals"/>
   </properties>
-  <object name="door1" x="64" y="272" width="32" height="16">
+  <object x="64" y="272" width="32" height="16">
    <properties>
-    <property name="map" value="test/test1"/>
-    <property name="spawn" value="spawn1"/>
+    <property name="map" value="test/arkanos"/>
+    <property name="spawn" value="house1"/>
    </properties>
   </object>
   <object name="room2" x="416" y="64" width="32" height="32">
@@ -108,5 +108,11 @@
     <property name="spawn" value="door1"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup color="#ffff7f" name="Spawns" width="16" height="9">
+  <properties>
+   <property name="type" value="spawns"/>
+  </properties>
+  <object name="door1" x="64" y="240" width="32" height="32"/>
  </objectgroup>
 </map>

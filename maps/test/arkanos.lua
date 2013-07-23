@@ -68,7 +68,7 @@ return {
       y = 0,
       width = 40,
       height = 40,
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["priority"] = "0",
@@ -182,7 +182,7 @@ return {
       y = 0,
       width = 40,
       height = 40,
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["z"] = "1"
@@ -1021,7 +1021,7 @@ return {
       visible = true,
       opacity = 1,
       properties = {
-        ["type"] = "spawn"
+        ["type"] = "spawns"
       },
       objects = {
         {
@@ -1047,7 +1047,7 @@ return {
           properties = {}
         },
         {
-          name = "",
+          name = "house1",
           type = "",
           shape = "rectangle",
           x = 128,
@@ -1065,7 +1065,7 @@ return {
       visible = true,
       opacity = 1,
       properties = {
-        ["type"] = "portal"
+        ["type"] = "portals"
       },
       objects = {
         {
@@ -1111,7 +1111,10 @@ return {
           width = 32,
           height = 32,
           visible = true,
-          properties = {}
+          properties = {
+            ["map"] = "test/house1",
+            ["spawn"] = "door1"
+          }
         }
       }
     },

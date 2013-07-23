@@ -21,7 +21,7 @@
   <tileoffset x="0" y="10"/>
   <image source="../../images/gamegraphics/flowers.png" width="78" height="20"/>
  </tileset>
- <layer name="0" width="40" height="40" visible="0">
+ <layer name="0" width="40" height="40">
   <properties>
    <property name="priority" value="0"/>
    <property name="z" value="0"/>
@@ -39,7 +39,7 @@
    eJztzrENgCAUQEGcRkoXUCtx/42koDQ0xHyNd8nrX0oAAADwnLW2tfbglztHrbTO4JcvyFP0Qd/ib4i/MfPL/wD+5gLXfgMm
   </data>
  </layer>
- <layer name="1" width="40" height="40" visible="0">
+ <layer name="1" width="40" height="40">
   <properties>
    <property name="z" value="1"/>
   </properties>
@@ -161,15 +161,15 @@
  </layer>
  <objectgroup color="#ffff00" name="Spawn points" width="40" height="40">
   <properties>
-   <property name="type" value="spawn"/>
+   <property name="type" value="spawns"/>
   </properties>
   <object name="entrance" x="240" y="1248" width="32" height="32"/>
   <object name="door1" x="32" y="1184" width="32" height="32"/>
-  <object x="128" y="736" width="32" height="32"/>
+  <object name="house1" x="128" y="736" width="32" height="32"/>
  </objectgroup>
  <objectgroup color="#55aaff" name="Portals" width="40" height="40">
   <properties>
-   <property name="type" value="portal"/>
+   <property name="type" value="portals"/>
   </properties>
   <object x="224" y="1280">
    <properties>
@@ -186,7 +186,12 @@
     <property name="world" value="orthogonia"/>
    </properties>
   </object>
-  <object x="128" y="704" width="32" height="32"/>
+  <object x="128" y="704" width="32" height="32">
+   <properties>
+    <property name="map" value="test/house1"/>
+    <property name="spawn" value="door1"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#ff0000" name="Collision" width="40" height="40">
   <properties>
