@@ -1017,7 +1017,7 @@ return {
     },
     {
       type = "objectgroup",
-      name = "Spawn points",
+      name = "Spawns",
       visible = true,
       opacity = 1,
       properties = {
@@ -1029,14 +1029,14 @@ return {
           type = "",
           shape = "rectangle",
           x = 240,
-          y = 1248,
+          y = 1280,
           width = 32,
           height = 32,
           visible = true,
           properties = {}
         },
         {
-          name = "door1",
+          name = "secret",
           type = "",
           shape = "rectangle",
           x = 32,
@@ -1049,18 +1049,18 @@ return {
         {
           name = "start",
           type = "",
-          shape = "ellipse",
-          x = 224,
-          y = 672,
-          width = 64,
-          height = 64,
+          shape = "rectangle",
+          x = 240,
+          y = 704,
+          width = 32,
+          height = 32,
           visible = true,
           properties = {}
         },
         {
           name = "house1",
           type = "",
-          shape = "ellipse",
+          shape = "rectangle",
           x = 128,
           y = 736,
           width = 32,
@@ -1082,25 +1082,6 @@ return {
         {
           name = "",
           type = "",
-          shape = "polyline",
-          x = 224,
-          y = 1280,
-          width = 0,
-          height = 0,
-          visible = true,
-          polyline = {
-            { x = 0, y = 0 },
-            { x = 64, y = 0 }
-          },
-          properties = {
-            ["map"] = "test",
-            ["spawn"] = "arkanos",
-            ["world"] = "orthogonia"
-          }
-        },
-        {
-          name = "",
-          type = "",
           shape = "rectangle",
           x = 32,
           y = 1216,
@@ -1108,9 +1089,8 @@ return {
           height = 32,
           visible = true,
           properties = {
-            ["map"] = "moenomappu",
-            ["spawn"] = "door",
-            ["world"] = "orthogonia"
+            ["map"] = "test/secret",
+            ["spawn"] = "door"
           }
         },
         {
@@ -1125,6 +1105,26 @@ return {
           properties = {
             ["map"] = "test/house1_room1",
             ["spawn"] = "door1"
+          }
+        },
+        {
+          name = "",
+          type = "",
+          shape = "polyline",
+          x = 224,
+          y = 1280,
+          width = 0,
+          height = 0,
+          visible = true,
+          polyline = {
+            { x = 0, y = 0 },
+            { x = 0, y = 32 },
+            { x = 64, y = 32 },
+            { x = 64, y = 0 }
+          },
+          properties = {
+            ["map"] = "test/house1_room1",
+            ["spawn"] = "door2"
           }
         }
       }

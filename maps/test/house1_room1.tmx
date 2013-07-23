@@ -102,7 +102,7 @@
   <properties>
    <property name="type" value="portals"/>
   </properties>
-  <object x="64" y="272" width="32" height="16">
+  <object x="64" y="288" width="32" height="32">
    <properties>
     <property name="map" value="test/arkanos"/>
     <property name="spawn" value="house1"/>
@@ -110,8 +110,8 @@
   </object>
   <object x="416" y="64" width="32" height="32">
    <properties>
-    <property name="map" value="test/house1_room2"/>
-    <property name="spawn" value="door1"/>
+    <property name="map" value="test/arkanos"/>
+    <property name="spawn" value="entrance"/>
    </properties>
   </object>
  </objectgroup>
@@ -119,7 +119,7 @@
   <properties>
    <property name="type" value="spawns"/>
   </properties>
-  <object name="door1" x="64" y="240" width="32" height="32"/>
+  <object name="door1" x="64" y="256" width="32" height="32"/>
   <object name="door2" x="416" y="96" width="32" height="32"/>
   <object name="behind_counter" x="64" y="128" width="32" height="32"/>
  </objectgroup>

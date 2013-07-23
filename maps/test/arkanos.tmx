@@ -159,36 +159,23 @@
    eJzt1zkKgDAARNFJ47Esvf9VXMEl4oBNGpdCich/8EmTYlJGAgAAAL6nClIZcq8AAAAA8GdD7gEXVle7xrWuc73Od9+585TCf7bR5+Rmt7iofXcqfcPRnTdsTE8WyA==
   </data>
  </layer>
- <objectgroup color="#ffff00" name="Spawn points" width="40" height="40">
+ <objectgroup color="#ffff00" name="Spawns" width="40" height="40">
   <properties>
    <property name="type" value="spawns"/>
   </properties>
-  <object name="entrance" x="240" y="1248" width="32" height="32"/>
-  <object name="door1" x="32" y="1184" width="32" height="32"/>
-  <object name="start" x="224" y="672" width="64" height="64">
-   <ellipse/>
-  </object>
-  <object name="house1" x="128" y="736" width="32" height="32">
-   <ellipse/>
-  </object>
+  <object name="entrance" x="240" y="1280" width="32" height="32"/>
+  <object name="secret" x="32" y="1184" width="32" height="32"/>
+  <object name="start" x="240" y="704" width="32" height="32"/>
+  <object name="house1" x="128" y="736" width="32" height="32"/>
  </objectgroup>
  <objectgroup color="#55aaff" name="Portals" width="40" height="40">
   <properties>
    <property name="type" value="portals"/>
   </properties>
-  <object x="224" y="1280">
-   <properties>
-    <property name="map" value="test"/>
-    <property name="spawn" value="arkanos"/>
-    <property name="world" value="orthogonia"/>
-   </properties>
-   <polyline points="0,0 64,0"/>
-  </object>
   <object x="32" y="1216" width="32" height="32">
    <properties>
-    <property name="map" value="moenomappu"/>
+    <property name="map" value="test/secret"/>
     <property name="spawn" value="door"/>
-    <property name="world" value="orthogonia"/>
    </properties>
   </object>
   <object x="128" y="704" width="32" height="32">
@@ -196,6 +183,13 @@
     <property name="map" value="test/house1_room1"/>
     <property name="spawn" value="door1"/>
    </properties>
+  </object>
+  <object x="224" y="1280">
+   <properties>
+    <property name="map" value="test/house1_room1"/>
+    <property name="spawn" value="door2"/>
+   </properties>
+   <polyline points="0,0 0,32 64,32 64,0"/>
   </object>
  </objectgroup>
  <objectgroup color="#ff0000" name="Collision" width="40" height="40">

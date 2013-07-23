@@ -79,20 +79,20 @@ function entities_player.new(map, x, y, z)
 
 	--anchor:setCategory(1)
 	--love.physics.newBody(vp.map.data.world, x, y-radius, "dynamic"),
-	local weapon = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
-	weapon:setUserData(public)
-	weapon:setSensor(true)
-	--weapon:getBody():setActive(false)
-	--weapon:setCategory(1, 2)
-	weapon:getBody():setActive(false)
+	private.weapon = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
+	private.weapon:setUserData(public)
+	private.weapon:setSensor(true)
+	--private.weapon:getBody():setActive(false)
+	--private.weapon:setCategory(1, 2)
+	private.weapon:getBody():setActive(false)
 
-	--joint = love.physics.newDistanceJoint( anchor:getBody(), weapon:getBody(), -10, -10, 10, 10, false)
+	--joint = love.physics.newDistanceJoint( anchor:getBody(), private.weapon:getBody(), -10, -10, 10, 10, false)
 
-	--local weapon2 = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--local private.weapon2 = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
 
-	--weapon2:getBody():setActive(false)
+	--private.weapon2:getBody():setActive(false)
 	--hitbox:setUserData(public)
-	--weapon2:setSensor(true)
+	--private.weapon2:setSensor(true)
 
 	-- PATROL
 	--local patrol = yama.patrols.new(true, 32)
@@ -116,8 +116,8 @@ function entities_player.new(map, x, y, z)
 					cooldown = 0.1
 					public.attack()
 				end
-				--weapon:getBody():setPosition(x, y)
-				--weapon:getBody():setLinearVelocity(wvx, wvy)
+				--private.weapon:getBody():setPosition(x, y)
+				--private.weapon:getBody():setLinearVelocity(wvx, wvy)
 
 			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)) > 0.2 then
 				private.state = "walk"
@@ -234,9 +234,9 @@ function entities_player.new(map, x, y, z)
 	end
 
 	function public.attack()
-		weapon:getBody():setPosition(x, y)
-		weapon:getBody():setAngle(private.direction)
-		weapon:getBody():setActive(true)
+		private.weapon:getBody():setPosition(private.anchor:getBody():getX(), private.anchor:getBody():getY())
+		private.weapon:getBody():setAngle(private.direction)
+		private.weapon:getBody():setActive(true)
 
 		for k, target in ipairs(targets) do
 			target.hurt(0.3, x, y)
@@ -307,6 +307,7 @@ function entities_player.new(map, x, y, z)
 	function public.destroy()
 		print("Destroying player")
 		private.anchor:getBody():destroy()
+		private.weapon:getBody():destroy()
 		public.destroyed = true
 	end
 

@@ -431,9 +431,9 @@ return {
           type = "",
           shape = "rectangle",
           x = 64,
-          y = 272,
+          y = 288,
           width = 32,
-          height = 16,
+          height = 32,
           visible = true,
           properties = {
             ["map"] = "test/arkanos",
@@ -450,8 +450,8 @@ return {
           height = 32,
           visible = true,
           properties = {
-            ["map"] = "test/house1_room2",
-            ["spawn"] = "door1"
+            ["map"] = "test/arkanos",
+            ["spawn"] = "entrance"
           }
         }
       }
@@ -470,7 +470,7 @@ return {
           type = "",
           shape = "rectangle",
           x = 64,
-          y = 240,
+          y = 256,
           width = 32,
           height = 32,
           visible = true,
