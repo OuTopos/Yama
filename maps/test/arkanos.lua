@@ -1123,8 +1123,8 @@ return {
             { x = 64, y = 0 }
           },
           properties = {
-            ["map"] = "test/house1_room1",
-            ["spawn"] = "door2"
+            ["map"] = "test/large",
+            ["spawn"] = "arkanos"
           }
         }
       }

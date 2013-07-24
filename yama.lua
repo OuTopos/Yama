@@ -18,4 +18,9 @@ yama.joystick       = require("yama_joystick")
 
 yama.g              = require("yama_g")
 
+
+function yama.distance(x1, y1, x2, y2)
+	return g.sqrt((x1-x2)^2+(y1-y2)^2)
+end
+
 return yama

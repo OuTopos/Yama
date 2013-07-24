@@ -148,10 +148,10 @@ function entities_humanoid.new(map, x, y, z)
 	anchor:getBody():setLinearDamping( 10 )
 	anchor:getBody():setFixedRotation( true )
 
-	local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -64, 192, -96, 192, 96, 32, 64), 0)
-	hitbox:setUserData(public)
-	hitbox:setSensor(true)
-	hitbox:setCategory(2)
+	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -64, 192, -96, 192, 96, 32, 64), 0)
+	--hitbox:setUserData(public)
+	--hitbox:setSensor(true)
+	--hitbox:setCategory(2)
 
 
 	-- Monster variables

@@ -186,8 +186,8 @@
   </object>
   <object x="224" y="1280">
    <properties>
-    <property name="map" value="test/house1_room1"/>
-    <property name="spawn" value="door2"/>
+    <property name="map" value="test/large"/>
+    <property name="spawn" value="arkanos"/>
    </properties>
    <polyline points="0,0 0,32 64,32 64,0"/>
   </object>

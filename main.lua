@@ -10,7 +10,8 @@ function love.load()
 	scaleToggle = 1
 
 	yama.gui.load()
-	vp1 = yama.viewports.new(0, 0, 0, yama.screen.width, yama.screen.height, 4, 4, true)
+	vp1 = yama.viewports.new()
+	arkanosPlayer = 0
 end
 
 function love.keypressed(key)
@@ -58,12 +59,58 @@ function love.keypressed(key)
 	end
 	if key == "s" then
 		arkanos = yama.maps.load("test/arkanos")
-		if arkanosPlayer then
-			--vp1.view(arkanos)
-		else
-			local player = arkanos.spawn("player", "start")
-			vp1.view(arkanos, player)
-			arkanosPlayer = true
+		if arkanosPlayer == 0 then
+			local player1 = arkanos.spawn("player", "start")
+			vp1.view(arkanos, player1)
+			vp1.setScale(4, 4)
+			arkanosPlayer = 1
+		elseif arkanosPlayer == 1 then
+			local player2 = arkanos.spawn("player", "start")
+			vp2 = yama.viewports.new()
+			vp2.view(arkanos, player2)
+			vp2.setScale(4, 4)
+
+
+			vp1.setSize(yama.screen.width / 2, yama.screen.height)
+			vp2.setSize(yama.screen.width / 2, yama.screen.height)
+			vp2.setPosition(yama.screen.width / 2)
+			arkanosPlayer = 2
+		elseif arkanosPlayer == 2 then
+			local player3 = arkanos.spawn("player", "start")
+			vp3 = yama.viewports.new()
+			vp3.view(arkanos, player3)
+			vp3.setScale(4, 4)
+
+
+			vp1.setSize(yama.screen.width / 3, yama.screen.height)
+			vp2.setSize(yama.screen.width / 3, yama.screen.height)
+			vp2.setPosition(yama.screen.width / 3)
+			vp3.setSize(yama.screen.width / 3, yama.screen.height)
+			vp3.setPosition((yama.screen.width / 3) * 2)
+			arkanosPlayer = 3
+		elseif arkanosPlayer == 3 then
+			local player4 = arkanos.spawn("player", "start")
+			vp4 = yama.viewports.new()
+			vp4.view(arkanos, player4)
+
+
+			vp1.setSize(yama.screen.width / 2, yama.screen.height / 2)
+			
+			vp2.setSize(yama.screen.width / 2, yama.screen.height / 2)
+			vp2.setPosition(yama.screen.width / 2, 0)
+
+			vp3.setSize(yama.screen.width / 2, yama.screen.height / 2)
+			vp3.setPosition(0, yama.screen.height / 2)
+
+			vp4.setSize(yama.screen.width / 2, yama.screen.height / 2)
+			vp4.setPosition(yama.screen.width / 2, yama.screen.height / 2)
+
+			vp1.setScale(2, 2)
+			vp2.setScale(2, 2)
+			vp3.setScale(2, 2)
+			vp4.setScale(2, 2)
+
+			arkanosPlayer = 4
 		end
 		--vp1.follow(player)
 

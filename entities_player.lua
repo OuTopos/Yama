@@ -270,10 +270,10 @@ function entities_player.new(map, x, y, z)
 		print("["..private.userdata.name.. "] is teleporting to ["..mapname.."] and spawning at ["..spawn.."]")
 		local newMap = yama.maps.load(mapname)
 		local newEntity = newMap.spawn(private.type, spawn)
+		if public.vp then
+			public.vp.view(newMap, newEntity)
+		end
 		public.destroy()
-
-		vp1.view(newMap, newEntity)
-
 	end
 
 	-- DEFAULT FUNCTIONS

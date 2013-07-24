@@ -109,7 +109,7 @@ function maps.load(path)
 					for i=1, #private.viewports do
 						local vp = private.viewports[i]
 						local wasVisible = entity.visible[vp] or false
-						local isVisible = vp.getCamera().isEntityInside(entity)
+						local isVisible = vp.isEntityInside(entity)
 						
 						if wasVisible and isVisible then
 							table.insert(private.entities.visible[vp], entity)
@@ -160,7 +160,7 @@ function maps.load(path)
 
 		function public.addViewport(vp)
 			-- Set camera boundaries for the viewport.
-			vp.getCamera().setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
+			vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
 
 			-- Make the camera follow the player.
 			vp.getCamera().follow = private.player
@@ -197,6 +197,9 @@ function maps.load(path)
 
 		-- SPAWNS
 		private.spawns = {}
+
+		-- MISC
+		private.cooldown = 0
 
 
 		-- LOAD - Physics
@@ -320,16 +323,6 @@ function maps.load(path)
 			print("Map optimized. Tiles: "..public.tilesInMap)
 		end
 
-		function public.unload()
-			game.update()
-			private.data = nil
-			player = nil
-			camera.follow = nil
-			entities.destroy()
-			--physics.destroy()
-			buffer.reset()
-		end
-
 		function public.getQuad(quad)
 			i = #private.data.tilesets
 			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
@@ -427,11 +420,11 @@ function maps.load(path)
 
 				public.tilesInView = 0
 				local batches = {}
-
-				local xmin = vp.getCamera().view.x
-				local xmax = vp.getCamera().view.x+vp.getCamera().view.width-1
-				local ymin = vp.getCamera().view.y
-				local ymax = vp.getCamera().view.y+vp.getCamera().view.height-1
+				local mapview = vp.getMapview()
+				local xmin = mapview.x
+				local xmax = mapview.x + mapview.width - 1
+				local ymin = mapview.y
+				local ymax = mapview.y + mapview.height - 1
 
 				if xmin < 0 then
 					xmin = 0
