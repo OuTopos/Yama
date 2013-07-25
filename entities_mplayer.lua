@@ -17,7 +17,7 @@ function entities_mplayer.new( map, x, y, z )
 	local world = map.getWorld()
 
 	-- Common variables
-	local width, height = 32, 48
+	local width, height = 32, 32
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
@@ -58,8 +58,8 @@ function entities_mplayer.new( map, x, y, z )
 	local bulletImpulse = 900
 	local nAllowedBullets = 60
 
-	local wallContact = 'röv'
-
+	local wallContact = 0
+	local latestCol = nil
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
 	
@@ -76,8 +76,8 @@ function entities_mplayer.new( map, x, y, z )
 	table.insert( bufferBatch.data, spriteArrow )
 	
 	-- Physics
-	local anchor = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
-	--anchor:setGroupIndex( -1 )
+	local anchor = love.physics.newFixture( love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
+	anchor:setGroupIndex( -2 )
 	anchor:setUserData( userdata )
 	anchor:setRestitution( 0 )	
 	anchor:getBody( ):setFixedRotation( true )
@@ -86,18 +86,17 @@ function entities_mplayer.new( map, x, y, z )
 	anchor:getBody( ):setInertia( 1 )
 	anchor:getBody( ):setGravityScale( 9 )
 	anchor:getBody( ):setBullet( true )
-	--local anchor2 = love.physics.newFixture(anchor:getBody(), love.physics.newRectangleShape( width, height-2 ) )
-	--anchor2:setGroupIndex( -1 )
+
 	
-	--local canon = love.physics.newFixture(love.physics.newBody( world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
-	--canon:setGroupIndex( -1 )
-	--canonJoint = love.physics.newRevoluteJoint( canon:getBody(), anchor:getBody(), x, y, false )
-	--anchor:setUserData( userdata )
-	--anchor:setRestitution( 0 )	
-	--canon:getBody( ):setLinearDamping( 1 )
-	--canon:getBody( ):setMass( 0.0001 )
-	--canon:getBody( ):setInertia( 1 )
-	--canon:getBody( ):setGravityScale( 9 )
+	local canon = love.physics.newFixture(love.physics.newBody( world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
+	canon:setGroupIndex( -1 )
+	canonJoint = love.physics.newRevoluteJoint( canon:getBody(), anchor:getBody(), x, y, false )
+	canonJoint:enableMotor( true )
+	--canonJoint = love.physics.newWheelJoint( canon:getBody(), anchor:getBody(), x, y, x, y )
+	canon:getBody( ):setLinearDamping( 1 )
+	canon:getBody( ):setMass( 0.0001 )
+	canon:getBody( ):setInertia( 0.01 )
+	canon:getBody( ):setGravityScale( 0.9 )
 
 	function self.update( dt )
 		self.updateInput( dt )
@@ -105,6 +104,8 @@ function entities_mplayer.new( map, x, y, z )
 		
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
+
+
 		
 	end
 
@@ -117,17 +118,24 @@ function entities_mplayer.new( map, x, y, z )
 		bulletSpawn( dt )
 		jumping( dt )
 		--legJump( dt )
-
 	end
 
 	function movement( dt )
 		fx, fy = 0, 0
 		relativeDirection = ""
-		xv, yv = anchor:getBody():getLinearVelocity()
+		
 		if yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 1 ), love.joystick.getAxis( 1, 2 ) ) > 0.25 then
+			xv, yv = anchor:getBody():getLinearVelocity()
+			if pContact then
+				pContact:setFriction( friction )
+			end
 			nx = love.joystick.getAxis( 1, 1 )
 			ny = love.joystick.getAxis( 1, 2 )
 			relativeDirection = yama.g.getRelativeDirection( math.atan2( ny, nx ))
+		else
+			if pContact then
+				pContact:setFriction( stopFriction )
+			end
 		end
 		
 		if love.keyboard.isDown( "right" ) or relativeDirection == "right" then
@@ -169,8 +177,9 @@ function entities_mplayer.new( map, x, y, z )
 				xrad = math.cos( aim )
 				yrad = math.sin( aim )
 				
-				xPosBulletSpawn = x + 28*xrad 
+				xPosBulletSpawn = x + 28*xrad
 				yPosBulletSpawn = y + 28*yrad
+				--print( xPosBulletSpawn, xPosBulletSpawn )
 				bullet = map.spawnXYZ( "bullet", xPosBulletSpawn, yPosBulletSpawn, 0 )
 				fxbullet = bulletImpulse * nx
 				fybullet = bulletImpulse * ny				
@@ -195,24 +204,11 @@ function entities_mplayer.new( map, x, y, z )
 			allowjump = false
 		end
 		
+
 		jumpAccelerator( dt, buttonShoulderR, jumpMaxTimer, jumpIncreaser )
 
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) and onGround == true then
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) and yv == 0 then
 			allowjump = true
-		end
-
-		if pContact then
-			if not love.keyboard.isDown(" ") and not love.joystick.isDown( 1, buttonShoulderR ) and onGround then
-				--print( 'pContact STAHP')
-				pContact:setFriction( stopFriction )
-			end
-		else
-			--print( 'pContact NOT!!')	
-		end
-
-		if not pContact then
-		--	onGround = false
-		--	allowjump = false
 		end
 	end
 
@@ -223,7 +219,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		if doLeg == 1 then
 			print( "doLeg")
-			legSetup()
+			--legSetup()
 		end
 		
 		if allowjump and yama.g.getDistance( 0, 0, love.joystick.getAxis( 1, 3 ), love.joystick.getAxis( 1, 3 ) ) > 0.25 then
@@ -233,22 +229,16 @@ function entities_mplayer.new( map, x, y, z )
 			--allowjump = false
 		end
 
-		--JUMPING LEG  A BUTTON --
+
 		if love.joystick.isDown( 1, buttunFaceA ) then
 			print( "pressssaaaaaa")
-			leg1:getBody():applyForce( 0, 20000000 )
+			--leg1:getBody():applyLinearImpulse( 0, 200000 )
 			--allowjump = false
 		end
 		
 		--jumpAccelerator( dt, 3, jumpMaxTimer, jumpIncreaser )
-			
 
-		if pContact then
-			if not love.keyboard.isDown( " " ) and not love.joystick.isDown( 1, buttunFaceA ) then
-				pContact:setFriction( stopFriction ) 
-			end
-		end
-		-- JUUMPING END --
+
 	end
 
 	function legSetup( )
@@ -315,8 +305,8 @@ function entities_mplayer.new( map, x, y, z )
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
 		--print( "beginContact!" )
-
 		
+
 		xc1, yc1, xc2, yc2 = contact:getPositions( )
 		--[[
 		print( "contactPos xc1", xc1 )
@@ -332,7 +322,7 @@ function entities_mplayer.new( map, x, y, z )
 		--print( "b y", b:getBody( ):getY() )
 		--print( "delta Y", b:getBody( ):getY() - anchor:getBody( ):getY()  )
 		--print( "delta X", b:getBody( ):getX() - anchor:getBody( ):getX()  )
-		--]]
+		
 		if a:getBody( ) == anchor:getBody( ) then
 			--print( 'a = anchor' )
 			if xc1 and xc2 then
@@ -340,58 +330,37 @@ function entities_mplayer.new( map, x, y, z )
 			end
 			if xc1 and xc2 then 
 				if xc1 - xc2 < 0.1 and xc1 - xc2 > - 0.1 then
-					contact:setFriction( 0.00001 )
-					wallContact = contact
-				--	latestCol = 'wall'
-				--	pContact = nil
-					print( 'isWall' )
+					latestCol = 'wall'
 				else
 					--contact:setRestitution( 0 )
-					pContact = contact
+					latestCol = 'ground'
 					jumpTimer = 0
-					onGround = true
-					contact:setFriction( friction )
+					onGround = true					
 					yposContact = anchor:getBody( ):getY( )
 				end
 			end
 		end
-
-		--[[
-		-- NEW JUMP --
-		if a:getBody( ) == anchor:getBody( ) then
-			contactNormal = math.atan2( contact:getNormal( ) )
-			contactNormal = math.deg( contactNormal )
-		--	print( "normal!", contactNormal )
-			if contactNormal < 20 and contactNormal > - 20 then
-				contactNormal = contactNormal + 180
-			end
-			if contactNormal < 200 and contactNormal > 160 then
-				contact:setRestitution( 0 )
-				pContact = contact
-				xc1, yc1, xc2, yc2 = contact:getPositions( )
-				--print( "YES", contactNormal )
-				jumpTimer = 0
-				onGround = true
-				contact:setFriction( friction )
-			end
-		end
 		--]]
 		-- JUMP STUFF --
-		--[[
-		if b:getUserData() then
-			if b:getUserData().type == 'floor' then
-				print( 'On floor!')
-				jumpTimer = 0
-		 		onGround = true
-				contact:setFriction( friction )
+		---[[
+		if a:getBody() == anchor:getBody() then
+			contact:setRestitution( 0 )
+			if b:getUserData() then
+				if b:getUserData().type == 'floor' then
+					pContact = contact
+					print( 'On floor!')
+					jumpTimer = 0
+			 		onGround = true
+				end
 			end
 		end
 		--]]
 	end
 
 	function self.endContact(a, b, contact)
+
 		--print( "endContact!" )
-		---[[
+		--[[
 		endxc1, endyc1, endxc2, endyc2 = contact:getPositions( )
 		--print( "contactPos xc1", xc1 )
 		--print( "contactPos yc1", yc1 )
@@ -403,17 +372,8 @@ function entities_mplayer.new( map, x, y, z )
 		--print( "a y", a:getBody( ):getY() )
 		--print( "bx:", b:getBody( ):getX() )
 		--print( "by:", b:getBody( ):getY() )
-		--]]
-		print( 'current', contact:getFriction() )
-		print( 'wallf', wallContact:getFriction() )
-		print( 'groundf', pContact:getFriction() )
 
-		print( '-------------' )
-		if wallContact == contact then
 
-		end
-
-		---[[
 		if a:getBody( ) == anchor:getBody( ) then
 			--print( 'a = anchor' )
 			if xc1 and xc2 then
@@ -429,30 +389,16 @@ function entities_mplayer.new( map, x, y, z )
 			end
 		end
 		--]]
-
-		--[[
-		if a:getBody( ) == anchor:getBody( ) then
-
-			contact:setRestitution( 0 )
-			contactNormalEnd = math.atan2( contact:getNormal( ) )
-			contactNormalEnd = math.deg( contactNormalEnd )
-			--print( "contactEndNormal", contactNormalEnd )
-
-
-			if contactNormalEnd < 100 and contactNormalEnd > 80 then
-				onGround = false
-				allowjump = false
-			end
-		end
-		--]]
 	
-		--[[
+		---[[
 		-- JUMP STUFF --
-		if a:getUserData() or b:getUserData() then
-			if a:getUserData().type == 'floor' or b:getUserData().type == 'floor' then
-				print( 'Endcontact floor!')
-				onGround = false
-				allowjump = false
+		if a:getBody() == anchor:getBody() then
+			contact:setRestitution( 0 )
+			if b:getUserData() then
+				if a:getUserData().type == 'floor' or b:getUserData().type == 'floor' then
+					print( 'Endcontact floor!')
+					onGround = false
+				end
 			end
 		end
 		--]]
