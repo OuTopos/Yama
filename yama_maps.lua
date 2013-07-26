@@ -233,8 +233,33 @@ function maps.load(path)
 					if layer.properties.type == "collision" then
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
+							-- Creating a fixture from the object.
 							local fixture = public.createFixture(object, "static")
+
+							-- And setting the userdata from the object.
 							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
+
+							-- Setting filter data from object properties. (category, mask, groupindex)
+							if object.properties.category then
+								local category = {}
+								for x in string.gmatch(object.properties.category, "%P+") do
+									x = tonumber(string.match(x, "%S+"))
+									if x then
+										table.insert(category, x)
+									end
+								end
+								fixture:setCategory(unpack(category))
+							end
+							if object.properties.mask then
+								local mask = {}
+								for x in string.gmatch(object.properties.mask, "%P+") do
+									x = tonumber(string.match(x, "%S+"))
+									if x then
+										table.insert(mask, x)
+									end
+								end
+								fixture:setMask(unpack(mask))
+							end
 							if object.properties.groupindex then
 								fixture:setGroupIndex(tonumber(object.properties.groupindex))
 							end
