@@ -9,6 +9,9 @@
  <tileset firstgid="1" name="hyptosis_ff6-recreated" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/hyptosis_ff6-recreated.png" width="512" height="1335"/>
  </tileset>
+ <tileset firstgid="657" name="doorshade" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/doorshade.png" width="32" height="64"/>
+ </tileset>
  <layer name="0.0" width="16" height="9">
   <properties>
    <property name="z" value="0"/>
@@ -30,7 +33,7 @@
    <property name="z" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYBj6wAiIm4DYGAeOQFMLAiZIYpxAvAVKI2MPKM0FxOZAbIbDfkkCWIoSzw1yAAB3SgUw
+   eJxjYBj6wAiIm4DYGAeOQFM7iYmBwQRJjBOIt0BpZOwBpbmA2ByIzXDYL0kAS1HqwUEMADdHBcQ=
   </data>
  </layer>
  <layer name="1.1" width="16" height="9">
@@ -46,7 +49,7 @@
    <property name="z" value="2"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYBh4oATERUCsDMQ+UFoZia+CppYBTQwXsIDSlkCsDsRqONRZo/GlgVibCPNHAQMDAClTA2I=
+   eJxjYBh4oATERUCsDMQ+UFoZia+CpnYiE6oYLmABpS2BWB2I1XCos0bjSwOxNlEuHwUADMQD9Q==
   </data>
  </layer>
  <layer name="3.0" width="16" height="9">
@@ -65,7 +68,7 @@
    eJxTZWBgYAJiZjyYBYhZgVgVSS1MTJCBOCCKRS02MVLAqH4GhkAgDoLyk5DYxOpXhJqhCcShUHYIkRikHgCnKQfN
   </data>
  </layer>
- <objectgroup color="#ff0000" name="Collision" width="16" height="9">
+ <objectgroup color="#ff0000" name="Collision" width="16" height="9" visible="0">
   <properties>
    <property name="type" value="collision"/>
   </properties>
@@ -98,7 +101,7 @@
   <object x="352" y="0" width="64" height="128"/>
   <object x="464" y="128" width="16" height="16"/>
  </objectgroup>
- <objectgroup color="#00ffff" name="Portals" width="16" height="9">
+ <objectgroup color="#00ffff" name="Portals" width="16" height="9" visible="0">
   <properties>
    <property name="type" value="portals"/>
   </properties>
@@ -115,7 +118,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ffff00" name="Spawn" width="16" height="9">
+ <objectgroup color="#ffff00" name="Spawn" width="16" height="9" visible="0">
   <properties>
    <property name="type" value="spawns"/>
   </properties>
@@ -123,7 +126,7 @@
   <object name="door2" x="416" y="96" width="32" height="32"/>
   <object name="behind_counter" x="64" y="128" width="32" height="32"/>
  </objectgroup>
- <objectgroup name="Entities" width="16" height="9">
+ <objectgroup name="Entities" width="16" height="9" visible="0">
   <properties>
    <property name="type" value="entities"/>
   </properties>

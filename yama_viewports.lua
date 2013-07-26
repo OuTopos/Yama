@@ -249,14 +249,10 @@ function viewports.new()
 		--]]
 
 		-- Check bounding box
-		if entity.getBoundingBox then
-			local x, y, width, height = entity.getBoundingBox()
+		local x, y, width, height = entity.getBoundingBox()
 
-			if x + width > private.camera.x and x < private.camera.x + private.camera.width and y + height > private.camera.y and y < private.camera.y + private.camera.height then
-				return true
-			else
-				return false
-			end
+		if x + width > private.camera.x and x < private.camera.x + private.camera.width and y + height > private.camera.y and y < private.camera.y + private.camera.height then
+			return true
 		else
 			return false
 		end

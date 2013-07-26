@@ -21,6 +21,9 @@
   <tileoffset x="0" y="10"/>
   <image source="../../images/gamegraphics/flowers.png" width="78" height="20"/>
  </tileset>
+ <tileset firstgid="367" name="doorshade" tilewidth="32" tileheight="32">
+  <image source="../../images/tilesets/doorshade.png" width="32" height="64"/>
+ </tileset>
  <layer name="0" width="40" height="40">
   <properties>
    <property name="priority" value="0"/>
@@ -44,7 +47,7 @@
    <property name="z" value="1"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJxjYCAfKFGglx5gsLtvFIyCUTAKRsHQBvJArDDQjiAByAy0AwgA3gGwM5uROHVSQCxNZbszibSbGECruM2iohupCYiNt1EwCkYSKMTBHgjgCMyjWgwQDAIGWNSY0tE96ICYMnOw1ZnFWNhPB8IhaKBooB1AAQgYoLqkAEoPtbCbDMRTBtoRSGCwhp8fkekqn7bOIArgC0OQHKiMeYYkBmI/p6mLsANs5R8MyOBgj4JRMApGATIAAL4BECE=
+   eJxjYCAfKFGglx5gsLtvFIyCUTAKRsHQBvJArDDQjiAByAy0AwgA3gGwM5uROHVSQCxNZbszibSbGECruM2iohupCYiNt1EwCkYSKMTBHgjgCMyjWgwQXABkG2BRY0pnNyEDYsrMwVZnFmNhPx0Ih6CBooF2AAUgYIDqkgIoPdTCbjIQTxloRyCBwRp+fkSmq3zaOoMogC8MQXKgMuYZkhiI/ZymLsIOsJV/MCCDgz0KRsEoGAXIAABn2xCS
   </data>
  </layer>
  <layer name="1" width="40" height="40">
@@ -68,7 +71,7 @@
    <property name="z" value="2"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1EEKgzAQBdB4BRXq2pWLXsBepC7dmbZHqVdUr9KkpBAkM1okjsJ/EDLGET4xRKltbhu/j+3o+QAAgHYxo5AO8YdcOsCJpWZk0iEY+LcA8CBqCXWi1NXMpXuuAj3Djnnm1tyZR7tXX4Faag8br34yfffYQQjtyr4uZgiGdjO3d5IaYv1tRr9nEELr5qX9kzp/ernlS+r8+bg9tO/sHTN6a7aeoiYKC91/PzlRAwCcyQfXBBCG
+   eJzt1EEKgzAQBdB4hVawa1dd9AL2Irp0p60LD6JXbHsVJ6KQRWa0SByF/yBkiCN8Rokx2zw3vh/a0fMBAAAvoXXTDvGHWDvAiV1oXbVDCPBtAeDF1BqyyJgH7Smtluq7p+ezcybXmjvzaPdq46m1Zlg49Vvoy0MHYZQr+6qQIQT1tEuz01Qw5x2tfs8gjHLal+an9f/Vyy0jrf/PJc3QPrN3zNc5s/UvaCI/3/03i5kaAOBMBrxOEPY=
   </data>
  </layer>
  <layer name="2" width="40" height="40">
@@ -159,7 +162,7 @@
    eJzt1zkKgDAARNFJ47Esvf9VXMEl4oBNGpdCich/8EmTYlJGAgAAAL6nClIZcq8AAAAA8GdD7gEXVle7xrWuc73Od9+585TCf7bR5+Rmt7iofXcqfcPRnTdsTE8WyA==
   </data>
  </layer>
- <objectgroup color="#ffff00" name="Spawns" width="40" height="40">
+ <objectgroup color="#ffff00" name="Spawns" width="40" height="40" visible="0">
   <properties>
    <property name="type" value="spawns"/>
   </properties>
@@ -169,7 +172,7 @@
   <object name="house1" x="128" y="736" width="32" height="32"/>
   <object name="voidroid" x="608" y="480" width="32" height="32"/>
  </objectgroup>
- <objectgroup color="#55aaff" name="Portals" width="40" height="40">
+ <objectgroup color="#55aaff" name="Portals" width="40" height="40" visible="0">
   <properties>
    <property name="type" value="portals"/>
   </properties>
@@ -193,7 +196,7 @@
    <polyline points="0,0 0,32 64,32 64,0"/>
   </object>
  </objectgroup>
- <objectgroup color="#ff0000" name="Collision" width="40" height="40">
+ <objectgroup color="#ff0000" name="Collision" width="40" height="40" visible="0">
   <properties>
    <property name="type" value="collision"/>
   </properties>
@@ -272,7 +275,7 @@
    <polygon points="0,0 35,0 44,-28 29,-43 6,-43 -11,-26"/>
   </object>
  </objectgroup>
- <objectgroup color="#ff00ff" name="Patrols" width="40" height="40">
+ <objectgroup color="#ff00ff" name="Patrols" width="40" height="40" visible="0">
   <properties>
    <property name="type" value="patrols"/>
   </properties>
@@ -286,7 +289,7 @@
    <polyline points="0,0 0,416 -96,480 -64,544 0,576 0,896 1088,896 1088,-512 832,-512"/>
   </object>
  </objectgroup>
- <objectgroup name="Entities" width="40" height="40">
+ <objectgroup name="Entities" width="40" height="40" visible="0">
   <properties>
    <property name="type" value="entities"/>
   </properties>

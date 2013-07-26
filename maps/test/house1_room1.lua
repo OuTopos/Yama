@@ -25,6 +25,19 @@ return {
       imageheight = 1335,
       properties = {},
       tiles = {}
+    },
+    {
+      name = "doorshade",
+      firstgid = 657,
+      tilewidth = 32,
+      tileheight = 32,
+      spacing = 0,
+      margin = 0,
+      image = "../../images/tilesets/doorshade.png",
+      imagewidth = 32,
+      imageheight = 64,
+      properties = {},
+      tiles = {}
     }
   },
   layers = {
@@ -95,7 +108,7 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 0, 52, 0,
+        0, 50, 130, 51, 51, 51, 51, 51, 51, 88, 0, 0, 50, 658, 52, 0,
         0, 9, 180, 9, 9, 9, 9, 72, 9, 10, 55, 54, 0, 0, 0, 0,
         0, 25, 25, 25, 25, 25, 25, 25, 25, 26, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -144,7 +157,7 @@ return {
       data = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 34, 114, 35, 76, 35, 35, 35, 76, 36, 0, 0, 34, 0, 36, 0,
+        0, 34, 114, 35, 76, 35, 35, 35, 76, 36, 0, 0, 34, 657, 36, 0,
         0, 0, 0, 0, 0, 0, 0, 56, 0, 57, 39, 38, 0, 0, 0, 0,
         0, 59, 0, 0, 0, 27, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -206,7 +219,7 @@ return {
     {
       type = "objectgroup",
       name = "Collision",
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["type"] = "collision"
@@ -420,7 +433,7 @@ return {
     {
       type = "objectgroup",
       name = "Portals",
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["type"] = "portals"
@@ -459,7 +472,7 @@ return {
     {
       type = "objectgroup",
       name = "Spawn",
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["type"] = "spawns"
@@ -503,7 +516,7 @@ return {
     {
       type = "objectgroup",
       name = "Entities",
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {
         ["type"] = "entities"
