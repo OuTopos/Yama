@@ -20,7 +20,7 @@ function maps.load(path)
 
 		function private.beginContact(a, b, contact)
 			if a:getUserData() then
-				if a:getUserData().entiy then
+				if a:getUserData().entity then
 					if a:getUserData().entity.beginContact then
 						a:getUserData().entity.beginContact(a, b, contact)
 					end
