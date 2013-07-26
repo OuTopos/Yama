@@ -235,6 +235,9 @@ function maps.load(path)
 						for i, object in ipairs(layer.objects) do
 							local fixture = public.createFixture(object, "static")
 							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
+							if object.properties.groupindex then
+								fixture:setGroupIndex(tonumber(object.properties.groupindex))
+							end
 						end
 					elseif layer.properties.type == "entities" then
 						-- Block add to physics.
