@@ -4,22 +4,39 @@ function entities_humanoid.new(map, x, y, z)
 	local public = {}
 	local private = {}
 
-	private.name = "Unnamed"
-	private.type = "humanoid"
-	private.properties = {}
-	
-	local world = map.getWorld()
+	private.world = map.getWorld()
 
-	-- Sprite variables
-	local width, height = 64, 64
-	local ox, oy = width/2, height
-	local sx, sy = 1, 1
-	local r = 0
-	public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
-	public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
+	private.type = "humanoid"
+
+	private.userdata = {}
+	private.userdata.name = "Unnamed"
+	private.userdata.type = "player"
+	private.userdata.properties = {}
+	private.userdata.entity = public
+
+	-- ANCHOR/POSITION/SPRITE VARIABLES
+	private.radius = 10
+	private.mass = 1
+
+	private.x, private.y, private.z = x, y, z
+	private.r = 0
+	private.width, private.height = 64, 64
+	private.sx, private.sy = 1, 1
+	private.ox, private.oy = 32, 64
+	private.aox, private.aoy = 0, private.radius
+	private.sprite = nil
+
+	private.scale = (private.sx + private.sy) / 2
+
+	-- PHYSICS OBJECT
+	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
+	private.anchor:setRestitution(0)
+	private.anchor:getBody():setLinearDamping(10)
+	private.anchor:getBody():setFixedRotation(true)
+	private.anchor:setUserData(private.userdata)
+
 
 	-- Movement variables
-	local radius = 10
 	local mass = 1
 	local velocity = 250
 	local direction = math.atan2(math.random(-1, 1), math.random(-1, 1))
@@ -39,7 +56,7 @@ function entities_humanoid.new(map, x, y, z)
 	--patrol.setRadius(32)
 
 	-- BUFFER BATCH
-	local bufferBatch = yama.buffers.newBatch(x, y, z)
+	local bufferBatch = yama.buffers.newBatch(private.x, private.y, private.z)
 	
 	-- SPRITE
 	local attributes = {}
@@ -85,73 +102,56 @@ function entities_humanoid.new(map, x, y, z)
 	local spr = {}
 	-- Body
 	tilesets.body = "LPC/body/"..character.gender.."/"..character.body
-	images.quads.add(tilesets.body, width, height)
-	spr.body = yama.buffers.newSprite(images.load(tilesets.body), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+	images.quads.add(tilesets.body, private.width, private.height)
+	spr.body = yama.buffers.newSprite(images.load(tilesets.body), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 	table.insert(bufferBatch.data, spr.body)
 	if character.eyes then
 		tilesets.eyes = "LPC/body/"..character.gender.."/eyes/"..character.eyes
-		spr.eyes = yama.buffers.newSprite(images.load(tilesets.eyes), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.eyes = yama.buffers.newSprite(images.load(tilesets.eyes), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.eyes)
 	end
 	-- Hair
 	if character.hair then
 		if character.haircolor then
 			tilesets.hair = "LPC/hair/"..character.gender.."/"..character.hair.."/"..character.haircolor
-			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 			table.insert(bufferBatch.data, spr.hair)
 		else
 			tilesets.hair = "LPC/hair/"..character.gender.."/"..character.hair
-			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+			spr.hair = yama.buffers.newSprite(images.load(tilesets.hair), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 			table.insert(bufferBatch.data, spr.hair)
 		end
 	end
 	-- Torso
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.torso = "LPC/torso/white_shirt_male"
-		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.torso)
 	elseif character.gender == "female" then
 		tilesets.torso = "LPC/torso/pirate_shirt_female"
-		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.torso = yama.buffers.newSprite(images.load(tilesets.torso), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.torso)
 	end
 	-- Legs
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.legs = "LPC/legs/green_pants_male"
-		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.legs)
 	elseif character.gender == "female" then
 		tilesets.legs = "LPC/legs/green_pants_female"
-		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.legs = yama.buffers.newSprite(images.load(tilesets.legs), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.legs)
 	end
 	-- Feet
 	if character.gender == "male" and character.body ~= "skeleton" then
 		tilesets.feet = "LPC/feet/brown_shoes_male"
-		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.feet)
 	elseif character.gender == "female" then
 		tilesets.feet = "LPC/feet/brown_shoes_female"
-		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], x, y+radius, z, r, sx, sy, ox, oy)
+		spr.feet = yama.buffers.newSprite(images.load(tilesets.feet), images.quads.data[tilesets.body][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 		table.insert(bufferBatch.data, spr.feet)
 	end
-	--love.graphics.setCanvas()
-
-	--images.inject("123456", love.graphics.newImage(canvas:getImageData()))
-	-- local image = images.load("tilesets/lpcfemaletest")
-	--local image = love.graphics.newImage(canvas:getImageData())
-
-	-- Anchor variables
-	local anchor = love.physics.newFixture(love.physics.newBody(world, x, y-radius, "dynamic"), love.physics.newCircleShape(radius))
-	anchor:setUserData(public)
-	anchor:setRestitution( 0 )
-	anchor:getBody():setLinearDamping( 10 )
-	anchor:getBody():setFixedRotation( true )
-
-	--local hitbox = love.physics.newFixture(anchor:getBody(), love.physics.newPolygonShape(0, 0, 32, -64, 192, -96, 192, 96, 32, 64), 0)
-	--hitbox:setUserData(public)
-	--hitbox:setSensor(true)
-	--hitbox:setCategory(2)
 
 
 	-- Monster variables
@@ -164,19 +164,19 @@ function entities_humanoid.new(map, x, y, z)
 
 	-- Standard functions
 	function public.update(dt)
-		brain.update(x, y)
+		brain.update(private.x, private.y)
 
 		if brain.speed > 0 or brain.speed < 0 then
 			local fx = velocity * math.cos(brain.direction) * brain.speed
 			local fy = velocity * math.sin(brain.direction) * brain.speed
-			anchor:getBody():applyForce(fx, fy)
+			private.anchor:getBody():applyForce(fx, fy)
 		end
 
 		-- Position updates
-		x = anchor:getBody():getX()
-		y = anchor:getBody():getY()
-		anchor:getBody():setAngle(brain.direction)
-		yama.buffers.setBatchPosition(bufferBatch, x, y + radius)
+		private.x = private.anchor:getBody():getX()
+		private.y = private.anchor:getBody():getY()
+		private.anchor:getBody():setAngle(brain.direction)
+		yama.buffers.setBatchPosition(bufferBatch, private.x + private.aox, private.y + private.aoy)
 
 		-- Animation updates
 		animation.timescale = brain.speed
@@ -189,8 +189,6 @@ function entities_humanoid.new(map, x, y, z)
 				yama.buffers.setBatchQuad(bufferBatch, images.quads.data[tilesets.body][animation.frame])
 			end
 		end
-		public.cx, public.cy = x - ox + width / 2, y - oy + height / 2
-		public.radius = yama.g.getDistance(public.cx, public.cy, x - ox, y - oy)
 	end
 
 	function public.addToBuffer(vp)
@@ -205,7 +203,7 @@ function entities_humanoid.new(map, x, y, z)
 		local d = math.atan2(y-dy, x-dx)
 		wvx = 500 * math.cos(d)
 		wvy = 500 * math.sin(d)
-		anchor:getBody():setLinearVelocity(wvx, wvy)
+		private.anchor:getBody():setLinearVelocity(wvx, wvy)
 
 		print("ittai!")
 		if hp < 0 then
@@ -233,40 +231,32 @@ function entities_humanoid.new(map, x, y, z)
 		return private.name
 	end
 
-	-- Common functions
-	function public.getX()
-		return x
-	end
-	function public.getY()
-		return y
-	end
-	function public.getZ()
-		return z
-	end
-	function public.getOX()
-		return x - ox * sx
-	end
-	function public.getOY()
-		return y - oy * sy + radius
-	end
-	function public.getWidth()
-		return width * sx
-	end
-	function public.getHeight()
-		return height * sy
-	end
-	function public.getCX()
-		return x - ox + width / 2
-	end
-	function public.getCY()
-		return y - oy + height / 2
-	end
-	function public.getRadius()
-		return yama.g.getDistance(public.getCX(), public.getCY(), x - ox * sx, y - oy * sy)
-	end
 	function public.destroy()
-		anchor:getBody():destroy()
+		private.anchor:getBody():destroy()
 		public.destroyed = true
+	end
+
+	-- GET
+	function public.getType()
+		return private.type
+	end
+	function public.getPosition()
+		return private.x, private.y, private.z
+	end
+	function public.getBoundingBox()
+		local x = private.x - (private.ox - private.aox) * private.sx
+		local y = private.y - (private.oy - private.aoy) * private.sy
+		local width = private.width * private.sx
+		local height = private.height * private.sy
+
+		return x, y, width, height
+	end
+	function public.getBoundingCircle()
+		local x, y, width, height = public.getBoundingBox()
+		local cx, cy = x + width / 2, y + height / 2
+		local radius = yama.g.getDistance(x, y, cx, cy)
+
+		return cx, cy, radius
 	end
 
 	return public

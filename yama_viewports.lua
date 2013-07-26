@@ -160,10 +160,10 @@ function viewports.new()
 	--public.entities = {}
 
 
-	private.camera.round = false
+	--private.camera.round = false
 
 
-	private.camera.follow = nil
+	--private.camera.follow = nil
 
 	function private.camera.isInside2(x, y, width, height)
 		if x+width > private.camera.x and x < private.camera.x+private.camera.width and y+height > private.camera.y and y < private.camera.y+private.camera.height then
@@ -206,7 +206,8 @@ function viewports.new()
 
 	function public.update(dt, map)
 		if private.entity then
-			private.camera.center(private.entity.getX(), private.entity.getY())
+			local x, y = private.entity.getPosition()
+			private.camera.center(x, y)
 		end
 		private.camera.update()
 		private.mapview.update()
@@ -238,8 +239,24 @@ function viewports.new()
 
 
 	function public.isEntityInside(entity)
+		-- Check distance
+		--[[
 		if yama.g.getDistance(private.camera.cx, private.camera.cy, entity.getCX(), entity.getCY()) < private.camera.radius + entity.getRadius() then
 			return true
+		else
+			return false
+		end
+		--]]
+
+		-- Check bounding box
+		if entity.getBoundingBox then
+			local x, y, width, height = entity.getBoundingBox()
+
+			if x + width > private.camera.x and x < private.camera.x + private.camera.width and y + height > private.camera.y and y < private.camera.y + private.camera.height then
+				return true
+			else
+				return false
+			end
 		else
 			return false
 		end

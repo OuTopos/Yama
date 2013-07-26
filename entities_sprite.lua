@@ -12,7 +12,7 @@ function entities_sprite.new(map, x, y, z)
 	private.width, private.height = 0, 0
 	private.sx, private.sy = 1, 1
 	private.ox, private.oy = 0, 0
-	private.oex, private.oey = 0, 0
+	private.aox, private.aoy = 0, 0
 
 	private.sprite = nil
 
@@ -44,38 +44,27 @@ function entities_sprite.new(map, x, y, z)
 		self.destroyed = true
 	end
 
+	-- GET
 	function public.getType()
 		return private.type
 	end
-	function public.getX()
-		return private.x
+	function public.getPosition()
+		return private.x, private.y, private.z
 	end
-	function public.getY()
-		return private.y
+	function public.getBoundingBox()
+		local x = private.x - (private.ox - private.aox) * private.sx
+		local y = private.y - (private.oy - private.aoy) * private.sy
+		local width = private.width * private.sx
+		local height = private.height * private.sy
+
+		return x, y, width, height
 	end
-	function public.getZ()
-		return private.z
-	end
-	function public.getOX()
-		return private.x - (private.ox - private.oex) * private.sx
-	end
-	function public.getOY()
-		return private.y - (private.oy - private.oey)  * private.sy
-	end
-	function public.getWidth()
-		return private.width * private.sx
-	end
-	function public.getHeight()
-		return private.height * private.sy
-	end
-	function public.getCX()
-		return private.x - private.ox + private.width / 2
-	end
-	function public.getCY()
-		return private.y - private.oy + private.height / 2
-	end
-	function public.getRadius()
-		return yama.g.getDistance(public.getCX(), public.getCY(), private.x - private.ox * private.sx, private.y - private.oy * private.sy)
+	function public.getBoundingCircle()
+		local x, y, width, height = public.getBoundingBox()
+		local cx, cy = x + width / 2, y + height / 2
+		local radius = yama.g.getDistance(x, y, cx, cy)
+
+		return cx, cy, radius
 	end
 
 	return public

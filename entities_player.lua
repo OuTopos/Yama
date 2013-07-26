@@ -4,6 +4,8 @@ function entities_player.new(map, x, y, z)
 	local public = {}
 	local private = {}
 
+	private.world = map.getWorld()
+
 	private.type = "player"
 
 	private.userdata = {}
@@ -11,8 +13,6 @@ function entities_player.new(map, x, y, z)
 	private.userdata.type = "player"
 	private.userdata.properties = {}
 	private.userdata.entity = public
-
-	private.world = map.getWorld()
 
 	-- ANCHOR/POSITION/SPRITE VARIABLES
 	private.radius = 10
@@ -23,13 +23,13 @@ function entities_player.new(map, x, y, z)
 	private.width, private.height = 64, 64
 	private.sx, private.sy = 1, 1
 	private.ox, private.oy = 32, 64
-	private.oex, private.oey = 0, private.radius
+	private.aox, private.aoy = 0, private.radius
 	private.sprite = nil
 
 	private.scale = (private.sx + private.sy) / 2
 
 	-- PHYSICS OBJECT
-	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, x, y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
+	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
 	private.anchor:setRestitution(0)
 	private.anchor:getBody():setLinearDamping(10)
 	private.anchor:getBody():setFixedRotation(true)
@@ -62,7 +62,7 @@ function entities_player.new(map, x, y, z)
 	-- SPRITE
 	local tileset = "tilesets/lpcfemaletest"
 	images.quads.add(tileset, private.width, private.height)
-	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], private.x + private.oex, private.y + private.oey, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
+	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
 	table.insert(bufferBatch.data, sprite)
 
 	tilesetArrow = "directionarrow"
@@ -188,7 +188,7 @@ function entities_player.new(map, x, y, z)
 		private.y = private.anchor:getBody():getY()
 		private.anchor:getBody():setAngle(private.direction)
 
-		yama.buffers.setBatchPosition(bufferBatch, private.x + private.oex, private.y + private.oey)
+		yama.buffers.setBatchPosition(bufferBatch, private.x + private.aox, private.y + private.aoy)
 		spriteArrow.x = private.x --math.floor(x + 0.5)
 		spriteArrow.y = private.y-16 --math.floor(y-16 + 0.5)
 		spriteArrow.r = private.aim
@@ -311,39 +311,28 @@ function entities_player.new(map, x, y, z)
 		public.destroyed = true
 	end
 
+	-- GET
 	function public.getType()
 		return private.type
 	end
-	function public.getX()
-		return private.x
+	function public.getPosition()
+		return private.x, private.y, private.z
 	end
-	function public.getY()
-		return private.y
-	end
-	function public.getZ()
-		return private.z
-	end
-	function public.getOX()
-		return private.x - (private.ox - private.oex) * private.sx
-	end
-	function public.getOY()
-		return private.y - (private.oy - private.oey)  * private.sy
-	end
-	function public.getWidth()
-		return private.width * private.sx
-	end
-	function public.getHeight()
-		return private.height * private.sy
-	end
-	function public.getCX()
-		return private.x - private.ox + private.width / 2
-	end
-	function public.getCY()
-		return private.y - private.oy + private.height / 2
-	end
-	function public.getRadius()
-		return yama.g.getDistance(public.getCX(), public.getCY(), private.x - private.ox * private.sx, private.y - private.oy * private.sy)
-	end
+	function public.getBoundingBox()
+		local x = private.x - (private.ox - private.aox) * private.sx
+		local y = private.y - (private.oy - private.aoy) * private.sy
+		local width = private.width * private.sx
+		local height = private.height * private.sy
 
+		return x, y, width, height
+	end
+	function public.getBoundingCircle()
+		local x, y, width, height = public.getBoundingBox()
+		local cx, cy = x + width / 2, y + height / 2
+		local radius = yama.g.getDistance(x, y, cx, cy)
+
+		return cx, cy, radius
+	end
+	
 	return public
 end

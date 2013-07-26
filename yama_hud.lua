@@ -16,12 +16,16 @@ function hud.drawR(vp)
 		-- Entities
 
 		for i = 1, #entities.list do
-			if camera.isInside(entities.list[i].getOX(), entities.list[i].getOY(), entities.list[i].getWidth(), entities.list[i].getHeight()) then
-				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(i, entities.list[i].getX(), entities.list[i].getY()+2)
-				love.graphics.circle("fill", entities.list[i].getX(), entities.list[i].getY(), 1)
+			if vp.isEntityInside(entities.list[i]) then
+				local x, y, z = entities.list[i].getPosition()
+				local left, top, width, height = entities.list[i].getBoundingBox()
+
 				love.graphics.setColor(255, 0, 0, 255)
-				love.graphics.rectangle( "line", entities.list[i].getOX(), entities.list[i].getOY(), entities.list[i].getWidth(), entities.list[i].getHeight() )
+				love.graphics.rectangle( "line", left, top, width, height)
+			
+				love.graphics.setColor(0, 0, 255, 255)
+				love.graphics.print(i, left + 2, top + 2)
+				love.graphics.circle("line", x, y, 2)
 			end
 		end
 
