@@ -131,6 +131,7 @@ function love.keypressed(key)
 			local player = gravityfall.spawn("mplayer", "start")
 			vp1.view(gravityfall, player)
 			gravityfallPlayer = true
+			vp1.setScale(1, 1, true)
 		end
 	end
 	if key == "a" then

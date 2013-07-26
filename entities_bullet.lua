@@ -42,8 +42,8 @@ function entities_bullet.new( map, x, y, z )
 	table.insert( bufferBatch.data, bulletsprite )
 
 	-- Physics
-	--local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
-	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
+	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
+	--local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
 	bullet:setGroupIndex( -1 )
 
 	bullet:setUserData( userdata )
@@ -70,8 +70,8 @@ function entities_bullet.new( map, x, y, z )
 		y = bullet:getBody( ):getY( )
 		r = bullet:getBody( ):getAngle( )
 
-		bufferBatch.x = self.getX( )
-		bufferBatch.y = self.getY( )
+		bufferBatch.x = x
+		bufferBatch.y = y
 		bufferBatch.z = 100
 		bufferBatch.r = r
 		
@@ -87,10 +87,14 @@ function entities_bullet.new( map, x, y, z )
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
+		--print( 'bullet: beginContact')
+		--print( a:getBody( ):getMass() )
 		pContact = contact
-		if b:getUserData( ) then
-			if b:getUserData( ).type == 'floor' then
-
+		local userdata = b:getUserData( )
+		if userdata then
+			--print( a:getUserData().type, userdata.type )
+			if userdata.type == 'shield' then
+				self.destroy()
 			end
 		end
 	end
@@ -101,7 +105,6 @@ function entities_bullet.new( map, x, y, z )
 
 			end
 		end
-
 	end
 
 	function self.draw( )
@@ -137,43 +140,31 @@ function entities_bullet.new( map, x, y, z )
 		return yvel
 	end
 
-	-- Common functions
-	function self.getX( )
-		return math.floor( x + 0.5 )
+	-- GET
+	function self.getType()
+		return type
 	end
-	function self.getY()
-		return math.floor( y + 0.5 )
+	function self.getPosition()
+		return x, y, z
 	end
-	function self.getZ( )
-		return z
+	function self.getBoundingBox()
+		local bx = x - ox * sx
+		local by = y - oy * sy
+
+		return bx, by, width * sx, height * sy
 	end
-	function self.getOX( )
-		return x - ox
-	end
-	function self.getOY( )
-		return y - oy
-	end
-	function self.getWidth( )
-		return width * sx
-	end
-	function self.getHeight( )
-		return height * sy
-	end
-	function self.getDirection( )
-		return direction
-	end
-	function self.getCX()
-		return x - ox + width / 2
-	end
-	function self.getCY()
-		return y - oy + height / 2
-	end
-	function self.getRadius()
-		return yama.g.getDistance(self.getCX(), self.getCY(), x - ox * sx, y - oy * sy)
+	function self.getBoundingCircle()
+		local bx, by, width, height = self.getBoundingBox()
+		local cx, cy = bx + width / 2, by + height / 2
+		local radius = yama.g.getDistance(x, y, cx, cy)
+
+		return cx, cy, radius
 	end
 	function self.destroy( )
-		bullet:getBody():destroy()
-		self.destroyed = true
+		if not self.destroyed then
+			bullet:getBody():destroy()
+			self.destroyed = true
+		end
 	end
 
 	return self
