@@ -1067,6 +1067,17 @@ return {
           height = 32,
           visible = true,
           properties = {}
+        },
+        {
+          name = "voidroid",
+          type = "",
+          shape = "rectangle",
+          x = 608,
+          y = 480,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
         }
       }
     },

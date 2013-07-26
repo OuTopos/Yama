@@ -167,6 +167,7 @@
   <object name="secret" x="32" y="1184" width="32" height="32"/>
   <object name="start" x="240" y="704" width="32" height="32"/>
   <object name="house1" x="128" y="736" width="32" height="32"/>
+  <object name="voidroid" x="608" y="480" width="32" height="32"/>
  </objectgroup>
  <objectgroup color="#55aaff" name="Portals" width="40" height="40">
   <properties>
