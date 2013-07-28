@@ -1031,7 +1031,7 @@ return {
     {
       type = "objectgroup",
       name = "Spawns",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "spawns"
@@ -1097,7 +1097,7 @@ return {
     {
       type = "objectgroup",
       name = "Portals",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "portals"
@@ -1156,7 +1156,7 @@ return {
     {
       type = "objectgroup",
       name = "Collision",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "collision"
@@ -1659,7 +1659,7 @@ return {
     {
       type = "objectgroup",
       name = "Patrols",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "patrols"
@@ -2490,6 +2490,71 @@ return {
           y = 224,
           width = 64,
           height = 64,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "NPC",
+          type = "humanoid",
+          shape = "ellipse",
+          x = 96,
+          y = 768,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "NPC",
+          type = "humanoid",
+          shape = "ellipse",
+          x = 352,
+          y = 896,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "NPC",
+          type = "humanoid",
+          shape = "ellipse",
+          x = 384,
+          y = 1088,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "NPC",
+          type = "humanoid",
+          shape = "ellipse",
+          x = 192,
+          y = 1088,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "NPC",
+          type = "humanoid",
+          shape = "ellipse",
+          x = 288,
+          y = 1088,
+          width = 32,
+          height = 32,
           visible = true,
           properties = {
             ["z"] = "1"
