@@ -268,7 +268,7 @@ function maps.load(path)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
-								public.spawnXYZ(object.type, object.x, object.y, object.properties.z or 1, object)
+								public.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.properties.z or 1, object)
 							end
 						end
 					elseif layer.properties.type == "patrols" then

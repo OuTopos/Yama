@@ -1773,72 +1773,17 @@ return {
     {
       type = "objectgroup",
       name = "Entities",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "entities"
       },
       objects = {
         {
-          name = "",
-          type = "monster",
-          shape = "rectangle",
-          x = 288,
-          y = 320,
-          width = 0,
-          height = 0,
-          gid = 11,
-          visible = true,
-          properties = {
-            ["z"] = "1"
-          }
-        },
-        {
-          name = "Plant",
-          type = "monster",
-          shape = "rectangle",
-          x = 288,
-          y = 224,
-          width = 0,
-          height = 0,
-          gid = 11,
-          visible = true,
-          properties = {
-            ["z"] = "1"
-          }
-        },
-        {
-          name = "Bag",
-          type = "monster",
-          shape = "rectangle",
-          x = 192,
-          y = 224,
-          width = 0,
-          height = 0,
-          gid = 80,
-          visible = true,
-          properties = {
-            ["z"] = "1"
-          }
-        },
-        {
-          name = "Bobby",
-          type = "monster",
-          shape = "rectangle",
-          x = 192,
-          y = 288,
-          width = 32,
-          height = 32,
-          visible = true,
-          properties = {
-            ["z"] = "1"
-          }
-        },
-        {
-          name = "",
+          name = "Eyeball",
           type = "monster",
           shape = "ellipse",
-          x = 224,
+          x = 288,
           y = 288,
           width = 32,
           height = 32,
@@ -2497,6 +2442,58 @@ return {
           gid = 365,
           visible = true,
           properties = {}
+        },
+        {
+          name = "Eyeball",
+          type = "monster",
+          shape = "ellipse",
+          x = 192,
+          y = 288,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Eyeball",
+          type = "monster",
+          shape = "ellipse",
+          x = 192,
+          y = 192,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Eyeball",
+          type = "monster",
+          shape = "ellipse",
+          x = 288,
+          y = 192,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
+        },
+        {
+          name = "Eyeball",
+          type = "monster",
+          shape = "ellipse",
+          x = 224,
+          y = 224,
+          width = 64,
+          height = 64,
+          visible = true,
+          properties = {
+            ["z"] = "1"
+          }
         }
       }
     }

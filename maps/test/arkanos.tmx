@@ -289,31 +289,11 @@
    <polyline points="0,0 0,416 -96,480 -64,544 0,576 0,896 1088,896 1088,-512 832,-512"/>
   </object>
  </objectgroup>
- <objectgroup name="Entities" width="40" height="40" visible="0">
+ <objectgroup name="Entities" width="40" height="40">
   <properties>
    <property name="type" value="entities"/>
   </properties>
-  <object type="monster" gid="11" x="288" y="320">
-   <properties>
-    <property name="z" value="1"/>
-   </properties>
-  </object>
-  <object name="Plant" type="monster" gid="11" x="288" y="224">
-   <properties>
-    <property name="z" value="1"/>
-   </properties>
-  </object>
-  <object name="Bag" type="monster" gid="80" x="192" y="224">
-   <properties>
-    <property name="z" value="1"/>
-   </properties>
-  </object>
-  <object name="Bobby" type="monster" x="192" y="288" width="32" height="32">
-   <properties>
-    <property name="z" value="1"/>
-   </properties>
-  </object>
-  <object type="monster" x="224" y="288" width="32" height="32">
+  <object name="Eyeball" type="monster" x="288" y="288" width="32" height="32">
    <properties>
     <property name="z" value="1"/>
    </properties>
@@ -544,5 +524,29 @@
    <ellipse/>
   </object>
   <object type="sprite" gid="365" x="1088" y="192"/>
+  <object name="Eyeball" type="monster" x="192" y="288" width="32" height="32">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object name="Eyeball" type="monster" x="192" y="192" width="32" height="32">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object name="Eyeball" type="monster" x="288" y="192" width="32" height="32">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object name="Eyeball" type="monster" x="224" y="224" width="64" height="64">
+   <properties>
+    <property name="z" value="1"/>
+   </properties>
+   <ellipse/>
+  </object>
  </objectgroup>
 </map>
