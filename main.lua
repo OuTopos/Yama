@@ -66,7 +66,7 @@ function love.keypressed(key)
 		if arkanosPlayer == 0 then
 			local player1 = arkanos.spawn("player", "start")
 			vp1.view(arkanos, player1)
-			vp1.setScale(4, 4, false)
+			vp1.setScale(4, 4)
 			arkanosPlayer = 1
 		elseif arkanosPlayer == 1 then
 			local player2 = arkanos.spawn("player", "start")
