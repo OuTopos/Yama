@@ -51,6 +51,9 @@ function buffers.new()
 		end
 
 		if object.type == "drawable" then
+			if object.drawable:type() == "ParticleSystem" then
+				--print("Drawing:", object.drawable.type(), "x:", object.x, "y:", object.y, "r:", object.r, "sx:", object.sx, "sy:", object.sy, "ox:", object.ox, "oy:", object.oy, "kx:", object.kx, "ky:", object.ky)
+			end
 			-- DRAWABLE
 			love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 			public.debug.drawcalls = public.debug.drawcalls + 1

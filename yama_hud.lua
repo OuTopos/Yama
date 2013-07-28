@@ -28,17 +28,17 @@ function hud.drawR(vp)
 				love.graphics.circle("line", x, y, 2)
 			end
 		end
-
+		love.graphics.setColor(255, 255, 255, 255)
 	end
 end
 
 function hud.draw(vp)
 	if hud.enabled then
 		local lh = 10
-		local left = 0
-		local right = vp.getWidth() / vp.getSx()
-		local top = 0
-		local bottom = vp.getHeight() / vp.getSy()
+		local left = vp.getX()
+		local right = vp.getX() + vp.getWidth()
+		local top = vp.getY()
+		local bottom = vp.getY() + vp.getHeight()
 		
 		local camera = vp.getCamera()
 		local map = vp.getMap()
@@ -48,8 +48,8 @@ function hud.draw(vp)
 		-- Debug text.
 		
 		-- Backgrounds
-		love.graphics.setColor(0, 0, 0, 204)
-		love.graphics.rectangle("fill", left, top, 100, vp.getHeight())
+		love.graphics.setColor(0, 0, 0, 127)
+		love.graphics.rectangle("fill", left, top, 100, 92+#yama.screen.modes*lh)
 		love.graphics.rectangle("fill", right-120, top, 120, 92+#yama.screen.modes*lh)
 
 		-- Text color
@@ -101,8 +101,8 @@ function hud.draw(vp)
 		love.graphics.print("Camera: "..camera.width.."x"..camera.height, right-118, top + 52)
 		love.graphics.print("  sx: "..camera.sx, right-118, top + 62)
 		love.graphics.print("              sy: "..camera.sy, right-118, top + 62)
-		love.graphics.print("  x: "..camera.x, right-118, top + 72)
-		love.graphics.print("              y: "..camera.y, right-118, top + 72)
+		love.graphics.print("  x: "..math.floor(camera.x + 0.5), right-118, top + 72)
+		love.graphics.print("              y: "..math.floor(camera.y + 0.5), right-118, top + 72)
 		if map.getData() then
 		love.graphics.print("                          ("..math.floor( camera.x / map.getData().tilewidth)..":"..math.floor( camera.y / map.getData().tileheight)..")", right-118, top + 72)
 

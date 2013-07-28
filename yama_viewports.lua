@@ -193,6 +193,7 @@ function viewports.new()
 		else
 			private.canvas = love.graphics.newCanvas(private.width / private.sx, private.height / private.sy)
 			private.csx, private.csy = private.sx, private.sy
+			print("scaling shit")
 		end
 
 		private.camera.resize()
@@ -226,10 +227,10 @@ function viewports.new()
 		--yama.gui.draw()
 
 		private.camera.unset()
-		yama.hud.draw(public)
 		love.graphics.setCanvas()
 
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.csx, private.csy)
+		yama.hud.draw(public)
 		--private.buffer.reset()
 	end
 
@@ -334,6 +335,14 @@ function viewports.new()
 
 	function public.getMap()
 		return private.map
+	end
+
+	function public.getX()
+		return private.x
+	end
+
+	function public.getY()
+		return private.y
 	end
 
 	function public.getWidth()

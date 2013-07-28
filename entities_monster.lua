@@ -59,13 +59,38 @@ function entities_monster.new(map, x, y, z)
 	local tileset = "eyeball"
 	images.quads.add(tileset, 32, 38)
 	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
+	images.quads.add("lifebar", 32, 8)
+	private.lifebar = yama.buffers.newSprite(images.load("lifebar"), images.quads.data["lifebar"][1], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy + 8)
 	
+	private.p = love.graphics.newParticleSystem(images.load("part1"), 1000)
+	private.p:setEmissionRate(10)
+	private.p:setSpeed(10, 10)
+	private.p:setSizes(0.1, 1.5)
+	private.p:setSizeVariation(0.5)
+	private.p:setColors(127, 51, 0, 255, 255, 51, 0, 0)
+	private.p:setPosition(400, 300)
+	private.p:setLifetime(0.15)
+	private.p:setParticleLife(1)
+	private.p:setDirection(0)
+	private.p:setSpread(1)
+	--private.p:setTangentialAcceleration(0, 0)
+	private.p:setRadialAcceleration(-2000)
+	private.p:stop()
+
+	private.spores = yama.buffers.newDrawable(private.p, 0, 0, 1)
+
+	private.bufferbatch = yama.buffers.newBatch(private.x + private.aox, private.y + private.aoy, private.z)
+
+	table.insert(private.bufferbatch.data, private.spores)
+	table.insert(private.bufferbatch.data, sprite)
+	table.insert(private.bufferbatch.data, private.lifebar)
 	--table.insert(bufferBatch.data, sprite)
 
 
 	-- Monster variables
 	public.monster = true
-	local hp = 0.75
+	local hp = 10
+	local hpmax = 10
 
 	-- Destination
 	local dx, dy = nil, nil
@@ -97,9 +122,15 @@ function entities_monster.new(map, x, y, z)
 		-- Position updates
 		private.x = private.anchor:getBody():getX()
 		private.y = private.anchor:getBody():getY()
-		sprite.x = private.x + private.aox
-		sprite.y = private.y + private.aoy
-		--sprite.z = z
+		yama.buffers.setBatchPosition(private.bufferbatch, private.x + private.aox, private.y + private.aoy)
+
+
+		private.spores.ox = private.x
+		private.spores.oy = private.y
+
+		private.p:setPosition(private.x, private.y - 24)
+		private.p:start()
+		private.p:update(dt)
 		--bufferBatch.x = public.getX()
 		--bufferBatch.y = public.getY() + radius
 		--bufferBatch.z = z
@@ -107,16 +138,20 @@ function entities_monster.new(map, x, y, z)
 		-- Animation updates
 		animation.update(dt, "eyeball_walk_"..yama.g.getRelativeDirection(direction))
 		sprite.quad = images.quads.data[tileset][animation.frame]
+		private.lifebar.quad = images.quads.data["lifebar"][24 - math.floor(hp / hpmax * 23 + 0.5)]
 	end
 
 	function public.addToBuffer(vp)
-		vp.getBuffer().add(sprite)
+		vp.getBuffer().add(private.bufferbatch)
 	end
 
 	-- Monster functions
 
 	function public.hurt(p)
-
+		hp = hp - p
+		if hp <= 0 then
+			public.destroy()
+		end
 	end
 
 	function public.setName(name)
@@ -133,6 +168,21 @@ function entities_monster.new(map, x, y, z)
 	end
 	function public.getProperties()
 		return private.name
+	end
+
+
+
+	-- CONTACT FUNCTIONS
+	function public.beginContact(a, b, contact)
+		aData = a:getUserData()
+		bData = b:getUserData()
+
+		if bData then
+			print(bData.type)
+			if bData.type == "damage" then
+				public.hurt(bData.properties.physical)
+			end
+		end
 	end
 
 
@@ -160,7 +210,7 @@ function entities_monster.new(map, x, y, z)
 	end
 	function public.destroy()
 		print("Destroying monster")
-		anchor:getBody():destroy()
+		private.anchor:getBody():destroy()
 		public.destroyed = true
 	end
 

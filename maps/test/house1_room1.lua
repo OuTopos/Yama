@@ -219,7 +219,7 @@ return {
     {
       type = "objectgroup",
       name = "Collision",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "collision"
@@ -433,7 +433,7 @@ return {
     {
       type = "objectgroup",
       name = "Portals",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "portals"
@@ -472,7 +472,7 @@ return {
     {
       type = "objectgroup",
       name = "Spawn",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "spawns"
@@ -516,18 +516,29 @@ return {
     {
       type = "objectgroup",
       name = "Entities",
-      visible = false,
+      visible = true,
       opacity = 1,
       properties = {
         ["type"] = "entities"
       },
       objects = {
         {
-          name = "",
+          name = "Bart the Tender",
           type = "humanoid",
           shape = "ellipse",
           x = 128,
           y = 128,
+          width = 32,
+          height = 32,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "monster",
+          shape = "ellipse",
+          x = 384,
+          y = 192,
           width = 32,
           height = 32,
           visible = true,

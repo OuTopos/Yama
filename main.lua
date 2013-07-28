@@ -12,6 +12,10 @@ function love.load()
 	yama.gui.load()
 	vp1 = yama.viewports.new()
 	arkanosPlayer = 0
+
+
+
+
 end
 
 function love.keypressed(key)
@@ -62,7 +66,7 @@ function love.keypressed(key)
 		if arkanosPlayer == 0 then
 			local player1 = arkanos.spawn("player", "start")
 			vp1.view(arkanos, player1)
-			vp1.setScale(4, 4)
+			vp1.setScale(4, 4, false)
 			arkanosPlayer = 1
 		elseif arkanosPlayer == 1 then
 			local player2 = arkanos.spawn("player", "start")
@@ -171,6 +175,14 @@ end
 
 function love.draw()
 	yama.maps.draw()
+
+	love.graphics.setColorMode("modulate")
+	love.graphics.setBlendMode("additive")
+	
+	--love.graphics.draw(p, 0, 0)
+
+	love.graphics.setColorMode("modulate")
+	love.graphics.setBlendMode("alpha")
 
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 3)
