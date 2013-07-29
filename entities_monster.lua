@@ -12,7 +12,7 @@ function entities_monster.new(map, x, y, z)
 	private.userdata.name = "Unnamed"
 	private.userdata.type = "monster"
 	private.userdata.properties = {}
-	private.userdata.entity = public
+	private.userdata.callback = public
 
 	-- ANCHOR/POSITION/SPRITE VARIABLES
 	private.radius = 8
@@ -65,7 +65,7 @@ function entities_monster.new(map, x, y, z)
 	private.p = love.graphics.newParticleSystem(images.load("part1"), 1000)
 	private.p:setEmissionRate(10)
 	private.p:setSpeed(10, 10)
-	private.p:setSizes(0.1, 1.5)
+	private.p:setSizes(1, 1.5)
 	private.p:setSizeVariation(0.5)
 	private.p:setColors(127, 51, 0, 255, 255, 51, 0, 0)
 	private.p:setPosition(400, 300)
@@ -78,6 +78,7 @@ function entities_monster.new(map, x, y, z)
 	private.p:stop()
 
 	private.spores = yama.buffers.newDrawable(private.p, 0, 0, 1)
+	private.spores.blendmode = "additive"
 
 	private.bufferbatch = yama.buffers.newBatch(private.x + private.aox, private.y + private.aoy, private.z)
 

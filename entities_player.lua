@@ -6,13 +6,9 @@ function entities_player.new(map, x, y, z)
 
 	private.world = map.getWorld()
 
+	private.name = "Jonas"
 	private.type = "player"
-
-	private.userdata = {}
-	private.userdata.name = "Moe"
-	private.userdata.type = "player"
-	private.userdata.properties = {}
-	private.userdata.entity = public
+	private.properties = {}
 
 	-- ANCHOR/POSITION/SPRITE VARIABLES
 	private.radius = 10
@@ -28,12 +24,38 @@ function entities_player.new(map, x, y, z)
 
 	private.scale = (private.sx + private.sy) / 2
 
-	-- PHYSICS OBJECT
-	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
-	private.anchor:setRestitution(0)
-	private.anchor:getBody():setLinearDamping(10)
-	private.anchor:getBody():setFixedRotation(true)
-	private.anchor:setUserData(private.userdata)
+	-- PHYSICS OBJECTS
+	private.fixtures = {}
+
+	private.fixtures.anchor = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
+	private.fixtures.anchor:setRestitution(0)
+	private.fixtures.anchor:getBody():setLinearDamping(10)
+	private.fixtures.anchor:getBody():setFixedRotation(true)
+	private.fixtures.anchor:setUserData({type = "player", callback = public})
+
+	private.fixtures.anchor:setGroupIndex(1)
+
+	public.test = {}
+
+	function public.test.beginContact(a, b, contact)
+		print("JADÅ!!!")
+	end
+
+
+	private.weapon = {}
+	private.weapon.data = {}
+	private.weapon.data.callback = public.test
+	private.weapon.data.type = "damage"
+	private.weapon.data.properties = {}
+	private.weapon.data.properties.physical = 3
+
+	private.fixtures.weapon = love.physics.newFixture(private.fixtures.anchor:getBody(), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
+	private.fixtures.weapon:setUserData(private.weapon.data)
+	private.fixtures.weapon:setSensor(true)
+	--private.fixtures.weapon:getBody():setActive(false)
+	private.fixtures.weapon:setGroupIndex(1)
+
+
 
 	-- Movement variables
 	private.velocity = 250 * private.scale
@@ -48,9 +70,8 @@ function entities_player.new(map, x, y, z)
 	--end
 
 
+	public.joystick = 1
 
-	local team = 1
-	local targets = {}
 	local cooldown = 0
 
 	-- BUFFER BATCH
@@ -60,32 +81,36 @@ function entities_player.new(map, x, y, z)
 	local animation = yama.animations.new()
 
 	-- SPRITE
-	local tileset = "tilesets/lpcfemaletest"
+	local tileset = "LPC/body/male/light"
 	images.quads.add(tileset, private.width, private.height)
 	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
-	table.insert(bufferBatch.data, sprite)
+
 
 	tilesetArrow = "directionarrow"
 	--images.load(tilesetArrow):setFilter("linear", "linear")
 	local spriteArrow = yama.buffers.newDrawable(images.load(tilesetArrow), private.x, private.y-16, 640, 1, private.sx, private.sy, -24, 12)
 
-	local fire = love.graphics.newImage("images/part1.png");
+	local fire = love.graphics.newImage("images/part2.png");
 
-	local p = love.graphics.newParticleSystem(fire, 1000)
-	p:setEmissionRate(1000)
-	p:setSpeed(300, 400)
-	p:setSizes(0.2, 0.1)
-	p:setColors(220, 105, 20, 255, 194, 30, 18, 0)
-	p:setPosition(400, 300)
-	p:setLifetime(0.1)
-	p:setParticleLife(0.2)
-	p:setDirection(0)
-	p:setSpread(360)
-	p:setTangentialAcceleration(1000)
-	p:setRadialAcceleration(-2000)
-	p:stop()
-	private.fx = yama.buffers.newDrawable(p, 0, 0, 1)
-	print(p:type())
+	private.p = love.graphics.newParticleSystem(fire, 1000)
+	private.p:setEmissionRate(1000)
+	private.p:setSpeed(300, 400)
+	private.p:setSizes(2, 1)
+	private.p:setColors(220, 105, 20, 255, 194, 30, 18, 0)
+	private.p:setPosition(400, 300)
+	private.p:setLifetime(0.1)
+	private.p:setParticleLife(0.2)
+	private.p:setDirection(0)
+	private.p:setSpread(360)
+	private.p:setTangentialAcceleration(1000)
+	private.p:setRadialAcceleration(-2000)
+	private.p:stop()
+
+	private.spores = yama.buffers.newDrawable(private.p, 0, 0, 24)
+	private.spores.blendmode = "additive"
+
+	table.insert(bufferBatch.data, private.spores)
+	table.insert(bufferBatch.data, sprite)
 	--table.insert(bufferBatch.data, private.fx)
 
 	--local tilesetOversized = "tilesets/lpcfemaletest"
@@ -96,28 +121,16 @@ function entities_player.new(map, x, y, z)
 	-- Physics
 	--local hitbox = physics.newObject(love.physics.newBody(vp.map.data.world, x, y, "dynamic"), love.physics.newRectangleShape(0, -8, 28, 48), public, true)
 
-	private.anchor:setGroupIndex(1)
-	--love.physics.newBody(vp.map.data.world, x, y-radius, "dynamic"),
-	private.weapon = {}
-	private.weapon.data = {}
-	--private.weapon.data.entity = public
-	private.weapon.data.type = "damage"
-	private.weapon.data.properties = {}
-	private.weapon.data.properties.physical = 3
-	private.weapon.fixture = love.physics.newFixture(private.anchor:getBody(), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
-	private.weapon.fixture:setUserData(private.weapon.data)
-	private.weapon.fixture:setSensor(true)
-	--private.weapon.fixture:getBody():setActive(false)
-	private.weapon.fixture:setGroupIndex(1)
-	--private.weapon.fixture:getBody():setActive(false)
+	
+	--private.fixtures.weapon:getBody():setActive(false)
 
-	--joint = love.physics.newDistanceJoint( anchor:getBody(), private.weapon.fixture:getBody(), -10, -10, 10, 10, false)
+	--joint = love.physics.newDistanceJoint( anchor:getBody(), private.fixtures.weapon:getBody(), -10, -10, 10, 10, false)
 
-	--local private.weapon.fixture2 = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
+	--local private.fixtures.weapon2 = love.physics.newFixture(love.physics.newBody(private.world, x, y-radius, "dynamic"), love.physics.newChainShape(false, 0, 0, 64, 0), 0)
 
-	--private.weapon.fixture2:getBody():setActive(false)
+	--private.fixtures.weapon2:getBody():setActive(false)
 	--hitbox:setUserData(public)
-	--private.weapon.fixture2:setSensor(true)
+	--private.fixtures.weapon2:setSensor(true)
 
 	-- PATROL
 	--local patrol = yama.patrols.new(true, 32)
@@ -135,7 +148,7 @@ function entities_player.new(map, x, y, z)
 
 		if private.state == "stand" or private.state == "walk" then
 
-			if love.keyboard.isDown("lctrl") or love.joystick.isDown(1, 1) then
+			if love.keyboard.isDown("lctrl") or love.joystick.isDown(public.joystick, 1) then
 				private.state = "sword"
 				wvx = 500 * math.cos(private.direction)
 				wvy = 500 * math.sin(private.direction)
@@ -143,16 +156,16 @@ function entities_player.new(map, x, y, z)
 					cooldown = 0.1
 					public.attack()
 				end
-				--private.weapon.fixture:getBody():setPosition(x, y)
-				--private.weapon.fixture:getBody():setLinearVelocity(wvx, wvy)
+				--private.fixtures.weapon:getBody():setPosition(x, y)
+				--private.fixtures.weapon:getBody():setLinearVelocity(wvx, wvy)
 
-			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2)) > 0.2 then
+			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(public.joystick, 1), love.joystick.getAxis(public.joystick, 2)) > 0.2 then
 				private.state = "walk"
-				nx = love.joystick.getAxis(1, 1)
-				ny = love.joystick.getAxis(1, 2)
+				nx = love.joystick.getAxis(public.joystick, 1)
+				ny = love.joystick.getAxis(public.joystick, 2)
 				private.direction = math.atan2(ny, nx)
 				private.aim = private.direction
-				vmultiplier = yama.g.getDistance(0, 0, love.joystick.getAxis(1, 1), love.joystick.getAxis(1, 2))
+				vmultiplier = yama.g.getDistance(0, 0, love.joystick.getAxis(public.joystick, 1), love.joystick.getAxis(public.joystick, 2))
 				if vmultiplier >  1 then
 					vmultiplier = 1
 				end
@@ -174,7 +187,7 @@ function entities_player.new(map, x, y, z)
 				private.direction = math.atan2(ny, nx)
 				private.aim = private.direction
 			elseif love.keyboard.isDown(" ") then
-				patrol.update(private.anchor:getBody():getX(), private.anchor:getBody():getY())
+				patrol.update(private.fixtures.anchor:getBody():getX(), private.fixtures.anchor:getBody():getY())
 				if patrol.isActive() then
 					private.state = "walk"
 					nx, ny = patrol.getPoint()
@@ -189,20 +202,20 @@ function entities_player.new(map, x, y, z)
 		
 
 		if private.state == "walk" then
-			if love.keyboard.isDown("lshift") or love.joystick.isDown(1, 5) then
+			if love.keyboard.isDown("lshift") or love.joystick.isDown(public.joystick, 5) then
 				vmultiplier = vmultiplier * 3
 			end
 			fx = private.velocity * vmultiplier * math.cos(private.direction)
 			fy = private.velocity * vmultiplier * math.sin(private.direction)
-			private.anchor:getBody():setAngle(private.direction)
-			private.anchor:getBody():applyForce(fx, fy)
+			private.fixtures.anchor:getBody():setAngle(private.direction)
+			private.fixtures.anchor:getBody():applyForce(fx, fy)
 			animation.timescale = vmultiplier
 		end
 
 
-		if yama.g.getDistance(0, 0, love.joystick.getAxis(1, 4), love.joystick.getAxis(1, 5)) > 0.2 then
-			local nx = love.joystick.getAxis(1, 4)
-			local ny = love.joystick.getAxis(1, 5)
+		if yama.g.getDistance(0, 0, love.joystick.getAxis(public.joystick, 4), love.joystick.getAxis(public.joystick, 5)) > 0.2 then
+			local nx = love.joystick.getAxis(public.joystick, 4)
+			local ny = love.joystick.getAxis(public.joystick, 5)
 			private.aim = math.atan2(ny, nx)
 		end
 
@@ -211,13 +224,12 @@ function entities_player.new(map, x, y, z)
 	function public.updatePosition()
 
 		-- Position updates
-		private.x = private.anchor:getBody():getX()
-		private.y = private.anchor:getBody():getY()
-		private.anchor:getBody():setAngle(private.direction)
+		private.x = private.fixtures.anchor:getBody():getX()
+		private.y = private.fixtures.anchor:getBody():getY()
+		private.fixtures.anchor:getBody():setAngle(private.direction)
 
 		yama.buffers.setBatchPosition(bufferBatch, private.x + private.aox, private.y + private.aoy)
-		private.fx.ox = private.x + private.aox
-		private.fx.oy = private.y + private.aoy + 32
+
 		spriteArrow.x = private.x --math.floor(x + 0.5)
 		spriteArrow.y = private.y-16 --math.floor(y-16 + 0.5)
 		spriteArrow.r = private.aim
@@ -247,36 +259,15 @@ function entities_player.new(map, x, y, z)
 	end
 
 	function public.endContact(a, b, contact)
-		if b:getUserData() then
-			local entity = b:getUserData()
-
-			if entity.getTeam then
-				if entity.getTeam() ~= team then
-					--terget(targets, entity)
-					-- should remove
-				end
-			end
-		end
-	end
-
-	function public.getTeam()
-		return team
 	end
 
 	function public.attack()
-		private.weapon.fixture:getBody():setPosition(private.anchor:getBody():getX(), private.anchor:getBody():getY())
-		private.weapon.fixture:getBody():setAngle(private.direction)
-		private.weapon.fixture:getBody():setActive(true)
-
-		for k, target in ipairs(targets) do
-			target.hurt(0.3, x, y)
-		end
 	end
 
 	-- Basic functions
 	function public.setPosition(x, y)
-		private.anchor.body:setPosition(x, y)
-		private.anchor.body:setLinearVelocity(0, 0)
+		private.fixtures.anchor.body:setPosition(x, y)
+		private.fixtures.anchor.body:setLinearVelocity(0, 0)
 	end
 	
 	function public.getPosition()
@@ -297,7 +288,6 @@ function entities_player.new(map, x, y, z)
 
 
 	function public.teleport(mapname, spawn)
-		print("["..private.userdata.name.. "] is teleporting to ["..mapname.."] and spawning at ["..spawn.."]")
 		local newMap = yama.maps.load(mapname)
 		local newEntity = newMap.spawn(private.type, spawn)
 		if public.vp then
@@ -328,11 +318,12 @@ function entities_player.new(map, x, y, z)
 		end
 		sprite.quad = images.quads.data[tileset][animation.frame]
 
+		private.spores.ox = private.x
+		private.spores.oy = private.y
 
-
-		p:setPosition(private.x, private.y)
-		p:start()
-		p:update(dt)
+		private.p:setPosition(private.x, private.y - 64)
+		private.p:start()
+		private.p:update(dt)
 	end
 
 	function public.addToBuffer(vp)
@@ -343,8 +334,8 @@ function entities_player.new(map, x, y, z)
 
 	function public.destroy()
 		print("Destroying player")
-		private.anchor:getBody():destroy()
-		private.weapon.fixture:getBody():destroy()
+		private.fixtures.anchor:getBody():destroy()
+		private.fixtures.weapon:getBody():destroy()
 		public.destroyed = true
 	end
 

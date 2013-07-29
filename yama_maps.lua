@@ -20,16 +20,16 @@ function maps.load(path)
 
 		function private.beginContact(a, b, contact)
 			if a:getUserData() then
-				if a:getUserData().entity then
-					if a:getUserData().entity.beginContact then
-						a:getUserData().entity.beginContact(a, b, contact)
+				if a:getUserData().callback then
+					if a:getUserData().callback.beginContact then
+						a:getUserData().callback.beginContact(a, b, contact)
 					end
 				end
 			end
 			if b:getUserData() then
-				if b:getUserData().entity then
-					if b:getUserData().entity.beginContact then
-						b:getUserData().entity.beginContact(b, a, contact)
+				if b:getUserData().callback then
+					if b:getUserData().callback.beginContact then
+						b:getUserData().callback.beginContact(b, a, contact)
 					end
 				end
 			end
@@ -37,16 +37,16 @@ function maps.load(path)
 
 		function private.endContact(a, b, contact)
 			if a:getUserData() then
-				if a:getUserData().entity then
-					if a:getUserData().entity.endContact then
-						a:getUserData().entity.endContact(a, b, contact)
+				if a:getUserData().callback then
+					if a:getUserData().callback.endContact then
+						a:getUserData().callback.endContact(a, b, contact)
 					end
 				end
 			end
 			if b:getUserData() then
-				if b:getUserData().entity then
-					if b:getUserData().entity.endContact then
-						b:getUserData().entity.endContact(b, a, contact)
+				if b:getUserData().callback then
+					if b:getUserData().callback.endContact then
+						b:getUserData().callback.endContact(b, a, contact)
 					end
 				end
 			end

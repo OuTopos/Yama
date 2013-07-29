@@ -46,14 +46,20 @@ function buffers.new()
 	end
 
 	function public.drawObject(object)
+		-- SET COLOR, COLORMODE, BLENDMODE
 		if object.color then
 			love.graphics.setColor(object.color)
 		end
+		if object.colormode then
+			love.graphics.setColorMode(object.colormode)
+		end
+		if object.blendmode then
+			love.graphics.setBlendMode(object.blendmode)
+		end
 
+		-- ACTUAL DRAW
 		if object.type == "drawable" then
-			if object.drawable:type() == "ParticleSystem" then
-				--print("Drawing:", object.drawable.type(), "x:", object.x, "y:", object.y, "r:", object.r, "sx:", object.sx, "sy:", object.sy, "ox:", object.ox, "oy:", object.oy, "kx:", object.kx, "ky:", object.ky)
-			end
+			--print("Drawing:", object.drawable.type(), "x:", object.x, "y:", object.y, "r:", object.r, "sx:", object.sx, "sy:", object.sy, "ox:", object.ox, "oy:", object.oy, "kx:", object.kx, "ky:", object.ky)
 			-- DRAWABLE
 			love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 			public.debug.drawcalls = public.debug.drawcalls + 1
@@ -63,8 +69,15 @@ function buffers.new()
 			public.debug.drawcalls = public.debug.drawcalls + 1
 		end
 
+		-- RESET COLOR, COLORMODE, BLENDMODE
 		if object.color then
 			love.graphics.setColor(255, 255, 255, 255)
+		end
+		if object.colormode then
+			love.graphics.setColorMode("modulate")
+		end
+		if object.blendmode then
+			love.graphics.setBlendMode("alpha")
 		end
 	end
 
@@ -113,7 +126,7 @@ function buffers.newBatch(x, y, z, data)
 	return object
 end
 
-function buffers.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
+function buffers.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color, colormode, blendmode)
 	local object = {}
 	object.type = "drawable"
 	object.drawable = drawable
@@ -128,10 +141,12 @@ function buffers.newDrawable(drawable, x, y, z, r, sx, sy, ox, oy, kx, ky, color
 	object.kx = kx or 0
 	object.ky = ky or 0
 	object.color = color or nil
+	object.colormode = colormode or nil
+	object.blendmode = blendmode or nil
 	return object
 end
 
-function buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color)
+function buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, color, colormode, blendmode)
 	local object = {}
 	object.type = "sprite"
 	object.image = image
@@ -147,6 +162,8 @@ function buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky, colo
 	object.kx = kx or 0
 	object.ky = ky or 0
 	object.color = color or nil
+	object.colormode = colormode or nil
+	object.blendmode = blendmode or nil
 	return object
 end
 
