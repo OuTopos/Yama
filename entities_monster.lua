@@ -182,6 +182,10 @@ function entities_monster.new(map, x, y, z)
 			print(bData.type)
 			if bData.type == "damage" then
 				public.hurt(bData.properties.physical)
+				local direction = math.atan2(private.anchor:getBody():getY() - b:getBody():getY(), private.anchor:getBody():getX() - b:getBody():getX())
+				local x = 100 * math.cos(direction)
+				local y = 100 * math.sin(direction)
+				private.anchor:getBody():setLinearVelocity( x, y )
 			end
 		end
 	end

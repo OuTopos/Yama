@@ -33,7 +33,8 @@ function entities_player.new(map, x, y, z)
 	private.fixtures.anchor:getBody():setFixedRotation(true)
 	private.fixtures.anchor:setUserData({type = "player", callback = public})
 
-	private.fixtures.anchor:setGroupIndex(1)
+	private.fixtures.anchor:setGroupIndex(-1)
+
 
 	public.test = {}
 
@@ -52,8 +53,7 @@ function entities_player.new(map, x, y, z)
 	private.fixtures.weapon = love.physics.newFixture(private.fixtures.anchor:getBody(), love.physics.newPolygonShape(0, 0, 16, -16, 32, -16, 32, 16, 16, 16), 0)
 	private.fixtures.weapon:setUserData(private.weapon.data)
 	private.fixtures.weapon:setSensor(true)
-	--private.fixtures.weapon:getBody():setActive(false)
-	private.fixtures.weapon:setGroupIndex(1)
+	private.fixtures.weapon:setMask(1)
 
 
 
@@ -109,7 +109,7 @@ function entities_player.new(map, x, y, z)
 	private.spores = yama.buffers.newDrawable(private.p, 0, 0, 24)
 	private.spores.blendmode = "additive"
 
-	table.insert(bufferBatch.data, private.spores)
+	--table.insert(bufferBatch.data, private.spores)
 	table.insert(bufferBatch.data, sprite)
 	--table.insert(bufferBatch.data, private.fx)
 
@@ -144,7 +144,9 @@ function entities_player.new(map, x, y, z)
 		local nx, ny = 0, 0
 		local fx, fy = 0, 0
 		local vmultiplier = 1
+		animation.timescale = 1
 		private.state = "stand"
+		private.fixtures.weapon:setMask(1)
 
 		if private.state == "stand" or private.state == "walk" then
 
@@ -152,13 +154,10 @@ function entities_player.new(map, x, y, z)
 				private.state = "sword"
 				wvx = 500 * math.cos(private.direction)
 				wvy = 500 * math.sin(private.direction)
-				if cooldown <= 0 then
-					cooldown = 0.1
-					public.attack()
-				end
+				private.fixtures.weapon:setMask()
+				vmultiplier = 1
 				--private.fixtures.weapon:getBody():setPosition(x, y)
 				--private.fixtures.weapon:getBody():setLinearVelocity(wvx, wvy)
-
 			elseif yama.g.getDistance(0, 0, love.joystick.getAxis(public.joystick, 1), love.joystick.getAxis(public.joystick, 2)) > 0.2 then
 				private.state = "walk"
 				nx = love.joystick.getAxis(public.joystick, 1)
@@ -210,6 +209,10 @@ function entities_player.new(map, x, y, z)
 			private.fixtures.anchor:getBody():setAngle(private.direction)
 			private.fixtures.anchor:getBody():applyForce(fx, fy)
 			animation.timescale = vmultiplier
+		end
+
+		if private.state == "sword" then
+			animation.timescale = 0.1
 		end
 
 

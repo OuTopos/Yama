@@ -28,6 +28,9 @@ function entities_sprite.new(map, x, y, z)
 			private.oy = tileset.tileheight
 
 			private.sprite = yama.buffers.newSprite(image, quad, private.x, private.y, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
+		else
+			print("Sprite destroying itself because the object from the map wasn't a sprite. Wasn't that stupid?")
+			public.destroy()
 		end
 	end
 
@@ -41,7 +44,7 @@ function entities_sprite.new(map, x, y, z)
 	end
 
 	function public.destroy()
-		self.destroyed = true
+		public.destroyed = true
 	end
 
 	-- GET
