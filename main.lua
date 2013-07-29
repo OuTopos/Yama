@@ -130,10 +130,8 @@ function love.keypressed(key)
 	end
 	if key == "z" then
 		gravityfall = yama.maps.load("test/gravityfall")
-		print( 'HEJ' )
 
 		if gravityfallPlayer == 0 then
-			print( 'GRAVFALL' )
 			local player1 = gravityfall.spawn("mplayer", "start")
 			vp1.view(gravityfall, player1)
 			--vp1.setScale(4, 4)

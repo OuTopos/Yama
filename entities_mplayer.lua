@@ -8,13 +8,13 @@ function entities_mplayer.new( map, x, y, z )
 	userdata.name = "Unnamed"
 	userdata.type = "mplayer"
 	userdata.properties = {}
-	userdata.entity = self
+	userdata.callback = self
 
 	local shieldUserdata = {}
 	shieldUserdata.name = "Unnamed"
 	shieldUserdata.type = "shield"
 	shieldUserdata.properties = {}
-	shieldUserdata.entity = self
+	shieldUserdata.callback = self
 
 	--local camera = vp.getCamera()
 	--local buffer = vp.getBuffer()
@@ -67,10 +67,13 @@ function entities_mplayer.new( map, x, y, z )
 	-- vars for shield --
 	local shieldMaxHealth = 300
 	local shieldKilled = false
-	local shieldHealth = 100
+	local shieldHealth = shieldMaxHealth
 	local shieldOn = true
 	local shieldTimer = 0
 	local shieldMaxTimer = 3.5
+
+	local shieldOffsetX = 0
+	local shieldOffsetY = 0
 	-- vars for body --
 	local bodyHealth = 100
 
@@ -159,21 +162,6 @@ function entities_mplayer.new( map, x, y, z )
 				shieldHealth = shieldMaxHealth
 			end
 		end
-
-		--[[ 
-		if not shieldOn and shieldKilled then
-			if shieldTimer <= shieldMaxTimer then
-				shieldTimer = shieldTimer + dt
-			else
-				local nxx = love.joystick.getAxis( self.joystick, 5 )
-				local nyy = love.joystick.getAxis( self.joystick, 4 )
-				if yama.g.getDistance( 0, 0, nxx, nyy ) < 0.22 then
-					self.createShield( shieldMaxHealth, false )
-				end
-			end
-		end
-		--]]
-
 	end
 
 	function self.updateInput( dt )
@@ -194,6 +182,8 @@ function entities_mplayer.new( map, x, y, z )
 		relativeDirection = ""
 		
 		if yama.g.getDistance( 0, 0, love.joystick.getAxis( self.joystick, 1 ), love.joystick.getAxis( self.joystick, 2 ) ) > 0.22 then
+			shieldOffsetX = 0
+			shieldOffsetY = 0
 			xv, yv = anchor:getBody():getLinearVelocity()
 			if pContact then
 				pContact:setFriction( friction )
@@ -209,7 +199,7 @@ function entities_mplayer.new( map, x, y, z )
 		
 		if love.keyboard.isDown( "right" ) or relativeDirection == "right" then
 			direction = 1.570796327
-			if onGround then				
+			if yv == 0 then				
 				fx = xForce
 			else
 				fx = xJumpForce
@@ -220,7 +210,7 @@ function entities_mplayer.new( map, x, y, z )
 		end
 		if love.keyboard.isDown("left") or relativeDirection == "left" then
 			direction = 4.71238898
-			if onGround then
+			if yv == 0 then
 				fx = -xForce
 			else	
 				fx = -xJumpForce
@@ -275,6 +265,8 @@ function entities_mplayer.new( map, x, y, z )
 		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
 		if yv < 0.1 and yv > -0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, buttonShoulderR ) ) then
+			shieldOffsetX = 0
+			shieldOffsetY = 0
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
@@ -317,7 +309,8 @@ function entities_mplayer.new( map, x, y, z )
 	end
 
 	function self.removeShield( killed )
-		shield:destroy()
+		--shield:destroy()
+		shield:setMask( 1 )
 		shieldOn = false
 		self.refreshBufferBatch()
 		shieldKilled = killed
@@ -326,9 +319,10 @@ function entities_mplayer.new( map, x, y, z )
 
 	function self.createShield( health, killed )
 		-- body
-		shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 32 ), 0 )
-		shield:setGroupIndex( -2 )
-		shield:setUserData( shieldUserdata )
+		--shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 32 ), 0 )
+		--shield:setGroupIndex( -2 )
+		--shield:setUserData( shieldUserdata )
+		shield:setMask( )
 		shieldHealth = health
 		shieldOn = true
 		self.refreshBufferBatch()
@@ -363,9 +357,13 @@ function entities_mplayer.new( map, x, y, z )
 		spriteJumper.z = 100
 		spriteJumper.r = r
 		
-		spriteShield.x = x
-		spriteShield.y = y
+		spriteShield.x = x + shieldOffsetX * 1.35
+		spriteShield.y = y + shieldOffsetY * 1.35
 		spriteShield.z = 100
+
+		spriteArrow.x = x --math.floor(x + 0.5)
+		spriteArrow.y = y --math.floor(y-16 + 0.5)
+		spriteArrow.r = aim
 
 		
 		bufferBatch.x = x
@@ -373,9 +371,7 @@ function entities_mplayer.new( map, x, y, z )
 		bufferBatch.z = 100
 		bufferBatch.r = r
 		
-		spriteArrow.x = x --math.floor(x + 0.5)
-		spriteArrow.y = y --math.floor(y-16 + 0.5)
-		spriteArrow.r = aim
+
 
 	end
 
@@ -420,6 +416,8 @@ function entities_mplayer.new( map, x, y, z )
 		 		onGround = true
 			elseif userdata.type == 'bullet' then
 				self.shieldPower( 'bullet' )
+				shieldOffsetX = math.cos( contact:getNormal() )
+				shieldOffsetY = math.sin( contact:getNormal() )
 			end
 			userdata2 = a:getUserData()
 			if userdata2 then
@@ -441,8 +439,7 @@ function entities_mplayer.new( map, x, y, z )
 		if a:getBody() == anchor:getBody() then
 			contact:setRestitution( 0 )
 			if b:getUserData() then
-				if a:getUserData().type == 'floor' or b:getUserData().type == 'floor' then
-					--print( 'Endcontact floor!')
+				if b:getUserData().type == 'floor' then
 					onGround = false
 				end
 			end

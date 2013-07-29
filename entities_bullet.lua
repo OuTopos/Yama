@@ -7,7 +7,7 @@ function entities_bullet.new( map, x, y, z )
 	userdata.name = "Unnamed"
 	userdata.type = "bullet"
 	userdata.properties = {}
-	userdata.entity = self
+	userdata.callback = self
 
 	--local camera = vp.getCamera()
 	--local buffer = vp.getBuffer()
