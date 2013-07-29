@@ -12,6 +12,7 @@ function love.load()
 	yama.gui.load()
 	vp1 = yama.viewports.new()
 	arkanosPlayer = 0
+	gravityfallPlayer = 0
 
 
 
@@ -129,14 +130,30 @@ function love.keypressed(key)
 	end
 	if key == "z" then
 		gravityfall = yama.maps.load("test/gravityfall")
-		if gravityfallPlayer then
+		print( 'HEJ' )
 
-		else
-			local player = gravityfall.spawn("mplayer", "start")
-			vp1.view(gravityfall, player)
-			gravityfallPlayer = true
-			vp1.setScale(1, 1, true)
+		if gravityfallPlayer == 0 then
+			print( 'GRAVFALL' )
+			local player1 = gravityfall.spawn("mplayer", "start")
+			vp1.view(gravityfall, player1)
+			--vp1.setScale(4, 4)
+			gravityfallPlayer = 1
+
+		elseif gravityfallPlayer == 1 then
+			local player2 = gravityfall.spawn("mplayer", "start2")
+			vp2 = yama.viewports.new()
+			vp2.view(gravityfall, player2)
+
+			--vp2.setScale(4, 4)
+
+
+			vp1.setSize(yama.screen.width / 2, yama.screen.height)
+			vp2.setSize(yama.screen.width / 2, yama.screen.height)
+			vp2.setPosition(yama.screen.width / 2)
+			gravityfallPlayer = 2
+			player2.joystick = 2
 		end
+
 	end
 	if key == "a" then
 		spaceMap = yama.maps.load("space/planets")

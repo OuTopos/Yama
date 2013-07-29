@@ -93,13 +93,14 @@ function entities_bullet.new( map, x, y, z )
 		local userdata = b:getUserData( )
 		if userdata then
 			--print( a:getUserData().type, userdata.type )
-			if userdata.type == 'shield' then
+			if userdata.type == 'shield' or userdata.type == 'mplayer' then
 				self.destroy()
 			end
 		end
 	end
 
 	function self.endContact( a, b, contact )
+
 		if b:getUserData( ) then
 			if b:getUserData( ).type == 'floor' then
 
