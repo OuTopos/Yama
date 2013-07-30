@@ -33,8 +33,6 @@ function entities_player.new(map, x, y, z)
 	private.fixtures.anchor:getBody():setFixedRotation(true)
 	private.fixtures.anchor:setUserData({type = "player", callback = public})
 
-	private.fixtures.anchor:setGroupIndex(-1)
-
 
 	public.test = {}
 

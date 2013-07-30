@@ -23,43 +23,6 @@ function viewports.new()
 	private.zoom = true
 
 
-	-- BOUNDARIES
-	private.boundaries = {}
-	private.boundaries.x = 0
-	private.boundaries.y = 0
-	private.boundaries.width = yama.screen.width
-	private.boundaries.height = yama.screen.height
-
-	function private.boundaries.apply()
-		if private.camera.width <= private.boundaries.width then
-			if private.camera.x < private.boundaries.x then
-				private.camera.x = private.boundaries.x
-			elseif private.camera.x > private.boundaries.width - private.camera.width then
-				private.camera.x = private.boundaries.width - private.camera.width
-			end
-		else
-			private.camera.x = private.boundaries.x - (private.camera.width - private.boundaries.width) / 2
-		end
-
-		if private.camera.height <= private.boundaries.height then
-			if private.camera.y < private.boundaries.y then
-				private.camera.y = private.boundaries.y
-			elseif private.camera.y > private.boundaries.height - private.camera.height then
-				private.camera.y = private.boundaries.height - private.camera.height
-			end
-		else
-			private.camera.y = private.boundaries.y - (private.camera.height - private.boundaries.height) / 2
-		end
-	end
-
-	function public.setBoundaries(x, y, width, height)
-		private.boundaries.x = x
-		private.boundaries.y = y
-		private.boundaries.width = width
-		private.boundaries.height = height
-	end
-
-
 	-- CAMERA
 	private.camera = {}
 	private.camera.x = 0
@@ -116,6 +79,43 @@ function viewports.new()
 
 	function private.camera.center(x, y)
 		private.camera.position(x - private.camera.width / 2, y - private.camera.height / 2)
+	end
+
+
+	-- BOUNDARIES
+	private.boundaries = {}
+	private.boundaries.x = 0
+	private.boundaries.y = 0
+	private.boundaries.width = yama.screen.width
+	private.boundaries.height = yama.screen.height
+
+	function private.boundaries.apply()
+		if private.camera.width <= private.boundaries.width then
+			if private.camera.x < private.boundaries.x then
+				private.camera.x = private.boundaries.x
+			elseif private.camera.x > private.boundaries.width - private.camera.width then
+				private.camera.x = private.boundaries.width - private.camera.width
+			end
+		else
+			private.camera.x = private.boundaries.x - (private.camera.width - private.boundaries.width) / 2
+		end
+
+		if private.camera.height <= private.boundaries.height then
+			if private.camera.y < private.boundaries.y then
+				private.camera.y = private.boundaries.y
+			elseif private.camera.y > private.boundaries.height - private.camera.height then
+				private.camera.y = private.boundaries.height - private.camera.height
+			end
+		else
+			private.camera.y = private.boundaries.y - (private.camera.height - private.boundaries.height) / 2
+		end
+	end
+
+	function public.setBoundaries(x, y, width, height)
+		private.boundaries.x = x
+		private.boundaries.y = y
+		private.boundaries.width = width
+		private.boundaries.height = height
 	end
 
 
