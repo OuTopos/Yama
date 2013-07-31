@@ -3,6 +3,7 @@
  <properties>
   <property name="boundaries" value="false"/>
   <property name="name" value="The Mage City"/>
+  <property name="sortmode" value="yz"/>
   <property name="sx" value="3"/>
   <property name="sy" value="3"/>
  </properties>

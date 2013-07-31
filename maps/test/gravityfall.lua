@@ -194,7 +194,7 @@ return {
       visible = true,
       opacity = 1,
       properties = {
-        ["z"] = "1"
+        ["z"] = "2"
       },
       encoding = "lua",
       data = {

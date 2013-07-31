@@ -192,7 +192,7 @@ function entities_humanoid.new(map, x, y, z)
 	end
 
 	function public.addToBuffer(vp)
-		vp.getBuffer().add(bufferBatch)
+		vp.addToBuffer(bufferBatch)
 	end
 
 	-- Monster functions

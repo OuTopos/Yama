@@ -116,10 +116,10 @@ function maps.load(path)
 						elseif not wasVisible and isVisible then
 							table.insert(private.entities.visible[vp], entity)
 							entity.visible[vp] = true
-							vp.getBuffer().reset()
+							vp.reset()
 						elseif wasVisible and not isVisible then
 							entity.visible[vp] = false
-							vp.getBuffer().reset()
+							vp.reset()
 						end
 					end
 				end
@@ -159,6 +159,9 @@ function maps.load(path)
 		private.viewports = {}
 
 		function public.addViewport(vp)
+			-- Set the sort mode.
+			vp.setSortMode(private.data.properties.sortmode)
+
 			-- Set camera boundaries for the viewport.
 			vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
 
@@ -183,7 +186,7 @@ function maps.load(path)
 
 		function public.resetViewports()
 			for i=1, #private.viewports do
-				private.viewports[i].getBuffer().reset()
+				private.viewports[i].reset()
 			end
 		end
 
@@ -206,7 +209,7 @@ function maps.load(path)
 		function private.loadPhysics()
 			private.data.properties.xg = private.data.properties.xg or 0
 			private.data.properties.yg = private.data.properties.yg or 0
-			private.data.properties.sleep = private.data.properties.sleep or true
+			--private.data.properties.sleep = private.data.properties.sleep or true
 			private.data.properties.meter = private.data.properties.meter or private.data.tileheight
 
 			private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
@@ -268,7 +271,10 @@ function maps.load(path)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
-								public.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.properties.z or 1, object)
+								object.z = tonumber(object.properties.z) or 1
+								object.z = object.z * private.data.tileheight
+								object.properties.z = nil
+								public.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.z, object)
 							end
 						end
 					elseif layer.properties.type == "patrols" then
@@ -303,7 +309,8 @@ function maps.load(path)
 
 							spawn.x = object.x + object.width / 2
 							spawn.y = object.y + object.height / 2
-							spawn.z = object.properties.z or 1
+							spawn.z = tonumber(object.properties.z) or 1
+							spawn.z = spawn.z * private.data.tileheight
 							private.spawns[spawn.name] = spawn
 						end
 					end
@@ -406,7 +413,7 @@ function maps.load(path)
 		function public.draw()
 			for i=1, #private.viewports do
 				-- Check if the buffer has been reset 
-				if next(private.viewports[i].getBuffer().data) == nil then
+				if next(private.viewports[i].getBuffer()) == nil then
 					public.addToBuffer(private.viewports[i])
 				end
 				private.viewports[i].draw()
@@ -425,13 +432,13 @@ function maps.load(path)
 					private.data.optimized.tiles[i] = nil
 					for li=1, #private.data.layers do
 						local layer = private.data.layers[li]
-						z = tonumber(layer.properties.z)
+						z = tonumber(layer.properties.z) or 0
 						if layer.type == "tilelayer" and layer.data[i] > 0 then
 							if not private.data.optimized.tiles[i] then
 								private.data.optimized.tiles[i] = {}
 							end
 							local image, quad = public.getQuad(layer.data[i])
-							table.insert(private.data.optimized.tiles[i], yama.buffers.newSprite(image, quad, public.getX(x), public.getY(y), public.getZ(z))) --, 0, 1, 1, -(private.data.tilewidth/2), -(private.data.tileheight/2)))
+							table.insert(private.data.optimized.tiles[i], yama.buffers.newSprite(image, quad, public.getX(x), public.getY(y) + private.data.tileheight, public.getZ(z), 0, 1, 1, 0, private.data.tileheight))
 							public.tilesInMap = public.tilesInMap + 1
 						end
 					end
@@ -486,7 +493,7 @@ function maps.load(path)
 								local zy = sprite.z + sprite.y
 								if not batches[zy] then
 									batches[zy] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
-									vp.getBuffer().add(batches[zy])
+									vp.addToBuffer(batches[zy])
 								end
 								table.insert(batches[zy].data, sprite)
 								public.tilesInView = public.tilesInView +1

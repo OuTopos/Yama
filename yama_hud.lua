@@ -26,6 +26,10 @@ function hud.drawR(vp)
 				love.graphics.setColor(0, 0, 255, 255)
 				love.graphics.print(i, left + 2, top + 2)
 				love.graphics.circle("line", x, y, 2)
+				love.graphics.setColor(0, 0, 0, 255)
+				love.graphics.print(math.floor(x + 0.5), left + 2, top + 12)
+				love.graphics.print(math.floor(y + 0.5), left + 2, top + 22)
+				love.graphics.print(math.floor(z + 0.5), left + 2, top + 32)
 			end
 		end
 		love.graphics.setColor(255, 255, 255, 255)
@@ -84,13 +88,9 @@ function hud.draw(vp)
 		end
 
 		-- Buffer
-		if buffer.enabled then
-			love.graphics.print("Buffer: "..buffer.length, right-118, top + 2)
-			love.graphics.print("  Drawcalls: "..buffer.debug.drawcalls, right-118, top + 12)
-			love.graphics.print("  Redraws: "..buffer.debug.redraws, right-118, top + 22)
-		else
-			love.graphics.print("Buffer: disabled", right-118, camera.y + 2)
-		end
+		love.graphics.print("Buffer: "..vp.debug.bufferSize, right-118, top + 2)
+		love.graphics.print("  Drawcalls: "..vp.debug.drawcalls, right-118, top + 12)
+		love.graphics.print("  Redraws: "..vp.debug.redraws, right-118, top + 22)
 
 		-- Screen
 		--love.graphics.print("Screen: "..vp.canvas:getWidth().."x"..vp.canvas:getHeight(), camera.x+camera.width-118, camera.y + 32)

@@ -457,7 +457,7 @@ function entities_mplayer.new( map, x, y, z )
 	end
 
 	function self.addToBuffer( vp )
-		vp.getBuffer().add( bufferBatch )
+		vp.addToBuffer( bufferBatch )
 	end
 	-- Basic functions
 	function self.setPosition( x, y )

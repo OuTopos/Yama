@@ -39,7 +39,7 @@ function entities_sprite.new(map, x, y, z)
 
 	function public.addToBuffer(vp)
 		if private.sprite then
-			vp.getBuffer().add(private.sprite)
+			vp.addToBuffer(private.sprite)
 		end
 	end
 

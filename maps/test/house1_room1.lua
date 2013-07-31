@@ -7,10 +7,7 @@ return {
   tilewidth = 32,
   tileheight = 32,
   properties = {
-    ["gx"] = "0",
-    ["gy"] = "0",
-    ["sx"] = "2",
-    ["sy"] = "2"
+    ["sortmode"] = "yz"
   },
   tilesets = {
     {

@@ -9,6 +9,7 @@ return {
   properties = {
     ["boundaries"] = "false",
     ["name"] = "The Mage City",
+    ["sortmode"] = "yz",
     ["sx"] = "3",
     ["sy"] = "3"
   },

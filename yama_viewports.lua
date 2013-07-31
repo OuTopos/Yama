@@ -1,9 +1,17 @@
 local viewports = {}
-viewports.list = {}
 
 function viewports.new()
 	local public = {}
 	local private = {}
+
+	-- DEBUG
+	public.debug = {}
+	public.debug.drawcalls = 0
+	public.debug.redraws = 0
+
+
+	private.buffer = {}
+
 
 	private.map = nil
 	private.entity = nil
@@ -39,48 +47,16 @@ function viewports.new()
 	private.camera.cy = 0
 	private.camera.radius = 0
 
-	function private.camera.update()
-		private.camera.cx = private.camera.x + private.camera.width / 2
-		private.camera.cy = private.camera.y + private.camera.height / 2
-		private.camera.radius = yama.g.getDistance(private.camera.cx, private.camera.cy, private.camera.x, private.camera.y)
-	end
-
-	function private.camera.resize()
-		private.camera.width = private.width / private.sx
-		private.camera.height = private.height / private.sy
-
-		if private.zoom then
-			private.camera.sx = private.sx
-			private.camera.sy = private.sy
+	function private.camera.setPosition(x, y, center)
+		if center then
+			private.camera.x = x - private.camera.width / 2
+			private.camera.y = y - private.camera.height / 2
 		else
-			private.camera.sx = 1
-			private.camera.sy = 1
+			private.camera.x = x
+			private.camera.y = y
 		end
-	end
-
-	function private.camera.set()
-		love.graphics.push()
-		love.graphics.translate(private.camera.width / 2 * private.camera.sx, private.camera.height / 2 * private.camera.sy)
- 		love.graphics.rotate(- private.camera.r)
-		love.graphics.translate(- private.camera.width / 2 * private.camera.sx, - private.camera.height / 2 * private.camera.sy)
-		love.graphics.scale(private.camera.sx, private.camera.sy)
-		love.graphics.translate(- private.camera.x, - private.camera.y)
-	end
-
-	function private.camera.unset()
-		love.graphics.pop()
-	end
-
-	function private.camera.position(x, y)
-		private.camera.x = x
-		private.camera.y = y
 		private.boundaries.apply()
 	end
-
-	function private.camera.center(x, y)
-		private.camera.position(x - private.camera.width / 2, y - private.camera.height / 2)
-	end
-
 
 	-- BOUNDARIES
 	private.boundaries = {}
@@ -128,7 +104,114 @@ function viewports.new()
 	private.mapview.tilewidth = 1
 	private.mapview.tilewidth = 1
 
-	function private.mapview.update()
+	-- RESET
+	function public.reset()
+		-- Set buffer to empty table.
+		private.buffer = {}
+
+		public.debug.redraws = 0
+	end
+
+	function public.addToBuffer(object)
+		table.insert(private.buffer, object)
+	end
+
+	-- SORTING
+	private.sortmode = "z"
+	private.sortmodes = {}
+
+	function public.setSortMode(mode)
+		if private.sortmodes[mode] then
+			private.sortmode = mode
+		else
+			private.sortmode = "z"
+		end
+	end
+
+	function private.sort()
+		table.sort(private.buffer, private.sortmodes[private.sortmode])
+	end
+
+	function private.sortmodes.z(a, b)
+		if a.z < b.z then
+			return true
+		end
+		return false
+	end
+
+	function private.sortmodes.y(a, b)
+		if a.y < b.y then
+			return true
+		end
+		return false
+	end
+
+	function private.sortmodes.yz(a, b)
+		if a.y+a.z < b.y+b.z then
+			return true
+		end
+		if a.z == b.z then
+			if a.y < b.y then
+				return true
+			end
+			if a.y == b.y then
+				if a.x < b.x then
+					return true
+				end
+			end
+		end
+		return false
+	end
+
+
+	-- RESIZE
+	function private.resize()
+		if private.zoom then
+			-- This means that scaling will be done by scaling the camera.
+			private.canvas = love.graphics.newCanvas(private.width, private.height)
+			private.csx, private.csy = 1, 1
+		else
+			-- This means scaling will be done by scaling the canvas.
+			private.canvas = love.graphics.newCanvas(private.width / private.sx, private.height / private.sy)
+			private.csx, private.csy = private.sx, private.sy
+		end
+		-- Setting the filtering for canvas.
+		private.canvas:setFilter("nearest", "nearest")
+
+		-- RESIZE CAMERA
+		private.camera.width = private.width / private.sx
+		private.camera.height = private.height / private.sy
+
+		if private.zoom then
+			private.camera.sx = private.sx
+			private.camera.sy = private.sy
+		else
+			private.camera.sx = 1
+			private.camera.sy = 1
+		end
+
+		-- RESIZE MAP VIEW
+		-- Get the tilewidth and tileheight from the map.
+		private.mapview.tilewidth, private.mapview.tileheight = private.map.getTilewidth(), private.map.getTileheight()
+		-- Get the size of the the map view in tiles (not pixels).
+		private.mapview.width = math.ceil(private.camera.width / private.mapview.tilewidth) + 1
+		private.mapview.height = math.ceil(private.camera.height / private.mapview.tilewidth) + 1
+	end
+
+
+	-- UPDATE
+	function public.update(dt, map)
+		if private.entity then
+			local x, y = private.entity.getPosition()
+			private.camera.setPosition(x, y, true)
+		end
+
+		-- UPDATE CAMERA
+		private.camera.cx = private.camera.x + private.camera.width / 2
+		private.camera.cy = private.camera.y + private.camera.height / 2
+		private.camera.radius = yama.g.getDistance(private.camera.cx, private.camera.cy, private.camera.x, private.camera.y)
+
+		-- UPDATE MAP VIEW
 		-- Get the new map view coordinates in tiles (not pixels).
 		local x = math.floor(private.camera.x / private.mapview.tilewidth)
 		local y = math.floor(private.camera.y / private.mapview.tilewidth)
@@ -139,105 +222,114 @@ function viewports.new()
 			private.mapview.x = x
 			private.mapview.y = y
 			-- And trigger a buffer reset.
-			private.buffer.reset()	
-		end
-	end
-
-	function private.mapview.resize()
-		-- Get the tilewidth and tileheight from the map.
-		private.mapview.tilewidth, private.mapview.tileheight = private.map.getTilewidth(), private.map.getTileheight()
-		-- Get the size of the the map view in tiles (not pixels).
-		private.mapview.width = math.ceil(private.camera.width / private.mapview.tilewidth) + 1
-		private.mapview.height = math.ceil(private.camera.height / private.mapview.tilewidth) + 1
-	end
-
-
-	-- Create the buffer
-	private.buffer = yama.buffers.new(private)
-	-- BUFFER
-
-
-	--public.entities = {}
-
-
-	--private.camera.round = false
-
-
-	--private.camera.follow = nil
-
-	function private.camera.isInside2(x, y, width, height)
-		if x+width > private.camera.x and x < private.camera.x+private.camera.width and y+height > private.camera.y and y < private.camera.y+private.camera.height then
-			return true
-		else
-			return false
-		end
-	end
-
-	
-
-	function private.camera.isInside(x, y, radius)
-		if yama.g.getDistance(private.camera.cx, private.camera.cy, x, y) < private.camera.radius + radius then
-			return true
-		else
-			return false
+			public.reset()
 		end
 	end
 
 
-
-	-- VIEWPORT
-	function private.resize()
-		if private.zoom then
-			private.canvas = love.graphics.newCanvas(private.width, private.height)
-			private.csx, private.csy = 1, 1
-		else
-			private.canvas = love.graphics.newCanvas(private.width / private.sx, private.height / private.sy)
-			private.csx, private.csy = private.sx, private.sy
-			print("scaling shit")
-		end
-
-		private.camera.resize()
-		private.mapview.resize()
-
-		private.canvas:setFilter("nearest", "nearest")
-	end
-
-
-
-
-	function public.update(dt, map)
-		if private.entity then
-			local x, y = private.entity.getPosition()
-			private.camera.center(x, y)
-		end
-		private.camera.update()
-		private.mapview.update()
-	end
-
+	-- DRAW
 	function public.draw()
-		private.camera.set()
+		-- SET CAMERA
+		love.graphics.push()
+		love.graphics.translate(private.camera.width / 2 * private.camera.sx, private.camera.height / 2 * private.camera.sy)
+ 		love.graphics.rotate(- private.camera.r)
+		love.graphics.translate(- private.camera.width / 2 * private.camera.sx, - private.camera.height / 2 * private.camera.sy)
+		love.graphics.scale(private.camera.sx, private.camera.sy)
+		love.graphics.translate(- private.camera.x, - private.camera.y)
+		
+		-- SET CANVAS
 		love.graphics.setCanvas(private.canvas)
 
-		-- Draw the buffer
-		private.buffer.draw()
+		-- DRAW BUFFER
+		public.debug.redraws = public.debug.redraws + 1
+		public.debug.drawcalls = 0
+		public.debug.drawcalls = 0
 
-		yama.hud.drawR(public)
+		private.bufferSize = #private.buffer
 
-		-- Draw the GUI
+		public.debug.bufferSize = private.bufferSize
+
+		private.sort()
+
+		for i = 1, private.bufferSize do
+			if private.buffer[i].type == "batch" then
+				private.drawBatch(private.buffer[i])
+			else
+				private.drawObject(private.buffer[i])
+			end
+		end
+
+		-- DRAW GUI
 		--yama.gui.draw()
 
-		private.camera.unset()
+		-- DRAW DEBUG GRAPHICS
+		yama.hud.drawR(public)
+
+		-- UNSET CAMERA
+		love.graphics.pop()
+
+		-- UNSET CANVAS
 		love.graphics.setCanvas()
 
+		-- DRAW CANVAS
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.csx, private.csy)
+
+		-- DRAW DEBUG TEXT
 		yama.hud.draw(public)
-		--private.buffer.reset()
 	end
 
+	function private.drawBatch(batch)
+		for i = 1, #batch.data do
+			private.drawObject(batch.data[i])
+		end
+	end
 
+	function private.drawObject(object)
+		-- SET COLOR, COLORMODE, BLENDMODE
+		if object.color then
+			love.graphics.setColor(object.color)
+		end
+		if object.colormode then
+			love.graphics.setColorMode(object.colormode)
+		end
+		if object.blendmode then
+			love.graphics.setBlendMode(object.blendmode)
+		end
 
+		-- THE ACTUAL DRAW
+		if object.type == "drawable" then
+			-- DRAWABLE
+			love.graphics.draw(object.drawable, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
+			public.debug.drawcalls = public.debug.drawcalls + 1
+		elseif object.type == "sprite" then
+			-- SPRITE
+			love.graphics.drawq(object.image, object.quad, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
+			public.debug.drawcalls = public.debug.drawcalls + 1
+			
+			---[[
+			love.graphics.setColor(255, 255, 0, 255)
+			love.graphics.circle("line", object.x, object.y, 2)
+			love.graphics.setColor(0, 0, 0, 255)
+			love.graphics.print(math.floor(object.x + 0.5), object.x + 2, object.y + 2)
+			love.graphics.print(" "..math.floor(object.y + 0.5), object.x + 2, object.y + 12)
+			love.graphics.print("  "..object.z, object.x + 2, object.y + 22)
+			love.graphics.setColor(255, 255, 2550, 255)
+			--]]
+		end
 
+		-- RESET COLOR, COLORMODE, BLENDMODE
+		if object.color then
+			love.graphics.setColor(255, 255, 255, 255)
+		end
+		if object.colormode then
+			love.graphics.setColorMode("modulate")
+		end
+		if object.blendmode then
+			love.graphics.setBlendMode("alpha")
+		end
+	end
 
+	-- MISC
 
 	function public.isEntityInside(entity)
 		-- Check distance
@@ -361,26 +453,8 @@ function viewports.new()
 		return private.sy
 	end
 
-	table.insert(viewports.list, public)
 	return public
 
-end
-
-function viewports.remove(name)
-	table.remove(viewports.list, name)
-end
-
-function viewports.update(dt)
-	for i = 1, #viewports.list do
-		viewports.list[i].update(dt)
-		viewports.list[i].updated()
-	end
-end
-
-function viewports.draw()
-	for i = 1, #viewports.list do
-		viewports.list[i].draw()
-	end
 end
 
 return viewports

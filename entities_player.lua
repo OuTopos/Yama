@@ -328,8 +328,8 @@ function entities_player.new(map, x, y, z)
 	end
 
 	function public.addToBuffer(vp)
-		vp.getBuffer().add(bufferBatch)
-		vp.getBuffer().add(spriteArrow)
+		vp.addToBuffer(bufferBatch)
+		vp.addToBuffer(spriteArrow)
 		--vp.getBuffer().add(fx)
 	end
 

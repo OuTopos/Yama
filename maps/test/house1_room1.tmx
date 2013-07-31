@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="16" height="9" tilewidth="32" tileheight="32">
  <properties>
-  <property name="gx" value="0"/>
-  <property name="gy" value="0"/>
-  <property name="sx" value="2"/>
-  <property name="sy" value="2"/>
+  <property name="sortmode" value="yz"/>
  </properties>
  <tileset firstgid="1" name="hyptosis_ff6-recreated" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/hyptosis_ff6-recreated.png" width="512" height="1335"/>

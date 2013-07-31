@@ -143,7 +143,7 @@ function entities_monster.new(map, x, y, z)
 	end
 
 	function public.addToBuffer(vp)
-		vp.getBuffer().add(private.bufferbatch)
+		vp.addToBuffer(private.bufferbatch)
 	end
 
 	-- Monster functions
