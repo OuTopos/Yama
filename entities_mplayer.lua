@@ -17,7 +17,7 @@ function entities_mplayer.new( map, x, y, z )
 	shieldUserdata.callback = self
 
 	--local camera = vp.getCamera()
-	--local buffer = vp.getBuffer()
+	--local buffer = vp.addToBuffer()
 	--local map = vp.getMap()
 	--local swarm = vp.getSwarm()
 	local world = map.getWorld()
@@ -92,26 +92,43 @@ function entities_mplayer.new( map, x, y, z )
 	local spriteArrow = yama.buffers.newDrawable( tilesetArrow, x, y, 900, 1, sx, sy, 3, 3 )
 
 	-- SHIELD --
-	shields = images.load( "shield" )
-	shields:setFilter( "linear", "linear" )
-	local spriteShield = yama.buffers.newDrawable( shields, x, y, 1000, 0, sx, sy, 32, 32 )
+	images.load( "shield" ):setFilter( "linear", "linear" )
+	local spriteShield = yama.buffers.newDrawable( images.load( "shield" ), x, y, 1000, 0, sx, sy, 32, 32 )
 	spriteShield.blendmode = "additive"
+
+	-- shield hit effect --
+	local ptcSpark = love.graphics.newParticleSystem( images.load( "spark" ), 1000)
+	ptcSpark:setEmissionRate( 1000 )
+	ptcSpark:setSpeed( 100, 200 )
+	ptcSpark:setSizes( 0, 1 )
+	ptcSpark:setColors( 255, 255, 255, 255, 255, 255, 255, 0 )
+	ptcSpark:setPosition( x, y )
+	ptcSpark:setLifetime(0.15)
+	ptcSpark:setParticleLife(0.25)
+	ptcSpark:setDirection(10)
+	ptcSpark:setSpread( math.rad( 300 ) )
+	ptcSpark:setTangentialAcceleration(200)
+	ptcSpark:setRadialAcceleration(200)
+	ptcSpark:stop()
+	local sparks = yama.buffers.newDrawable( ptcSpark, 0, 0, 24 )
+	sparks.blendmode = "additive"
 
 	table.insert( bufferBatch.data, spriteJumper )
 	table.insert( bufferBatch.data, spriteArrow )
 	table.insert( bufferBatch.data, spriteShield )
+	table.insert( bufferBatch.data, sparks )
 	
 	-- Physics
 	local anchor = love.physics.newFixture( love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
 	anchor:setGroupIndex( 1 )
 	anchor:setUserData( userdata )
 	anchor:setRestitution( 0 )	
-	anchor:getBody( ):setFixedRotation( true )
-	anchor:getBody( ):setLinearDamping( 1 )
-	anchor:getBody( ):setMass( 1 )
-	anchor:getBody( ):setInertia( 1 )
-	anchor:getBody( ):setGravityScale( 9 )
-	anchor:getBody( ):setBullet( true )
+	anchor:getBody():setFixedRotation( true )
+	anchor:getBody():setLinearDamping( 1 )
+	anchor:getBody():setMass( 1 )
+	anchor:getBody():setInertia( 1 )
+	anchor:getBody():setGravityScale( 9 )
+	anchor:getBody():setBullet( true )
 
 	local shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 32 ), 0 )
 	shield:setUserData( shieldUserdata )
@@ -160,8 +177,12 @@ function entities_mplayer.new( map, x, y, z )
 				end
 			else
 				shieldHealth = shieldMaxHealth
+				spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) }
 			end
 		end
+
+		--ptcSpark:start()
+		ptcSpark:update(dt)
 	end
 
 	function self.updateInput( dt )
@@ -301,6 +322,7 @@ function entities_mplayer.new( map, x, y, z )
 	function self.shieldPower( bulletType )		
 		if bulletType == 'bullet' then
 			 shieldHealth = shieldHealth -10
+			 spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) } 
 			 shieldTimer = 0
 			 if shieldHealth <= 0 and shieldOn then
 				self.removeShield( true )
@@ -324,6 +346,7 @@ function entities_mplayer.new( map, x, y, z )
 		--shield:setUserData( shieldUserdata )
 		shield:setMask( )
 		shieldHealth = health
+		spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) }
 		shieldOn = true
 		self.refreshBufferBatch()
 		shieldKilled = killed
@@ -340,6 +363,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		table.insert( bufferBatch.data, spriteJumper )
 		table.insert( bufferBatch.data, spriteArrow )
+		table.insert( bufferBatch.data, sparks )
 		if shieldOn then
 			table.insert( bufferBatch.data, spriteShield )
 		end
@@ -370,8 +394,6 @@ function entities_mplayer.new( map, x, y, z )
 		bufferBatch.y = y
 		bufferBatch.z = 100
 		bufferBatch.r = r
-		
-
 
 	end
 
@@ -381,6 +403,39 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
+
+		contact:setRestitution( 0 )
+		userdata = b:getUserData()
+		userdata2 = a:getUserData()
+		if userdata then
+			if userdata.type == 'floor' then
+				pContact = contact
+				--print( 'On floor!')
+				jumpTimer = 0
+		 		onGround = true
+			elseif userdata.type == 'bullet' and userdata2.type == 'shield' then
+				self.shieldPower( 'bullet' )
+
+				--aims = math.atan2( a:getBody:GetX(), b:getBody:GetX() )
+				--xrad = math.cos( aim )
+				--yrad = math.sin( aim )
+
+				local hitDirection = math.rad( contact:getNormal() )
+				local shieldOffsetX = math.cos( hitDirection )
+				local shieldOffsetY = math.sin( hitDirection )
+				local sparkx1, sparky1, sparkx2, sparky2 = contact:getPositions()
+				
+				ptcSpark:setPosition( sparkx1, sparky1 )
+				ptcSpark:setDirection(hitDirection)
+				ptcSpark:start()
+			end
+			if userdata2 then
+				if userdata2.type == 'mplayer' and userdata.type == 'bullet' then
+					self.bodyEnergy( 10 )
+				end
+			end
+		end
+
 
 		--print( "beginContact!" )
 
@@ -404,28 +459,10 @@ function entities_mplayer.new( map, x, y, z )
 			end
 		end
 		--]]
+
 		-- JUMP STUFF --
 		---[[
-		contact:setRestitution( 0 )
-		userdata = b:getUserData()
-		if userdata then
-			if userdata.type == 'floor' then
-				pContact = contact
-				--print( 'On floor!')
-				jumpTimer = 0
-		 		onGround = true
-			elseif userdata.type == 'bullet' then
-				self.shieldPower( 'bullet' )
-				shieldOffsetX = math.cos( contact:getNormal() )
-				shieldOffsetY = math.sin( contact:getNormal() )
-			end
-			userdata2 = a:getUserData()
-			if userdata2 then
-				if userdata2.type == 'mplayer' and userdata.type == 'bullet' then
-					self.bodyEnergy( 10 )
-				end
-			end
-		end
+
 	end
 
 	function self.endContact(a, b, contact)

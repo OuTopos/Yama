@@ -36,7 +36,6 @@ function entities_bullet.new( map, x, y, z )
 
 	-- SPRITE (PLAYER)	
 	images.quads.add( "bullet", 8, 8 )
-	images.load( "bullet" ):setFilter( "linear", "linear" )
 	local bulletsprite = yama.buffers.newSprite( images.load( "bullet" ), images.quads.data[ "bullet" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 
 	table.insert( bufferBatch.data, bulletsprite )
@@ -89,7 +88,6 @@ function entities_bullet.new( map, x, y, z )
 	function self.beginContact( a, b, contact )
 		--print( 'bullet: beginContact')
 		--print( a:getBody( ):getMass() )
-		pContact = contact
 		local userdata = b:getUserData( )
 		if userdata then
 			--print( a:getUserData().type, userdata.type )
