@@ -1148,7 +1148,7 @@ return {
             { x = 64, y = 0 }
           },
           properties = {
-            ["map"] = "test/large",
+            ["map"] = "test/random",
             ["spawn"] = "arkanos"
           }
         }

@@ -128,10 +128,6 @@ function viewports.new()
 		end
 	end
 
-	function private.sort()
-		table.sort(private.buffer, private.sortmodes[private.sortmode])
-	end
-
 	function private.sortmodes.z(a, b)
 		if a.z < b.z then
 			return true
@@ -249,7 +245,7 @@ function viewports.new()
 
 		public.debug.bufferSize = private.bufferSize
 
-		private.sort()
+		table.sort(private.buffer, private.sortmodes[private.sortmode])
 
 		for i = 1, private.bufferSize do
 			if private.buffer[i].type == "batch" then
@@ -306,7 +302,7 @@ function viewports.new()
 			love.graphics.drawq(object.image, object.quad, object.x, object.y, object.r, object.sx, object.sy, object.ox, object.oy, object.kx, object.ky)
 			public.debug.drawcalls = public.debug.drawcalls + 1
 			
-			---[[
+			--[[
 			love.graphics.setColor(255, 255, 0, 255)
 			love.graphics.circle("line", object.x, object.y, 2)
 			love.graphics.setColor(0, 0, 0, 255)

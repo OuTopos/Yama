@@ -160,7 +160,7 @@ function maps.load(path)
 
 		function public.addViewport(vp)
 			-- Set the sort mode.
-			vp.setSortMode(private.data.properties.sortmode)
+			vp.setSortMode(private.sortmode)
 
 			-- Set camera boundaries for the viewport.
 			vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
@@ -329,6 +329,12 @@ function maps.load(path)
 		function private.load()
 			if private.data.orientation == "orthogonal" then
 				-- PROPERTIES
+				if private.data.properties.sortmode then
+					private.sortmode = private.data.properties.sortmode
+				else
+					private.sortmode = "z"
+				end
+
 				private.sx = tonumber(private.data.properties.sx) or 1
 				private.sy = tonumber(private.data.properties.sy) or 1
 
@@ -340,22 +346,14 @@ function maps.load(path)
 				if private.data.properties.boundaries ~= "false" then
 					private.data.boundaries = love.physics.newFixture(love.physics.newBody(private.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, private.data.width * private.data.tilewidth + 1, -1, private.data.width * private.data.tilewidth + 1, private.data.height * private.data.tileheight + 1, -1, private.data.height * private.data.tileheight))
 				end
-
-
-				-- Spawning player
-				--private.data.properties.player_entity = private.data.properties.player_entity or "player"
-				--print(private.data.properties.player_entity)
-				--private.player = public.spawn(private.data.properties.player_entity, 200, 200, 0)
-
 				
 			else
 				print("Map is not orthogonal. Gaaah boom crash or something!")
 			end
 
 			-- Scale the screen
-
-			public.optimize()
-			print("Map optimized. Tiles: "..public.tilesInMap)
+			private.optimize()
+			print("Map optimized. Tiles: "..public.tilesInMap.." from "..private.data.width * private.data.height * private.data.layercount)
 		end
 
 		function public.getQuad(quad)
@@ -412,33 +410,41 @@ function maps.load(path)
 
 		function public.draw()
 			for i=1, #private.viewports do
-				-- Check if the buffer has been reset 
+				-- Check if the buffer has been reset. 
 				if next(private.viewports[i].getBuffer()) == nil then
+					-- Add tiles and entities to buffer.
 					public.addToBuffer(private.viewports[i])
 				end
+
+				-- Draw the viewport.
 				private.viewports[i].draw()
+
+				-- Reset the visible entities list.
 				private.entities.visible[private.viewports[i]] = {}
+
+				private.viewports[i].reset()
 			end
 		end
 
-		function public.optimize()
+		-- OPTIMIZE
+		function private.optimize()
 			if private.data then
 				private.data.optimized = {}
 				public.tilesInMap = 0
-				private.data.optimized.tiles = {}
+				private.tiles = {}
 
 				for i=1, private.data.width*private.data.height do
 					local x, y = public.index2xy(i)
-					private.data.optimized.tiles[i] = nil
+					private.tiles[i] = nil
 					for li=1, #private.data.layers do
 						local layer = private.data.layers[li]
 						z = tonumber(layer.properties.z) or 0
 						if layer.type == "tilelayer" and layer.data[i] > 0 then
-							if not private.data.optimized.tiles[i] then
-								private.data.optimized.tiles[i] = {}
+							if not private.tiles[i] then
+								private.tiles[i] = {}
 							end
 							local image, quad = public.getQuad(layer.data[i])
-							table.insert(private.data.optimized.tiles[i], yama.buffers.newSprite(image, quad, public.getX(x), public.getY(y) + private.data.tileheight, public.getZ(z), 0, 1, 1, 0, private.data.tileheight))
+							table.insert(private.tiles[i], yama.buffers.newSprite(image, quad, public.getX(x), public.getY(y) + private.data.tileheight, public.getZ(z), 0, 1, 1, 0, private.data.tileheight))
 							public.tilesInMap = public.tilesInMap + 1
 						end
 					end
@@ -447,57 +453,67 @@ function maps.load(path)
 		end
 
 		function public.addToBuffer(vp)
-			if private.data then
+			for i = 1, #private.entities.visible[vp] do
+				private.entities.visible[vp][i].addToBuffer(vp)
+			end
 
-				for i = 1, #private.entities.visible[vp] do
-					private.entities.visible[vp][i].addToBuffer(vp)
-				end
+			public.tilesInView = 0
 
-				public.tilesInView = 0
-				local batches = {}
-				local mapview = vp.getMapview()
-				local xmin = mapview.x
-				local xmax = mapview.x + mapview.width - 1
-				local ymin = mapview.y
-				local ymax = mapview.y + mapview.height - 1
+			local batchkey = {}
 
-				if xmin < 0 then
-					xmin = 0
-				end
-				if xmax > private.data.width-1 then
-					xmax = private.data.width-1
-				end
+			function batchkey.z(x, y, z)
+				return z
+			end
+			function batchkey.y(x, y, z)
+				return y
+			end
+			function batchkey.yz(x, y, z)
+				return y + z
+			end
 
-				if ymin < 0 then
-					ymin = 0
-				end
-				if ymax > private.data.height-1 then
-					ymax = private.data.height-1
-				end
+			local batches = {}
+			local mapview = vp.getMapview()
+			local xmin = mapview.x
+			local xmax = mapview.x + mapview.width - 1
+			local ymin = mapview.y
+			local ymax = mapview.y + mapview.height - 1
 
-				-- Iterate the y-axis.
-				for y=ymin, ymax do
+			if xmin < 0 then
+				xmin = 0
+			end
+			if xmax > private.data.width-1 then
+				xmax = private.data.width-1
+			end
 
-					-- Iterate the x-axis.
-					for x=xmin, xmax do
+			if ymin < 0 then
+				ymin = 0
+			end
+			if ymax > private.data.height-1 then
+				ymax = private.data.height-1
+			end
 
-						-- Set the tile
-						local tile = private.data.optimized.tiles[public.xy2index(x, y)]
+			-- Iterate the y-axis.
+			for y=ymin, ymax do
 
-						-- Check so tile is not empty
-						if tile then
+				-- Iterate the x-axis.
+				for x=xmin, xmax do
 
-							-- Iterate the layers
-							for i=1, #tile do
-								local sprite = tile[i]
-								local zy = sprite.z + sprite.y
-								if not batches[zy] then
-									batches[zy] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
-									vp.addToBuffer(batches[zy])
-								end
-								table.insert(batches[zy].data, sprite)
-								public.tilesInView = public.tilesInView +1
+					-- Set the tile
+					local tile = private.tiles[public.xy2index(x, y)]
+
+					-- Check so tile is not empty
+					if tile then
+
+						-- Iterate the layers
+						for i=1, #tile do
+							local sprite = tile[i]
+							local key = batchkey[private.sortmode](sprite.x, sprite.y, sprite.z)
+							if not batches[key] then
+								batches[key] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
+								vp.addToBuffer(batches[key])
 							end
+							table.insert(batches[key].data, sprite)
+							public.tilesInView = public.tilesInView +1
 						end
 					end
 				end

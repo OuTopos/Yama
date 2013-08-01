@@ -45,24 +45,8 @@ function love.keypressed(key)
 		end
 	end
 
-	if key == "r" then
-		entities.destroy(entities.data[math.random(1, #entities.data)])
-	end
-	if key == "g" then
-		physics.world:setGravity(0, 90)
-	end
-	if key == "t" then
-		camera.follow = entities.new("turret", player.getX(), player.getY())
-	end
-	if key == "b" then
-		if buffer.enabled then
-			buffer.enabled = false
-		else
-			buffer.enabled = true
-		end
-
-	end
-	if key == "s" then
+	-- ARKANOS
+	if key == "1" then
 		arkanos = yama.maps.load("test/arkanos")
 		if arkanosPlayer == 0 then
 			local player1 = arkanos.spawn("player", "start")
@@ -117,17 +101,9 @@ function love.keypressed(key)
 
 			arkanosPlayer = 4
 		end
-		--vp1.follow(player)
+	end
 
-		--vp2 = yama.viewports.new(yama.screen.width/2+5, 0, 0, yama.screen.width/2-5, yama.screen.height, 2, 2, true)
-		--vp2.view(map1)
-	end
-	if key == "d" then
-		yama.maps.load("test/house1_room1", "door1")
-	end
-	if key == "x" then
-		yama.maps.load("test/platform", "test")	
-	end
+	-- GRAVITYFALL
 	if key == "z" then
 		gravityfall = yama.maps.load("test/gravityfall")
 
@@ -158,20 +134,15 @@ function love.keypressed(key)
 		vp1.view(spaceMap)
 	end
 	if key == "e" then
-		arkanos.spawnXYZ("monster", math.random(100, 300), math.random(100, 300), 1)
-		arkanos.spawnXYZ("humanoid", math.random(100, 300), math.random(100, 300), 1)
+		arkanos.spawnXYZ("monster", math.random(100, 300), math.random(100, 300), 32)
+		arkanos.spawnXYZ("humanoid", math.random(100, 300), math.random(100, 300), 32)
 	end
 	if key == "q" then
 		jonasMap.getEntities().list[1].destroy()
 		--entities.new("fplayer", math.random(100, 300), math.random(100, 300), 0, yama.viewports.list.a)
 	end
 
-	if key == "1" then
-		yama.viewports.list.a.camera.setPosition(100, 100)
-	end
-	if key == "2" then
-		jonasMap.getCamera().follow = jonasMap.getSwarm().getEntities()[math.random(1, #map1.getSwarm().getEntities())]
-	end
+
 	if key == "0" then
 		scaleToggle = scaleToggle + 1
 		if scaleToggle > 5 then
@@ -189,19 +160,15 @@ function love.update(dt)
 end
 
 function love.draw()
+	-- DRAW MAPS
 	yama.maps.draw()
 
-	love.graphics.setColorMode("modulate")
-	love.graphics.setBlendMode("additive")
-	
-	--love.graphics.draw(p, 0, 0)
-
-	love.graphics.setColorMode("modulate")
-	love.graphics.setBlendMode("alpha")
-
+	---[[ FPS TIMER
+	local fps = love.timer.getFPS()
 	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 3)
+	love.graphics.print("FPS: "..fps, yama.screen.width - 39, 3)
 
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("FPS: "..love.timer.getFPS(), yama.screen.width - 39, 2)
+	love.graphics.print("FPS: "..fps, yama.screen.width - 39, 2)
+	--]]
 end
