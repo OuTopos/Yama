@@ -101,12 +101,12 @@ function entities_mplayer.new( map, x, y, z )
 	ptcSpark:setEmissionRate( 1000 )
 	ptcSpark:setSpeed( 100, 200 )
 	ptcSpark:setSizes( 0, 1 )
-	ptcSpark:setColors( 255, 255, 255, 255, 255, 255, 255, 0 )
+	ptcSpark:setColors( 100, 255, 100, 255, 200, 255, 200, 0 )
 	ptcSpark:setPosition( x, y )
 	ptcSpark:setLifetime(0.15)
 	ptcSpark:setParticleLife(0.25)
 	ptcSpark:setDirection(10)
-	ptcSpark:setSpread( math.rad( 300 ) )
+	ptcSpark:setSpread( math.rad( 360 ) )
 	ptcSpark:setTangentialAcceleration(200)
 	ptcSpark:setRadialAcceleration(200)
 	ptcSpark:stop()
@@ -401,6 +401,13 @@ function entities_mplayer.new( map, x, y, z )
 	animation.quad = 1
 	animation.dt = 0
 
+	self.callbacks = {}
+	self.callbacks.shield = {}
+
+	function self.callbacks.shield.BeginCont( a, b, contact )
+		-- body
+	end
+
 	-- CONTACT --
 	function self.beginContact( a, b, contact )
 
@@ -426,7 +433,7 @@ function entities_mplayer.new( map, x, y, z )
 				local sparkx1, sparky1, sparkx2, sparky2 = contact:getPositions()
 				
 				ptcSpark:setPosition( sparkx1, sparky1 )
-				ptcSpark:setDirection(hitDirection)
+				--ptcSpark:setDirection(hitDirection)
 				ptcSpark:start()
 			end
 			if userdata2 then
