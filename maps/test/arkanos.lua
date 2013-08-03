@@ -1874,7 +1874,7 @@ return {
           gid = 13,
           visible = true,
           properties = {
-            ["z"] = "2"
+            ["z"] = "1"
           }
         },
         {

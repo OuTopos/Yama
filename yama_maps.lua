@@ -103,10 +103,11 @@ function maps.load(path)
 
 				if entity.destroyed then
 					table.remove(private.entities.list, key)
-					public.resetViewports()
+					--public.resetViewports()
 				else
 					entity.update(dt)
 					for i=1, #private.viewports do
+						--[[
 						local vp = private.viewports[i]
 						local wasVisible = entity.visible[vp] or false
 						local isVisible = vp.isEntityInside(entity)
@@ -121,10 +122,15 @@ function maps.load(path)
 							entity.visible[vp] = false
 							vp.reset()
 						end
+						--]]
+						local vp = private.viewports[i]
+						if vp.isEntityInside(entity) then
+							entity.addToBuffer(vp)
+						end
 					end
 				end
 			end
-			public.updated = true
+			--public.updated = true
 		end
 
 		function public.getEntities()
@@ -185,9 +191,10 @@ function maps.load(path)
 		end
 
 		function public.resetViewports()
-			for i=1, #private.viewports do
-				private.viewports[i].reset()
-			end
+			print("Don't resetViewports")
+			--for i=1, #private.viewports do
+			--	private.viewports[i].reset()
+			--end
 		end
 
 
@@ -404,25 +411,28 @@ function maps.load(path)
 				-- Update viewports
 				for i=1, #private.viewports do
 					private.viewports[i].update(dt, public)
+					public.addToBuffer(private.viewports[i])
 				end
 			end
 		end
 
 		function public.draw()
 			for i=1, #private.viewports do
+				--[[
 				-- Check if the buffer has been reset. 
 				if next(private.viewports[i].getBuffer()) == nil then
 					-- Add tiles and entities to buffer.
 					public.addToBuffer(private.viewports[i])
 				end
+				--]]
 
 				-- Draw the viewport.
 				private.viewports[i].draw()
 
+				--[[
 				-- Reset the visible entities list.
-				private.entities.visible[private.viewports[i]] = {}
-
-				private.viewports[i].reset()
+				private.entities.visible[private.viewports[i]]-- = {}
+				--]]
 			end
 		end
 
@@ -453,9 +463,9 @@ function maps.load(path)
 		end
 
 		function public.addToBuffer(vp)
-			for i = 1, #private.entities.visible[vp] do
-				private.entities.visible[vp][i].addToBuffer(vp)
-			end
+			--for i = 1, #private.entities.visible[vp] do
+			--	private.entities.visible[vp][i].addToBuffer(vp)
+			--end
 
 			public.tilesInView = 0
 

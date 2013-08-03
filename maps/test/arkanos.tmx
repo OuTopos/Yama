@@ -327,7 +327,7 @@
   </object>
   <object name="Tunna" type="sprite" gid="13" x="137" y="128">
    <properties>
-    <property name="z" value="2"/>
+    <property name="z" value="1"/>
    </properties>
   </object>
   <object name="Tunna" type="sprite" gid="13" x="157" y="115">

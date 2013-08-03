@@ -106,8 +106,9 @@ function viewports.new()
 
 	-- RESET
 	function public.reset()
+		print("Hy reset?")
 		-- Set buffer to empty table.
-		private.buffer = {}
+		--private.buffer = {}
 
 		public.debug.redraws = 0
 	end
@@ -196,7 +197,7 @@ function viewports.new()
 
 
 	-- UPDATE
-	function public.update(dt, map)
+	function public.update(dt)
 		if private.entity then
 			local x, y = private.entity.getPosition()
 			private.camera.setPosition(x, y, true)
@@ -209,9 +210,10 @@ function viewports.new()
 
 		-- UPDATE MAP VIEW
 		-- Get the new map view coordinates in tiles (not pixels).
-		local x = math.floor(private.camera.x / private.mapview.tilewidth)
-		local y = math.floor(private.camera.y / private.mapview.tilewidth)
+		private.mapview.x = math.floor(private.camera.x / private.mapview.tilewidth)
+		private.mapview.y = math.floor(private.camera.y / private.mapview.tilewidth)
 
+		--[[
 		-- Compare them to the old.
 		if x ~= private.mapview.x or y ~= private.mapview.y then
 			-- If the map view moved assign the new to the map view coordinates.
@@ -220,6 +222,7 @@ function viewports.new()
 			-- And trigger a buffer reset.
 			public.reset()
 		end
+		--]]
 	end
 
 
@@ -254,6 +257,9 @@ function viewports.new()
 				private.drawObject(private.buffer[i])
 			end
 		end
+
+		-- EMPTY BUFFER
+		private.buffer = {}
 
 		-- DRAW GUI
 		--yama.gui.draw()
