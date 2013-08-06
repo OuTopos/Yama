@@ -169,7 +169,11 @@ function maps.load(path)
 			vp.setSortMode(private.sortmode)
 
 			-- Set camera boundaries for the viewport.
-			vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
+			if private.data.properties.boundaries == "false" then
+				vp.setBoundaries(0, 0, 0, 0)
+			else
+				vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
+			end
 
 			-- Make the camera follow the player.
 			vp.getCamera().follow = private.player
@@ -334,7 +338,7 @@ function maps.load(path)
 		end
 
 		function private.load()
-			if private.data.orientation == "orthogonal" then
+			--if private.data.orientation == "orthogonal" then
 				-- PROPERTIES
 				if private.data.properties.sortmode then
 					private.sortmode = private.data.properties.sortmode
@@ -354,9 +358,9 @@ function maps.load(path)
 					private.data.boundaries = love.physics.newFixture(love.physics.newBody(private.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, private.data.width * private.data.tilewidth + 1, -1, private.data.width * private.data.tilewidth + 1, private.data.height * private.data.tileheight + 1, -1, private.data.height * private.data.tileheight))
 				end
 				
-			else
-				print("Map is not orthogonal. Gaaah boom crash or something!")
-			end
+			--else
+			--	print("Map is not orthogonal. Gaaah boom crash or something!")
+			--end
 
 			-- Scale the screen
 			private.optimize()
@@ -410,7 +414,7 @@ function maps.load(path)
 
 				-- Update viewports
 				for i=1, #private.viewports do
-					private.viewports[i].update(dt, public)
+					private.viewports[i].update(dt)
 					public.addToBuffer(private.viewports[i])
 				end
 			end
@@ -441,6 +445,8 @@ function maps.load(path)
 			if private.data then
 				private.data.optimized = {}
 				public.tilesInMap = 0
+				private.tilelayers = {}
+
 				private.tiles = {}
 
 				for i=1, private.data.width*private.data.height do
@@ -454,7 +460,8 @@ function maps.load(path)
 								private.tiles[i] = {}
 							end
 							local image, quad = public.getQuad(layer.data[i])
-							table.insert(private.tiles[i], yama.buffers.newSprite(image, quad, public.getX(x), public.getY(y) + private.data.tileheight, public.getZ(z), 0, 1, 1, 0, private.data.tileheight))
+							local rx, ry, rz = private.getSpritePosition(x, y, z)
+							table.insert(private.tiles[i], yama.buffers.newSprite(image, quad, rx, ry + private.data.tileheight, rz, 0, 1, 1, 0, private.data.tileheight))
 							public.tilesInMap = public.tilesInMap + 1
 						end
 					end
@@ -540,7 +547,41 @@ function maps.load(path)
 			return x, y
 		end
 
+		function private.getSpritePosition(x, y, z)
+			if private.data.orientation == "orthogonal" then
+				return public.getX(x), public.getY(y), public.getZ(z)
+			elseif private.data.orientation == "isometric" then
+				nx = (x - 1 - y) * (private.data.tilewidth / 2)
+				ny = (y + x) * (private.data.tileheight / 2)
+				nz = z
+
+				return nx, ny, nz
+			end
+		end
+
+		function public.translatePosition(x, y)
+			if private.data.orientation == "orthogonal" then
+				return x, y
+			elseif private.data.orientation == "isometric" then
+				return x - y, (y + x) * private.data.tileheight / private.data.tilewidth
+			end
+		end
+
 		function public.getXYZ(x, y, z)
+			if private.data.orientation == "orthogonal" then
+				return public.getX(x), public.getY(y), public.getZ(z)
+			elseif private.data.orientation == "isometric" then
+				nx = (x - y) * (private.data.tilewidth / 2)
+				ny = (y + x) * (private.data.tileheight / 2)
+				nz = z
+
+				return nx, ny, nz
+			end
+		end
+
+		private.getPosition = {}
+
+		function private.getPosition.orthogonal(x, y, z)
 			return public.getX(x), public.getY(y), public.getZ(z)
 			--if private.data.orientation == "orthogonal" then
 			--	nx = 
@@ -553,6 +594,15 @@ function maps.load(path)
 			--end
 
 			--return nx, ny, nz
+		end
+
+		function private.getPosition.isometric(x, y, z)
+			nx = (x - y) * (private.data.tilewidth / 2)
+			ny = (y + x) * (private.data.tileheight / 2)
+			nz = z
+
+			return nx, ny, nz
+
 		end
 
 		function public.getX(x)

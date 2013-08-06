@@ -103,6 +103,17 @@ function love.keypressed(key)
 		end
 	end
 
+	-- CUBICLES
+	if key == "2" then
+		arkanos = yama.maps.load("test/cubicles")
+		if arkanosPlayer == 0 then
+			local player1 = arkanos.spawn("player", "start")
+			vp1.view(arkanos, player1)
+			vp1.setScale(4, 4)
+			arkanosPlayer = 1
+		end
+	end
+
 	-- GRAVITYFALL
 	if key == "z" then
 		gravityfall = yama.maps.load("test/gravityfall")

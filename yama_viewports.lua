@@ -62,28 +62,30 @@ function viewports.new()
 	private.boundaries = {}
 	private.boundaries.x = 0
 	private.boundaries.y = 0
-	private.boundaries.width = yama.screen.width
-	private.boundaries.height = yama.screen.height
+	private.boundaries.width = 0
+	private.boundaries.height = 0
 
 	function private.boundaries.apply()
-		if private.camera.width <= private.boundaries.width then
-			if private.camera.x < private.boundaries.x then
-				private.camera.x = private.boundaries.x
-			elseif private.camera.x > private.boundaries.width - private.camera.width then
-				private.camera.x = private.boundaries.width - private.camera.width
+		if not (private.boundaries.x == 0 and private.boundaries.y == 0 and private.boundaries.width == 0 and private.boundaries.height == 0) then
+			if private.camera.width <= private.boundaries.width then
+				if private.camera.x < private.boundaries.x then
+					private.camera.x = private.boundaries.x
+				elseif private.camera.x > private.boundaries.width - private.camera.width then
+					private.camera.x = private.boundaries.width - private.camera.width
+				end
+			else
+				private.camera.x = private.boundaries.x - (private.camera.width - private.boundaries.width) / 2
 			end
-		else
-			private.camera.x = private.boundaries.x - (private.camera.width - private.boundaries.width) / 2
-		end
 
-		if private.camera.height <= private.boundaries.height then
-			if private.camera.y < private.boundaries.y then
-				private.camera.y = private.boundaries.y
-			elseif private.camera.y > private.boundaries.height - private.camera.height then
-				private.camera.y = private.boundaries.height - private.camera.height
+			if private.camera.height <= private.boundaries.height then
+				if private.camera.y < private.boundaries.y then
+					private.camera.y = private.boundaries.y
+				elseif private.camera.y > private.boundaries.height - private.camera.height then
+					private.camera.y = private.boundaries.height - private.camera.height
+				end
+			else
+				private.camera.y = private.boundaries.y - (private.camera.height - private.boundaries.height) / 2
 			end
-		else
-			private.camera.y = private.boundaries.y - (private.camera.height - private.boundaries.height) / 2
 		end
 	end
 
@@ -199,7 +201,7 @@ function viewports.new()
 	-- UPDATE
 	function public.update(dt)
 		if private.entity then
-			local x, y = private.entity.getPosition()
+			local x, y = private.map.translatePosition(private.entity.getPosition())
 			private.camera.setPosition(x, y, true)
 		end
 

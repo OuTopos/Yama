@@ -225,8 +225,7 @@ function entities_player.new(map, x, y, z)
 	function public.updatePosition()
 
 		-- Position updates
-		private.x = private.fixtures.anchor:getBody():getX()
-		private.y = private.fixtures.anchor:getBody():getY()
+		private.x, private.y = map.translatePosition(private.fixtures.anchor:getBody():getX(), private.fixtures.anchor:getBody():getY())
 		private.fixtures.anchor:getBody():setAngle(private.direction)
 
 		yama.buffers.setBatchPosition(bufferBatch, private.x + private.aox, private.y + private.aoy)

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="isometric" width="100" height="100" tilewidth="64" tileheight="32">
+ <properties>
+  <property name="boundaries" value="false"/>
+ </properties>
+ <tileset firstgid="1" name="cubicles" tilewidth="64" tileheight="128">
+  <image source="../../images/cubicles.png" width="256" height="1024"/>
+ </tileset>
+ <tileset firstgid="33" name="carpet" tilewidth="64" tileheight="32">
+  <image source="../../images/carpet.png" width="256" height="128"/>
+ </tileset>
+ <layer name="Carpet" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt1TEKgDAURMFcRVDUzvufzpQStP4rmWL6hVfs0lpb+JWjuwbVm2amRxY9suiRRY8sa7cPqjcBvNm686F6z+zGP6/eMzs9suiRRY8semTRI4seAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8uQEAPAxO
+  </data>
+ </layer>
+ <layer name="Walls" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt17EKwjAUhtErYrUiXdy6+P5vaYeIU6VL9C+eAxcCzRD4QiHXqjqtzLn4tqnWe9zanuE3R/tLemTRI4seWfTI8qnHpe0Zlzm09bF9ow93P4seWbb0uC8z1/ufRT9bejy6n4IXPbLokUWPLHpk0SOLHlm8BwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAvXkCEH8C9Q==
+  </data>
+ </layer>
+ <objectgroup color="#ff0000" name="Collision" width="100" height="100">
+  <properties>
+   <property name="type" value="collision"/>
+  </properties>
+  <object x="64" y="352" width="128" height="32"/>
+  <object x="32" y="0" width="32" height="32"/>
+  <object x="96" y="96" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object x="64" y="32" width="32" height="32"/>
+  <object x="96" y="64" width="32" height="32"/>
+  <object x="128" y="96" width="32" height="32"/>
+  <object x="160" y="128" width="32" height="32"/>
+  <object x="192" y="160" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup color="#ffff00" name="Spawns" width="100" height="100">
+  <properties>
+   <property name="type" value="spawns"/>
+  </properties>
+  <object name="start" x="64" y="64" width="32" height="32">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>
