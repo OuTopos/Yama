@@ -42,4 +42,20 @@ function gui.draw()
 	end
 end
 
+
+function gui.newHealthBar()
+	local public = {}
+	local private = {}
+
+	private.hpmax = 1000
+	private.hp = 100
+
+	private.asd = 0
+
+	function public.draw()
+		-- body
+	end
+
+	return public
+end
 return gui

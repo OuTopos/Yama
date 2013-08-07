@@ -5,6 +5,11 @@
  </properties>
  <tileset firstgid="1" name="hyptosis_ff6-recreated" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/hyptosis_ff6-recreated.png" width="512" height="1335"/>
+  <tile id="56">
+   <properties>
+    <property name="blendmode" value="additive"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="657" name="doorshade" tilewidth="32" tileheight="32">
   <image source="../../images/tilesets/doorshade.png" width="32" height="64"/>

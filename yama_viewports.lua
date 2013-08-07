@@ -263,9 +263,6 @@ function viewports.new()
 		-- EMPTY BUFFER
 		private.buffer = {}
 
-		-- DRAW GUI
-		--yama.gui.draw()
-
 		-- DRAW DEBUG GRAPHICS
 		yama.hud.drawR(public)
 
@@ -277,6 +274,9 @@ function viewports.new()
 
 		-- DRAW CANVAS
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.csx, private.csy)
+
+		-- DRAW GUI
+		--yama.gui.draw()
 
 		-- DRAW DEBUG TEXT
 		yama.hud.draw(public)

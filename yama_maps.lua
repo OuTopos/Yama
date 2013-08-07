@@ -379,6 +379,19 @@ function maps.load(path)
 			return image, quad
 		end
 
+		function private.getTileData(tilenumber)
+			i = #private.data.tilesets
+			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
+				i = i - 1
+				local tileset = private.data.tilesets[i]
+			end
+			local imagename = string.match(tileset.image, "../../images/(.*).png")
+			local quadnumber = quad-(tileset.firstgid-1)
+			local image = images.load(imagename)
+			local quad = images.quads.data[imagename][quadnumber]
+			return image, quad
+		end
+
 		function public.getTileset(gid)
 			i = #private.data.tilesets
 			while private.data.tilesets[i] and gid < private.data.tilesets[i].firstgid do
@@ -460,6 +473,7 @@ function maps.load(path)
 								private.tiles[i] = {}
 							end
 							local image, quad = public.getQuad(layer.data[i])
+							--local tiledata = private.getTileData(layer.data[i])
 							local rx, ry, rz = private.getSpritePosition(x, y, z)
 							table.insert(private.tiles[i], yama.buffers.newSprite(image, quad, rx, ry + private.data.tileheight, rz, 0, 1, 1, 0, private.data.tileheight))
 							public.tilesInMap = public.tilesInMap + 1

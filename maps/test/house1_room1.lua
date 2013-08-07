@@ -21,7 +21,14 @@ return {
       imagewidth = 512,
       imageheight = 1335,
       properties = {},
-      tiles = {}
+      tiles = {
+        {
+          id = 56,
+          properties = {
+            ["blendmode"] = "additive"
+          }
+        }
+      }
     },
     {
       name = "doorshade",
