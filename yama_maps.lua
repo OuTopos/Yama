@@ -367,6 +367,7 @@ function maps.load(path)
 			print("Map optimized. Tiles: "..public.tilesInMap.." from "..private.data.width * private.data.height * private.data.layercount)
 		end
 
+		--[[
 		function public.getQuad(quad)
 			i = #private.data.tilesets
 			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
@@ -378,20 +379,18 @@ function maps.load(path)
 			local quad = images.quads.data[imagename][quadnumber]
 			return image, quad
 		end
+		--]]
 
-		function private.getTileData(tilenumber)
-			i = #private.data.tilesets
-			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
-				i = i - 1
-				local tileset = private.data.tilesets[i]
-			end
+		function public.getTileSprite(gid, x, y, z)
+			local tileset = public.getTileset(gid)
+			local xp, yp, zp = private.getSpritePosition(x, y, z)
 			local imagename = string.match(tileset.image, "../../images/(.*).png")
-			local quadnumber = quad-(tileset.firstgid-1)
+			local quadnumber = gid-(tileset.firstgid-1)
 			local image = images.load(imagename)
 			local quad = images.quads.data[imagename][quadnumber]
-			return image, quad
+			local sprite = yama.buffers.newSprite(image, quad, xp, yp + private.data.tileheight, zp, 0, 1, 1, 0, tileset.tileheight)
+			return sprite
 		end
-
 		function public.getTileset(gid)
 			i = #private.data.tilesets
 			while private.data.tilesets[i] and gid < private.data.tilesets[i].firstgid do
@@ -400,6 +399,8 @@ function maps.load(path)
 			return private.data.tilesets[i]
 		end
 
+
+		--[[
 		function public.getSprite(gid, x, y, z, r, sx, sy, ox, oy, kx, ky)
 			i = #private.data.tilesets
 			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
@@ -411,6 +412,7 @@ function maps.load(path)
 			local quad = images.quads.data[imagename][quadnumber]
 			return yama.buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky)
 		end
+		--]]
 
 		function public.update(dt)
 			if #private.viewports > 0 then
@@ -472,10 +474,10 @@ function maps.load(path)
 							if not private.tiles[i] then
 								private.tiles[i] = {}
 							end
-							local image, quad = public.getQuad(layer.data[i])
-							--local tiledata = private.getTileData(layer.data[i])
-							local rx, ry, rz = private.getSpritePosition(x, y, z)
-							table.insert(private.tiles[i], yama.buffers.newSprite(image, quad, rx, ry + private.data.tileheight, rz, 0, 1, 1, 0, private.data.tileheight))
+							--local image, quad = public.getQuad(layer.data[i])
+							--local tiledata = private.getTileData(layer.data[i], x, y, z)
+							--local rx, ry, rz = private.getSpritePosition(x, y, z)
+							table.insert(private.tiles[i], public.getTileSprite(layer.data[i], x, y, z))
 							public.tilesInMap = public.tilesInMap + 1
 						end
 					end
@@ -563,13 +565,10 @@ function maps.load(path)
 
 		function private.getSpritePosition(x, y, z)
 			if private.data.orientation == "orthogonal" then
-				return public.getX(x), public.getY(y), public.getZ(z)
+				return x * private.data.tilewidth, y * private.data.tileheight, z * private.data.tileheight
 			elseif private.data.orientation == "isometric" then
-				nx = (x - 1 - y) * (private.data.tilewidth / 2)
-				ny = (y + x) * (private.data.tileheight / 2)
-				nz = z
-
-				return nx, ny, nz
+				x, y = public.translatePosition(x * private.data.tileheight, y * private.data.tileheight)
+				return x, y, z
 			end
 		end
 
@@ -592,7 +591,7 @@ function maps.load(path)
 				return nx, ny, nz
 			end
 		end
-
+		--[[
 		private.getPosition = {}
 
 		function private.getPosition.orthogonal(x, y, z)
@@ -628,6 +627,7 @@ function maps.load(path)
 		function public.getZ(z)
 			return z * private.data.tileheight
 		end
+		--]]
 
 		function public.index2X(x)
 			return x * private.data.tilewidth

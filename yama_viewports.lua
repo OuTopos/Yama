@@ -201,7 +201,7 @@ function viewports.new()
 	-- UPDATE
 	function public.update(dt)
 		if private.entity then
-			local x, y = private.map.translatePosition(private.entity.getPosition())
+			local x, y = private.entity.getPosition()
 			private.camera.setPosition(x, y, true)
 		end
 
