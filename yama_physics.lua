@@ -1,4 +1,4 @@
-physics = {}
+local physics = {}
 
 function physics.draw(world)
 	if world then
@@ -49,3 +49,5 @@ function physics.drawFixture(fixture, map)
 	end
 	love.graphics.setColor(255, 255, 255, 255)
 end
+
+return physics

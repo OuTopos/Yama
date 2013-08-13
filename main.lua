@@ -1,9 +1,8 @@
 yama = require("yama")
 
 require "images"
-require "physics"
 
-require "shaders"
+--require "shaders"
 
 function love.load()
 	love.graphics.setDefaultImageFilter(yama.c.imageFilter, yama.c.imageFilter)

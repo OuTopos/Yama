@@ -1,74 +1,58 @@
 entities_sprite = {}
 
 function entities_sprite.new(map, x, y, z)
-	local public = {}
-	local private = {}
+	local self = {}
 
-	private.type = "sprite"
+	self.type = "sprite"
 
-	-- SPRITE VARIABLES
-	private.x, private.y, private.z = x, y, z
-	private.r = 0
-	private.width, private.height = 0, 0
-	private.sx, private.sy = 1, 1
-	private.ox, private.oy = 0, 0
-	private.aox, private.aoy = 0, 0
+	self.x, self.y, self.z = x, y, z
+	self.r = 0
+	self.width, self.height = 0, 0
+	self.sx, self.sy = 1, 1
+	self.ox, self.oy = 0, 0
+	self.aox, self.aoy = 0, 0
 
-	private.sprite = nil
+	self.boundingbox = {}
+
+	-- LOCAL VARIABLES
+	local sprite = nil
+
 
 	-- DEFAULT FUNCTIONS
-	function public.initialize(object)
-		if object.gid then
-			local tileset = map.getTileset(object.gid)
-			local imagename = string.match(tileset.image, "../../images/(.*).png")
-			local image = images.load(imagename)
-			local quad = images.quads.data[imagename][object.gid-tileset.firstgid+1]
-
-			private.width, private.height = tileset.tilewidth, tileset.tileheight
-			private.oy = tileset.tileheight
-
-			private.sprite = yama.buffers.newSprite(image, quad, private.x, private.y, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
+	function self.initialize(parameters)
+		if parameters.gid then
+			-- Get the sprite, width and height from the gid.
+			sprite, self.width, self.height = map.getSprite(parameters.gid, self.x, self.y, self.z)
+			-- Set the scale and offset from the sprite.
+			self.sx, self.sy = sprite.sx, sprite.sy
+			self.ox, self.oy = sprite.ox, sprite.oy
+			-- Update the bounding box.
+			self.updateBoundingBox()
 		else
-			print("Sprite destroying itself because the object from the map wasn't a sprite. Wasn't that stupid?")
-			public.destroy()
+			print("Sprite destroying itself because there was no gid in the parameters. Wasn't that stupid?")
+			self.destroy()
 		end
 	end
 
-	function public.update(dt)
+	function self.update(dt)
 	end
 
-	function public.addToBuffer(vp)
-		if private.sprite then
-			vp.addToBuffer(private.sprite)
+	function self.updateBoundingBox()
+		self.boundingbox.x = self.x - (self.ox - self.aox) * self.sx
+		self.boundingbox.y = self.y - (self.oy - self.aoy) * self.sy
+		self.boundingbox.width = self.width * self.sx
+		self.boundingbox.height = self.height * self.sy
+	end
+
+	function self.addToBuffer(vp)
+		if sprite then
+			vp.addToBuffer(sprite)
 		end
 	end
 
-	function public.destroy()
-		public.destroyed = true
+	function self.destroy()
+		self.destroyed = true
 	end
 
-	-- GET
-	function public.getType()
-		return private.type
-	end
-	function public.getPosition()
-		return private.x, private.y, private.z
-	end
-	function public.getBoundingBox()
-		local x = private.x - (private.ox - private.aox) * private.sx
-		local y = private.y - (private.oy - private.aoy) * private.sy
-		local width = private.width * private.sx
-		local height = private.height * private.sy
-
-		return x, y, width, height
-	end
-	function public.getBoundingCircle()
-		local x, y, width, height = public.getBoundingBox()
-		local cx, cy = x + width / 2, y + height / 2
-		local radius = yama.g.getDistance(x, y, cx, cy)
-
-		return cx, cy, radius
-	end
-
-	return public
+	return self
 end

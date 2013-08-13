@@ -108,7 +108,7 @@ function viewports.new()
 
 	-- RESET
 	function public.reset()
-		print("Hy reset?")
+		print("Why reset?")
 		-- Set buffer to empty table.
 		--private.buffer = {}
 
@@ -201,8 +201,7 @@ function viewports.new()
 	-- UPDATE
 	function public.update(dt)
 		if private.entity then
-			local x, y = private.entity.getPosition()
-			private.camera.setPosition(x, y, true)
+			private.camera.setPosition(private.entity.x, private.entity.y, true)
 		end
 
 		-- UPDATE CAMERA
@@ -346,9 +345,8 @@ function viewports.new()
 		--]]
 
 		-- Check bounding box
-		local x, y, width, height = entity.getBoundingBox()
-
-		if x + width > private.camera.x and x < private.camera.x + private.camera.width and y + height > private.camera.y and y < private.camera.y + private.camera.height then
+		--local x, y, width, height = entity.getBoundingBox()
+		if entity.boundingbox.x + entity.boundingbox.width > private.camera.x and entity.boundingbox.x < private.camera.x + private.camera.width and entity.boundingbox.y + entity.boundingbox.height > private.camera.y and entity.boundingbox.y < private.camera.y + private.camera.height then
 			return true
 		else
 			return false

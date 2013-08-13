@@ -1,43 +1,43 @@
 entities_monster = {}
 
 function entities_monster.new(map, x, y, z)
-	local public = {}
-	local private = {}
+	local self = {}
+	self.boundingbox = {}
 
-	private.world = map.getWorld()
+	self.world = map.getWorld()
 
-	private.type = "player"
+	self.type = "player"
 
-	private.userdata = {}
-	private.userdata.name = "Unnamed"
-	private.userdata.type = "monster"
-	private.userdata.properties = {}
-	private.userdata.callback = public
+	self.userdata = {}
+	self.userdata.name = "Unnamed"
+	self.userdata.type = "monster"
+	self.userdata.properties = {}
+	self.userdata.callback = self
 
 	-- ANCHOR/POSITION/SPRITE VARIABLES
-	private.radius = 8
-	private.mass = 1
+	self.radius = 8
+	self.mass = 1
 
-	private.x, private.y, private.z = x, y, z
-	private.r = 0
-	private.width, private.height = 32, 38
-	private.sx, private.sy = 1, 1
-	private.ox, private.oy = private.width / 2, private.height
-	private.aox, private.aoy = 0, private.radius
-	private.sprite = nil
+	self.x, self.y, self.z = x, y, z
+	self.r = 0
+	self.width, self.height = 32, 38
+	self.sx, self.sy = 1, 1
+	self.ox, self.oy = self.width / 2, self.height
+	self.aox, self.aoy = 0, self.radius
+	self.sprite = nil
 
-	private.scale = (private.sx + private.sy) / 2
+	self.scale = (self.sx + self.sy) / 2
 
 	-- PHYSICS OBJECT
-	private.anchor = love.physics.newFixture(love.physics.newBody(private.world, private.x, private.y, "dynamic"), love.physics.newCircleShape(private.radius * private.scale), private.mass)
-	private.anchor:setRestitution(0.9)
-	private.anchor:getBody():setLinearDamping(1)
-	private.anchor:getBody():setFixedRotation(true)
-	private.anchor:setUserData(private.userdata)
+	self.anchor = love.physics.newFixture(love.physics.newBody(self.world, self.x, self.y, "dynamic"), love.physics.newCircleShape(self.radius * self.scale), self.mass)
+	self.anchor:setRestitution(0.9)
+	self.anchor:getBody():setLinearDamping(1)
+	self.anchor:getBody():setFixedRotation(true)
+	self.anchor:setUserData(self.userdata)
 
 	-- Movement variables
 	local mass = 1
-	local velocity = 10 * private.scale
+	local velocity = 10 * self.scale
 	local direction = math.atan2(math.random(-1, 1), math.random(-1, 1))
 	local move = false
 
@@ -56,40 +56,39 @@ function entities_monster.new(map, x, y, z)
 	--patrol.setRadius(32)
 
 	-- SPRITE
-	local tileset = "eyeball"
-	images.quads.add(tileset, 32, 38)
-	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][1], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy)
-	images.quads.add("lifebar", 32, 8)
-	private.lifebar = yama.buffers.newSprite(images.load("lifebar"), images.quads.data["lifebar"][1], private.x + private.aox, private.y + private.aoy, private.z, private.r, private.sx, private.sy, private.ox, private.oy + 8)
+	yama.assets.tileset("eyeball", "eyeball", 32, 38)
+	local sprite = yama.buffers.newSprite(yama.assets.tilesets["eyeball"].image, yama.assets.tilesets["eyeball"].tiles[1], self.x + self.aox, self.y + self.aoy, self.z, self.r, self.sx, self.sy, self.ox, self.oy)
+	yama.assets.tileset("lifebar", "lifebar", 32, 8)
+	self.lifebar = yama.buffers.newSprite(yama.assets.tilesets["lifebar"].image, yama.assets.tilesets["lifebar"].tiles[1], self.x + self.aox, self.y + self.aoy, self.z, self.r, self.sx, self.sy, self.ox, self.oy + 8)
 	
-	private.p = love.graphics.newParticleSystem(images.load("part1"), 1000)
-	private.p:setEmissionRate(10)
-	private.p:setSpeed(10, 10)
-	private.p:setSizes(1, 1.5)
-	private.p:setSizeVariation(0.5)
-	private.p:setColors(127, 51, 0, 255, 255, 51, 0, 0)
-	private.p:setPosition(400, 300)
-	private.p:setLifetime(0.15)
-	private.p:setParticleLife(1)
-	private.p:setDirection(0)
-	private.p:setSpread(1)
-	--private.p:setTangentialAcceleration(0, 0)
-	private.p:setRadialAcceleration(-2000)
-	private.p:stop()
+	self.p = love.graphics.newParticleSystem(yama.assets.image("part1"), 1000)
+	self.p:setEmissionRate(10)
+	self.p:setSpeed(10, 10)
+	self.p:setSizes(1, 1.5)
+	self.p:setSizeVariation(0.5)
+	self.p:setColors(127, 51, 0, 255, 255, 51, 0, 0)
+	self.p:setPosition(400, 300)
+	self.p:setLifetime(0.15)
+	self.p:setParticleLife(1)
+	self.p:setDirection(0)
+	self.p:setSpread(1)
+	--self.p:setTangentialAcceleration(0, 0)
+	self.p:setRadialAcceleration(-2000)
+	self.p:stop()
 
-	private.spores = yama.buffers.newDrawable(private.p, 0, 0, 1)
-	private.spores.blendmode = "additive"
+	self.spores = yama.buffers.newDrawable(self.p, 0, 0, 1)
+	self.spores.blendmode = "additive"
 
-	private.bufferbatch = yama.buffers.newBatch(private.x + private.aox, private.y + private.aoy, private.z)
+	self.bufferbatch = yama.buffers.newBatch(self.x + self.aox, self.y + self.aoy, self.z)
 
-	table.insert(private.bufferbatch.data, private.spores)
-	table.insert(private.bufferbatch.data, sprite)
-	table.insert(private.bufferbatch.data, private.lifebar)
+	table.insert(self.bufferbatch.data, self.spores)
+	table.insert(self.bufferbatch.data, sprite)
+	table.insert(self.bufferbatch.data, self.lifebar)
 	--table.insert(bufferBatch.data, sprite)
 
 
 	-- Monster variables
-	public.monster = true
+	self.monster = true
 	local hp = 10
 	local hpmax = 10
 
@@ -98,9 +97,9 @@ function entities_monster.new(map, x, y, z)
 
 
 	-- Standard functions
-	function public.update(dt)
+	function self.update(dt)
 		-- Patrol stuff
-		patrol.update(private.x, private.y)
+		patrol.update(self.x, self.y)
 
 		if patrol.isActive() then
 			dx, dy = patrol.getPoint()
@@ -111,113 +110,100 @@ function entities_monster.new(map, x, y, z)
 		end
 
 		if dx and dy then
-			direction = math.atan2(dy-private.y, dx-private.x)
+			direction = math.atan2(dy-self.y, dx-self.x)
 		end
 
 		if move then
 			fx = velocity * math.cos(direction)
 			fy = velocity * math.sin(direction)
-			private.anchor:getBody():applyForce( fx, fy )
+			self.anchor:getBody():applyForce( fx, fy )
 		end
 
 		-- Position updates
-		private.x = private.anchor:getBody():getX()
-		private.y = private.anchor:getBody():getY()
-		yama.buffers.setBatchPosition(private.bufferbatch, private.x + private.aox, private.y + private.aoy)
+		self.x = self.anchor:getBody():getX()
+		self.y = self.anchor:getBody():getY()
+		yama.buffers.setBatchPosition(self.bufferbatch, self.x + self.aox, self.y + self.aoy)
 
 
-		private.spores.ox = private.x
-		private.spores.oy = private.y
+		self.spores.ox = self.x
+		self.spores.oy = self.y
 
-		private.p:setPosition(private.x, private.y - 24)
-		private.p:start()
-		private.p:update(dt)
-		--bufferBatch.x = public.getX()
-		--bufferBatch.y = public.getY() + radius
+		self.p:setPosition(self.x, self.y - 24)
+		self.p:start()
+		self.p:update(dt)
+		--bufferBatch.x = self.getX()
+		--bufferBatch.y = self.getY() + radius
 		--bufferBatch.z = z
 
 		-- Animation updates
 		animation.update(dt, "eyeball_walk_"..yama.g.getRelativeDirection(direction))
-		sprite.quad = images.quads.data[tileset][animation.frame]
-		private.lifebar.quad = images.quads.data["lifebar"][24 - math.floor(hp / hpmax * 23 + 0.5)]
-	end
+		sprite.quad = yama.assets.tilesets["eyeball"].tiles[animation.frame]
+		self.lifebar.quad = yama.assets.tilesets["lifebar"].tiles[24 - math.floor(hp / hpmax * 23 + 0.5)]
 
-	function public.addToBuffer(vp)
-		vp.addToBuffer(private.bufferbatch)
+		self.setBoundingBox()
+	end
+	
+function self.addToBuffer(vp)
+		vp.addToBuffer(self.bufferbatch)
 	end
 
 	-- Monster functions
 
-	function public.hurt(p)
+	function self.hurt(p)
 		hp = hp - p
 		if hp <= 0 then
-			public.destroy()
+			self.destroy()
 		end
 	end
 
-	function public.setName(name)
-		private.name = name
+	function self.setName(name)
+		self.name = name
 	end
-	function public.setProperties(properties)
-		private.properties = properties
+	function self.setProperties(properties)
+		self.properties = properties
 	end
-	function public.getName()
-		return private.name
+	function self.getName()
+		return self.name
 	end
-	function public.getType()
-		return private.type
+	function self.getType()
+		return self.type
 	end
-	function public.getProperties()
-		return private.name
+	function self.getProperties()
+		return self.name
 	end
 
 
 
 	-- CONTACT FUNCTIONS
-	function public.beginContact(a, b, contact)
+	function self.beginContact(a, b, contact)
 		aData = a:getUserData()
 		bData = b:getUserData()
 
 		if bData then
 			print(bData.type)
 			if bData.type == "damage" then
-				public.hurt(bData.properties.physical)
-				local direction = math.atan2(private.anchor:getBody():getY() - b:getBody():getY(), private.anchor:getBody():getX() - b:getBody():getX())
+				self.hurt(bData.properties.physical)
+				local direction = math.atan2(self.anchor:getBody():getY() - b:getBody():getY(), self.anchor:getBody():getX() - b:getBody():getX())
 				local x = 100 * math.cos(direction)
 				local y = 100 * math.sin(direction)
-				private.anchor:getBody():setLinearVelocity( x, y )
+				self.anchor:getBody():setLinearVelocity( x, y )
 			end
 		end
 	end
 
 
 	-- GET
-	function public.getType()
-		return private.type
+	function self.setBoundingBox()
+		self.boundingbox.x = self.x - (self.ox - self.aox) * self.sx
+		self.boundingbox.y = self.y - (self.oy - self.aoy) * self.sy
+		self.boundingbox.width = self.width * self.sx
+		self.boundingbox.height = self.height * self.sy
 	end
-	function public.getPosition()
-		return private.x, private.y, private.z
-	end
-	function public.getBoundingBox()
-		local x = private.x - (private.ox - private.aox) * private.sx
-		local y = private.y - (private.oy - private.aoy) * private.sy
-		local width = private.width * private.sx
-		local height = private.height * private.sy
-
-		return x, y, width, height
-	end
-	function public.getBoundingCircle()
-		local x, y, width, height = public.getBoundingBox()
-		local cx, cy = x + width / 2, y + height / 2
-		local radius = yama.g.getDistance(x, y, cx, cy)
-
-		return cx, cy, radius
-	end
-	function public.destroy()
+	function self.destroy()
 		print("Destroying monster")
-		private.anchor:getBody():destroy()
-		public.destroyed = true
+		self.anchor:getBody():destroy()
+		self.destroyed = true
 	end
 
-	return public
+	return self
 end

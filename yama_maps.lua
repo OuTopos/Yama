@@ -90,7 +90,6 @@ function maps.load(path)
 		-- ENTITIES
 		private.entities = {}
 		private.entities.list = {}
-		private.entities.visible = {}
 
 		function private.entities.insert(entity)
 			entity.visible = {}
@@ -179,7 +178,7 @@ function maps.load(path)
 			vp.getCamera().follow = private.player
 
 			-- Create a visible entities table for the viewport.
-			private.entities.visible[vp] = {}
+			--private.entities.visible[vp] = {}
 
 			-- Insert the viewport in the viewports table.
 			table.insert(private.viewports, vp)
@@ -233,8 +232,9 @@ function maps.load(path)
 		-- LOAD - Tilesets
 		function private.loadTilesets()
 			for i,tileset in ipairs(private.data.tilesets) do
-				local name = string.match(tileset.image, "../../images/(.*).png")
-				images.quads.add(name, tileset.tilewidth, tileset.tileheight)
+				local imagepath = string.match(tileset.image, "../../images/(.*).png")
+				--images.quads.add(name, tileset.tilewidth, tileset.tileheight)
+				yama.assets.tileset(tileset.name, imagepath, tileset.tilewidth, tileset.tileheight, tileset.spacing, tileset.margin)
 			end
 		end
 
@@ -380,16 +380,19 @@ function maps.load(path)
 			return image, quad
 		end
 		--]]
-
 		function public.getTileSprite(gid, x, y, z)
-			local tileset = public.getTileset(gid)
-			local xp, yp, zp = private.getSpritePosition(x, y, z)
-			local imagename = string.match(tileset.image, "../../images/(.*).png")
-			local quadnumber = gid-(tileset.firstgid-1)
-			local image = images.load(imagename)
-			local quad = images.quads.data[imagename][quadnumber]
-			local sprite = yama.buffers.newSprite(image, quad, xp, yp + private.data.tileheight, zp, 0, 1, 1, 0, tileset.tileheight)
+			x, y, z = private.getSpritePosition(x, y, z)
+			local sprite, width, height = public.getSprite(gid, x, y, z)
 			return sprite
+		end
+
+		function public.getSprite(gid, x, y, z)
+			local tileset = public.getTileset(gid)
+			local image = yama.assets.tilesets[tileset.name].image
+			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
+			local sprite = yama.buffers.newSprite(image, quad, x, y, z, 0, 1, 1, 0, tileset.tileheight)
+			return sprite, tileset.tilewidth, tileset.tileheight
+
 		end
 		function public.getTileset(gid)
 			i = #private.data.tilesets
@@ -460,7 +463,7 @@ function maps.load(path)
 			if private.data then
 				private.data.optimized = {}
 				public.tilesInMap = 0
-				private.tilelayers = {}
+				private.tilelayers = {} -- For odd size tiles maybe
 
 				private.tiles = {}
 
@@ -565,7 +568,7 @@ function maps.load(path)
 
 		function private.getSpritePosition(x, y, z)
 			if private.data.orientation == "orthogonal" then
-				return x * private.data.tilewidth, y * private.data.tileheight, z * private.data.tileheight
+				return x * private.data.tilewidth, y * private.data.tileheight + private.data.tileheight, z * private.data.tileheight
 			elseif private.data.orientation == "isometric" then
 				x, y = public.translatePosition(x * private.data.tileheight, y * private.data.tileheight)
 				return x, y, z

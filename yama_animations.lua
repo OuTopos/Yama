@@ -1,79 +1,75 @@
 local animations = {}
 
 function animations.new()
-	local public = {}
-	local private = {}
+	local self = {}
 
-	-- Public
-	public.frame = 1
-	public.finished = false
-	public.timescale = 1
+	self.frame = 1
+	self.finished = false
+	self.timescale = 1
 
-	-- Private
-	private.time = 0
-	private.animation = nil
+	self.time = 0
+	self.animation = nil
 
-	private.delay = 1
-	private.first = 1
-	private.last = 1
-	private.loop = true
-	private.finish = false
-	private.reverse = false
+	self.delay = 1
+	self.first = 1
+	self.last = 1
+	self.loop = true
+	self.finish = false
+	self.reverse = false
 
-	-- Public Functions
-	function public.set(animation, force, loop, finish, reverse)
-		if not private.finish or public.finished or force then
-			private.time = 0
-			private.animation = animations.list[animation]
+	function self.set(animation, force, loop, finish, reverse)
+		if not self.finish or self.finished or force then
+			self.time = 0
+			self.animation = animations.list[animation]
 
-			private.delay = private.animation.delay
-			private.first = private.animation.first
-			private.last = private.animation.last
-			private.loop = loop or private.animation.loop
-			private.finish = finish or private.animation.finish
-			private.reverse = reverse or private.animation.reverse
+			self.delay = self.animation.delay
+			self.first = self.animation.first
+			self.last = self.animation.last
+			self.loop = loop or self.animation.loop
+			self.finish = finish or self.animation.finish
+			self.reverse = reverse or self.animation.reverse
 
-			public.frame = private.first
-			public.finished = false
+			self.frame = self.first
+			self.finished = false
 		end
 	end
 
-	function public.update(dt, animation)
-		if animation and animations.list[animation] ~= private.animation then
-			public.set(animation)
+	function self.update(dt, animation)
+		if animation and animations.list[animation] ~= self.animation then
+			self.set(animation)
 		end
 		
-		private.time = private.time + dt * public.timescale
+		self.time = self.time + dt * self.timescale
 
-		if private.time > private.delay then
-			private.time = private.time - private.delay
+		if self.time > self.delay then
+			self.time = self.time - self.delay
 			
-			if private.reverse then
-				public.frame = public.frame - 1
+			if self.reverse then
+				self.frame = self.frame - 1
 
-				if public.frame < private.first and private.loop then
-					public.frame = private.last
-					public.finished = true
-				elseif public.frame < private.first then
-					public.frame = private.first
-					public.finished = true
-				elseif public.frame > private.last then
-					public.frame = private.last
-					public.finished = true
+				if self.frame < self.first and self.loop then
+					self.frame = self.last
+					self.finished = true
+				elseif self.frame < self.first then
+					self.frame = self.first
+					self.finished = true
+				elseif self.frame > self.last then
+					self.frame = self.last
+					self.finished = true
 				end
 				return true
 			else
-				public.frame = public.frame + 1
+				self.frame = self.frame + 1
 
-				if public.frame > private.last and private.loop then
-					public.frame = private.first
-					public.finished = true
-				elseif public.frame > private.last then
-					public.frame = private.last
-					public.finished = true
-				elseif public.frame < private.first then
-					public.frame = private.first
-					public.finished = true
+				if self.frame > self.last and self.loop then
+					self.frame = self.first
+					self.finished = true
+				elseif self.frame > self.last then
+					self.frame = self.last
+					self.finished = true
+				elseif self.frame < self.first then
+					self.frame = self.first
+					self.finished = true
 				end
 				return true
 
@@ -83,17 +79,7 @@ function animations.new()
 		return false
 	end
 
-	function public.getFrame()
-		print("WARNING: Don't use getFrame() on animations!")
-		return public.frame
-	end
-
-	function public.setTimescale(scale)
-		print("WARNING: Don't use setTimescale() on animations!")
-		public.timescale = scale
-	end
-
-	return public
+	return self
 end
 
 -- List of all the animations

@@ -1,6 +1,7 @@
 local yama = {}
 
 yama.c              = require("yama_c")
+yama.assets         = require("yama_assets")
 yama.screen         = require("yama_screen")
 yama.buffers      	= require("yama_buffers")
 yama.entities       = require("yama_entities")
@@ -14,10 +15,12 @@ yama.ai.patrols     = require("yama_ai_patrols")
 yama.patrols        = require("yama_patrols")
 yama.input          = require("yama_input")
 yama.joystick       = require("yama_joystick")
+yama.physics        = require("yama_physics")
 
 yama.g              = require("yama_g")
 
 
+-- GENERERIC FUNCTIONS
 function yama.distance(x1, y1, x2, y2)
 	return g.sqrt((x1-x2)^2+(y1-y2)^2)
 end

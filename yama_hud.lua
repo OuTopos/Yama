@@ -10,15 +10,15 @@ function hud.drawR(vp)
 		local entities = map.getEntities()
 
 		--if map.getData() then
-			physics.draw(map.getWorld())
+			yama.physics.draw(map.getWorld())
 		--end
 
 		-- Entities
 
 		for i = 1, #entities.list do
 			if vp.isEntityInside(entities.list[i]) then
-				local x, y, z = entities.list[i].getPosition()
-				local left, top, width, height = entities.list[i].getBoundingBox()
+				local x, y, z = entities.list[i].x, entities.list[i].y, entities.list[i].z
+				local left, top, width, height = entities.list[i].boundingbox.x, entities.list[i].boundingbox.y, entities.list[i].boundingbox.width, entities.list[i].boundingbox.height
 
 				love.graphics.setColor(255, 0, 0, 255)
 				love.graphics.rectangle( "line", left, top, width, height)
@@ -48,6 +48,7 @@ function hud.draw(vp)
 		local map = vp.getMap()
 		local buffer = vp.getBuffer()
 		local entities = map.getEntities()
+		local world = map.getWorld()
 
 		-- Debug text.
 		
@@ -64,7 +65,7 @@ function hud.draw(vp)
 
 		-- Entities
 		love.graphics.print("Entities: "..#entities.list, left + 2, top + 2)
-		love.graphics.print("  Visible: "..#entities.visible[vp], left + 2, top + 12)
+		--love.graphics.print("  Visible: "..entities.visible[vp], left + 2, top + 12)
 		-- Map
 		if map.getData() then
 			love.graphics.print("Map: "..map.getData().width.."x"..map.getData().height.."x"..map.getData().layercount, left + 2, top + 22)
@@ -72,8 +73,8 @@ function hud.draw(vp)
 
 			love.graphics.print("  Tiles: "..map.tilesInView.."/"..map.tilesInMap, left + 2, top + 42)
 			-- Physics
-			if physics.world then
-				love.graphics.print("Physics: "..physics.world:getBodyCount(), left + 2, top + 52)
+			if world then
+				love.graphics.print("Physics: "..world:getBodyCount(), left + 2, top + 52)
 			end
 			-- Player
 			if map.getData().player then
