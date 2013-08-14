@@ -22,7 +22,7 @@ function entities_sprite.new(map, x, y, z)
 	function self.initialize(parameters)
 		if parameters.gid then
 			-- Get the sprite, width and height from the gid.
-			sprite, self.width, self.height = map.getSprite(parameters.gid, self.x, self.y, self.z)
+			sprite, self.width, self.height = map.getSprite(parameters.gid, self.x, self.y, self.z, true)
 			-- Set the scale and offset from the sprite.
 			self.sx, self.sy = sprite.sx, sprite.sy
 			self.ox, self.oy = sprite.ox, sprite.oy

@@ -2,6 +2,7 @@ entities_bullet = {}
 
 function entities_bullet.new( map, x, y, z )
 	local self = {}
+	self.boundingbox = {}
 
 	local userdata = {}
 	userdata.name = "Unnamed"
@@ -20,8 +21,6 @@ function entities_bullet.new( map, x, y, z )
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
-	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-	self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
 	self.type = "brick"
 	
 	local aim = 0
@@ -56,8 +55,11 @@ function entities_bullet.new( map, x, y, z )
 
 	function self.update( dt )
 		self.updatePosition( )
-		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
+
+		self.x = x
+		self.y = y
+		self.z = z
+		self.setBoundingBox()
 	end
 	
 	function self.shoot( fx, fy )
@@ -139,31 +141,19 @@ function entities_bullet.new( map, x, y, z )
 		return yvel
 	end
 
-	-- GET
-	function self.getType()
-		return type
-	end
-	function self.getPosition()
-		return x, y, z
-	end
-	function self.getBoundingBox()
-		local bx = x - ox * sx
-		local by = y - oy * sy
-
-		return bx, by, width * sx, height * sy
-	end
-	function self.getBoundingCircle()
-		local bx, by, width, height = self.getBoundingBox()
-		local cx, cy = bx + width / 2, by + height / 2
-		local radius = yama.g.getDistance(x, y, cx, cy)
-
-		return cx, cy, radius
-	end
 	function self.destroy( )
 		if not self.destroyed then
 			bullet:getBody():destroy()
 			self.destroyed = true
 		end
+	end
+
+	function self.setBoundingBox()
+		self.boundingbox.x = x - ox * sx
+		self.boundingbox.y = y - oy * sy
+
+		self.boundingbox.width = width * sx
+		self.boundingbox.height = height * sy
 	end
 
 	return self

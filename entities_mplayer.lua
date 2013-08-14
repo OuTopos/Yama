@@ -3,6 +3,7 @@ entities_mplayer = {}
 
 function entities_mplayer.new( map, x, y, z )
 	local self = {}
+	self.boundingbox = {}
 
 	local userdata = {}
 	userdata.name = "Unnamed"
@@ -183,6 +184,11 @@ function entities_mplayer.new( map, x, y, z )
 
 		--ptcSpark:start()
 		ptcSpark:update(dt)
+
+		self.x = x
+		self.y = y
+		self.z = z
+		self.setBoundingBox()
 	end
 
 	function self.updateInput( dt )
@@ -524,25 +530,12 @@ function entities_mplayer.new( map, x, y, z )
 		self.destroyed = true
 	end
 
-	-- GET
-	function self.getType()
-		return type
-	end
-	function self.getPosition()
-		return x, y, z
-	end
-	function self.getBoundingBox()
-		local bx = x - ox * sx
-		local by = y - oy * sy
+	function self.setBoundingBox()
+		self.boundingbox.x = x - ox * sx
+		self.boundingbox.y = y - oy * sy
 
-		return bx, by, width * sx, height * sy
-	end
-	function self.getBoundingCircle()
-		local bx, by, width, height = self.getBoundingBox()
-		local cx, cy = bx + width / 2, by + height / 2
-		local radius = yama.g.getDistance(x, y, cx, cy)
-
-		return cx, cy, radius
+		self.boundingbox.width = width * sx
+		self.boundingbox.height = height * sy
 	end
 
 	return self

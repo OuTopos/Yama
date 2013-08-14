@@ -187,7 +187,7 @@ function maps.load(path)
 		function public.removeViewport(vp)
 			for i=#private.viewports, 1, -1 do
 				if private.viewports[i] == vp then
-					private.entities.visible[private.viewports[i]] = nil
+					--private.entities.visible[private.viewports[i]] = nil
 					table.remove(private.viewports, i)
 				end
 			end
@@ -382,16 +382,20 @@ function maps.load(path)
 		--]]
 		function public.getTileSprite(gid, x, y, z)
 			x, y, z = private.getSpritePosition(x, y, z)
-			local sprite, width, height = public.getSprite(gid, x, y, z)
+			local sprite = public.getSprite(gid, x, y, z)
 			return sprite
 		end
 
-		function public.getSprite(gid, x, y, z)
+		function public.getSprite(gid, x, y, z, returnsize)
 			local tileset = public.getTileset(gid)
 			local image = yama.assets.tilesets[tileset.name].image
 			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
 			local sprite = yama.buffers.newSprite(image, quad, x, y, z, 0, 1, 1, 0, tileset.tileheight)
-			return sprite, tileset.tilewidth, tileset.tileheight
+			if returnsize then
+				return sprite, tileset.tilewidth, tileset.tileheight
+			else
+				return sprite
+			end
 
 		end
 		function public.getTileset(gid)
