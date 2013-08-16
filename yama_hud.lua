@@ -24,12 +24,12 @@ function hud.drawR(vp)
 				love.graphics.rectangle( "line", left, top, width, height)
 			
 				love.graphics.setColor(0, 0, 255, 255)
-				love.graphics.print(i, left + 2, top + 2)
+				--love.graphics.print(i, left + 2, top + 2)
 				love.graphics.circle("line", x, y, 2)
-				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(math.floor(x + 0.5), left + 2, top + 12)
-				love.graphics.print(math.floor(y + 0.5), left + 2, top + 22)
-				love.graphics.print(math.floor(z + 0.5), left + 2, top + 32)
+				--love.graphics.setColor(0, 0, 0, 255)
+				--love.graphics.print(math.floor(x + 0.5), left + 2, top + 12)
+				--love.graphics.print(math.floor(y + 0.5), left + 2, top + 22)
+				--love.graphics.print(math.floor(z + 0.5), left + 2, top + 32)
 			end
 		end
 		love.graphics.setColor(255, 255, 255, 255)

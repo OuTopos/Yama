@@ -2,13 +2,16 @@ local maps = {}
 maps.list = {}
 
 function maps.load(path)
+	print("[Maps] Loading "..path)
 	-- This will create a map object and store it in the maps.list.
 	if maps.list[path] then
 		-- Except if that map is already loaded.
+		print("[Maps] "..path.." already loaded.")
 		return maps.list[path]
 	else
 		local public = {}
 		local private = {}
+		public.start_time = os.clock()
 
 
 		-- MAP DATA
@@ -202,14 +205,12 @@ function maps.load(path)
 
 
 		-- PATROLS
-		private.patrols = {}
 		function public.getPatrol(i)
 			return private.patrols[i]
 		end
 
 
 		-- SPAWNS
-		private.spawns = {}
 
 		-- MISC
 		private.cooldown = 0
@@ -232,19 +233,87 @@ function maps.load(path)
 		-- LOAD - Tilesets
 		function private.loadTilesets()
 			for i,tileset in ipairs(private.data.tilesets) do
-				local imagepath = string.match(tileset.image, "../../images/(.*).png")
-				--images.quads.add(name, tileset.tilewidth, tileset.tileheight)
-				yama.assets.tileset(tileset.name, imagepath, tileset.tilewidth, tileset.tileheight, tileset.spacing, tileset.margin)
+				tileset.image = string.match(tileset.image, "../../images/(.*).png")
+				yama.assets.tileset(tileset.name, tileset.image, tileset.tilewidth, tileset.tileheight, tileset.spacing, tileset.margin)
 			end
 		end
 
 
 		-- LOAD - Layers
 		function private.loadLayers()
-			for i = #private.data.layers, 1, -1 do
+			private.spritebatches = {}
+			private.tiles = {}
+
+			private.spawns = {}
+			private.patrols = {}
+
+
+			-- Itirate over.
+			for i = 1, #private.data.layers do
+
 				local layer = private.data.layers[i]
-				if layer.type == "objectgroup" then
+
+				if layer.type == "tilelayer" then
+					
+
+					-- TILE LAYERS
+					if layer.properties.type == "spritebatch" then
+
+
+						-- SPRITE BATCH
+						local i = 1
+						while layer.data[i] < 1 do
+							i = i + 1
+						end
+						local tileset = public.getTileset(layer.data[i])
+						local spritebatch = love.graphics.newSpriteBatch(yama.assets.image(tileset.image), #layer.data)
+						
+						spritebatch:bind()
+
+						local z = tonumber(layer.properties.z) or 0
+
+						for i, gid in ipairs(layer.data) do
+							if gid > 0 then
+								local x, y = public.index2xy(i)
+
+								x, y, z = private.getSpritePosition(x, y, z)
+
+								spritebatch:addq(public.getQuad(gid), x, y)
+							end
+						end
+						spritebatch:unbind()
+
+						table.insert(private.spritebatches, yama.buffers.newDrawable(spritebatch, 0, 0, z))
+
+
+					else
+
+
+						-- TILES
+						local z = tonumber(layer.properties.z) or 0
+						for i, gid in ipairs(layer.data) do
+							if not private.tiles[i] then
+								private.tiles[i] = {}
+							end
+
+							if gid > 0 then
+								local x, y = public.index2xy(i)
+								table.insert(private.tiles[i], public.getTileSprite(layer.data[i], x, y, z))
+							end
+						end
+
+
+					end
+
+
+				elseif layer.type == "objectgroup" then
+
+
+					-- OBJECT GROUPS
 					if layer.properties.type == "collision" then
+
+
+						--COLLISION
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							-- Creating a fixture from the object.
@@ -278,8 +347,13 @@ function maps.load(path)
 								fixture:setGroupIndex(tonumber(object.properties.groupindex))
 							end
 						end
+
+
 					elseif layer.properties.type == "entities" then
-						-- Block add to physics.
+
+
+						-- ENTITIES
+						-- Spawning entities.
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
 								object.z = tonumber(object.properties.z) or 1
@@ -288,8 +362,13 @@ function maps.load(path)
 								public.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.z, object)
 							end
 						end
+
+
 					elseif layer.properties.type == "patrols" then
-						-- Adding patrols to the patrols table
+
+
+						-- PATROLS
+						-- Adding patrols to the patrols table.
 						for i, object in ipairs(layer.objects) do
 							if object.shape == "polyline" then
 								local patrol = {}
@@ -303,14 +382,24 @@ function maps.load(path)
 								private.patrols[patrol.name] = patrol
 							end
 						end
+
+
 					elseif layer.properties.type == "portals" then
-						-- Adding portals to physics objects
+
+
+						-- PORTALS
+						-- Creating portal fixtures.
 						for i, object in ipairs(layer.objects) do
 							local fixture = public.createFixture(object, static)
 							fixture:setUserData({name = object.name, type = "portal", properties = object.properties})
 							fixture:setSensor(true)
 						end
+
+
 					elseif layer.properties.type == "spawns" then
+
+
+						-- SPAWNS
 						-- Adding spawns to the spawns list
 						for i, object in ipairs(layer.objects) do
 							local spawn = {}
@@ -325,9 +414,8 @@ function maps.load(path)
 							private.spawns[spawn.name] = spawn
 						end
 					end
-					table.remove(private.data.layers, layerkey)
-				elseif layer.properties.type == "quadmap" then
-					-- spritebatch backgrounds and stuff
+
+
 				end
 			end
 			private.data.layercount = #private.data.layers
@@ -363,8 +451,8 @@ function maps.load(path)
 			--end
 
 			-- Scale the screen
-			private.optimize()
-			print("Map optimized. Tiles: "..public.tilesInMap.." from "..private.data.width * private.data.height * private.data.layercount)
+			--private.optimize()
+			print("[Maps] Optimized tiles: "..public.tilesInMap.." from "..private.data.width * private.data.height * private.data.layercount)
 		end
 
 		--[[
@@ -380,9 +468,17 @@ function maps.load(path)
 			return image, quad
 		end
 		--]]
+		function public.getQuad(gid)
+			local tileset = public.getTileset(gid)
+			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
+			return quad
+		end
+
 		function public.getTileSprite(gid, x, y, z)
 			x, y, z = private.getSpritePosition(x, y, z)
-			local sprite = public.getSprite(gid, x, y, z)
+			local sprite, width, height = public.getSprite(gid, x, y, z, true)
+			sprite.y = sprite.y + private.data.tileheight
+			sprite.oy = height
 			return sprite
 		end
 
@@ -390,7 +486,7 @@ function maps.load(path)
 			local tileset = public.getTileset(gid)
 			local image = yama.assets.tilesets[tileset.name].image
 			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
-			local sprite = yama.buffers.newSprite(image, quad, x, y, z, 0, 1, 1, 0, tileset.tileheight)
+			local sprite = yama.buffers.newSprite(image, quad, x, y, z)
 			if returnsize then
 				return sprite, tileset.tilewidth, tileset.tileheight
 			else
@@ -462,7 +558,7 @@ function maps.load(path)
 			end
 		end
 
-		-- OPTIMIZE
+		--[[ OPTIMIZE
 		function private.optimize()
 			if private.data then
 				private.data.optimized = {}
@@ -491,8 +587,12 @@ function maps.load(path)
 				end
 			end
 		end
+		--]]
 
 		function public.addToBuffer(vp)
+			for i = 1, #private.spritebatches do
+				vp.addToBuffer(private.spritebatches[i])
+			end
 			--for i = 1, #private.entities.visible[vp] do
 			--	private.entities.visible[vp][i].addToBuffer(vp)
 			--end
@@ -531,7 +631,7 @@ function maps.load(path)
 			if ymax > private.data.height-1 then
 				ymax = private.data.height-1
 			end
-
+			---[[
 			-- Iterate the y-axis.
 			for y=ymin, ymax do
 
@@ -558,6 +658,7 @@ function maps.load(path)
 					end
 				end
 			end
+			--]]
 		end
 
 		function public.xy2index(x, y)
@@ -571,8 +672,9 @@ function maps.load(path)
 		end
 
 		function private.getSpritePosition(x, y, z)
+			-- This function gives you a pixel position from a tile position.
 			if private.data.orientation == "orthogonal" then
-				return x * private.data.tilewidth, y * private.data.tileheight + private.data.tileheight, z * private.data.tileheight
+				return x * private.data.tilewidth, y * private.data.tileheight, z * private.data.tileheight
 			elseif private.data.orientation == "isometric" then
 				x, y = public.translatePosition(x * private.data.tileheight, y * private.data.tileheight)
 				return x, y, z
@@ -762,6 +864,10 @@ function maps.load(path)
 		private.load()
 
 		maps.list[path] = public
+
+		public.end_time = os.clock()
+		public.load_time = public.end_time - public.start_time
+		print("[Maps] "..path.." loaded in "..public.load_time.." seconds.")
 		return public
 	end
 end

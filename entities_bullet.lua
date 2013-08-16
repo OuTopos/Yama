@@ -1,8 +1,7 @@
 entities_bullet = {}
 
 function entities_bullet.new( map, x, y, z )
-	local self = {}
-	self.boundingbox = {}
+	local self = yama.entities.base.new()
 
 	local userdata = {}
 	userdata.name = "Unnamed"

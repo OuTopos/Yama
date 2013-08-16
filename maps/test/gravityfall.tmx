@@ -21,6 +21,7 @@
  </tileset>
  <layer name="Background" width="100" height="100">
   <properties>
+   <property name="type" value="spritebatch"/>
    <property name="z" value="0"/>
   </properties>
   <data encoding="base64" compression="zlib">
@@ -29,10 +30,11 @@
  </layer>
  <layer name="Tiles Layer 2" width="100" height="100">
   <properties>
+   <property name="type" value="spritebatch"/>
    <property name="z" value="2"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0bEJACEQRUET+6/Jzi4QweAEo3XFGXip4P5SAAAAAAAAAAAAAAAAAACAW7XaIwd75GKPXOyRw9hh7sQbL9i5jT3iRN3HHmt/t7HHOa/usfq3JEm6JwAAAAAAAAAAAAAAAAAAAAAAAIj0AUVEsTA=
+   eJzt0TEKwCAQRUEbz+h5c7MUIlhESLWuOAOvFdzfagEAAAAAAAAAAAAAAAAAAA711B452CMXe+RijxzGDnM73rjBn9vYI07Ufeyx9nUbe+xz6x6rf0uSpHMCAAAAAAAAAAAAAAAAAAAAAACASC9vh7GM
   </data>
  </layer>
  <objectgroup color="#ff0000" name="Ground" width="100" height="100">

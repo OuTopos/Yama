@@ -2,8 +2,7 @@ entities_mplayer = {}
 
 
 function entities_mplayer.new( map, x, y, z )
-	local self = {}
-	self.boundingbox = {}
+	local self = yama.entities.base.new()
 
 	local userdata = {}
 	userdata.name = "Unnamed"

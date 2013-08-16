@@ -38,3 +38,5 @@ function character.new()
 
 	return self
 end
+
+return character

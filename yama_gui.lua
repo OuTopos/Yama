@@ -15,29 +15,45 @@ function gui.load()
 	gui.images = {}
 	gui.images.hp = love.graphics.newImage("images/gui/bar_hp_mp.png")
 	gui.images.test = love.graphics.newImage("images/gui/confirm_bg.png")
-end
-function gui.draw()
-	love.graphics.draw(gui.images.hp, camera.x + 2,  camera.y + 1)
-	--love.graphics.draw(gui.images.test, camera.x + 2,  camera.y + camera.height - 66)
 
-	love.graphics.setColor(0, 0, 0, 255)
-	love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 3)
+	--table.insert(gui.list, gui.newHealthBar())
+end
+function gui.draw(vp)
+	local left = vp.getX()
+	local right = vp.getX() + vp.getWidth()
+	local top = vp.getY()
+	local bottom = vp.getY() + vp.getHeight()
+	
+	local camera = vp.getCamera()
+	local map = vp.getMap()
+	local buffer = vp.getBuffer()
+	local entities = map.getEntities()
+	local world = map.getWorld()
+
+
+	yama.assets.image("gui/healthbar")
+	love.graphics.draw(yama.assets.image("gui/healthbar"), left,  top, 0, 4, 4)
+
+	--love.graphics.setColor(0, 0, 0, 255)
+	--love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 3)
 	--love.graphics.print("Skeleton: HELLO", camera.x + 12 + 1, camera.y + camera.height - 55 +1)
 	--love.graphics.print("Princess: Aahh!", camera.x + 12 + 1, camera.y + camera.height - 45 +1)
 
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 2)
+	--love.graphics.setColor(255, 255, 255, 255)
+	--love.graphics.print("FPS: "..love.timer.getFPS(), camera.x + camera.width - 39, camera.y + 2)
 	--love.graphics.print("Skeleton: HELLO", camera.x + 12, camera.y + camera.height - 55)
 	--love.graphics.print("Princess: Aahh!", camera.x + 12, camera.y + camera.height - 45)
 
 	if yama.g.paused then
 		love.graphics.setColor(0, 0, 0, 234)
-		love.graphics.rectangle("fill", camera.x, camera.y, camera.width, camera.height)
+		love.graphics.rectangle("fill", left, top, vp.getWidth(), vp.getHeight())
 		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.print("- PAUSE -", camera.x + camera.width/2 - 20, camera.y + camera.height/2 - 4)
+		love.graphics.print("- PAUSE -", left + vp.getWidth()/2 - 20, top + vp.getHeight()/2 - 4)
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("- PAUSE -", camera.x + camera.width/2 - 21, camera.y + camera.height/2 - 5)
+		love.graphics.print("- PAUSE -", left + vp.getWidth()/2 - 21, top + vp.getHeight()/2 - 5)
 	end
+
+	--gui.list[1].draw(vp)
 end
 
 
@@ -58,6 +74,14 @@ function gui.newHealthBar()
 	self.hpmax = 1000
 	self.hp = 100
 
+	local tileset = "LPC/body/male/light"
+	images.quads.add(tileset, self.width, self.height)
+	local sprite = yama.buffers.newSprite(images.load(tileset), images.quads.data[tileset][131], self.x + self.aox, self.y + self.aoy, self.z, self.r, self.sx, self.sy, self.ox, self.oy)
+
+
+
+	local background = yama.assets.image("gui/healthbar"), self.x, self.y, 10000
+
 	function self.hide()
 
 	end
@@ -67,7 +91,7 @@ function gui.newHealthBar()
 	end
 
 	function self.draw()
-		-- body
+		love.graphics.draw(yama.assets.image("gui/healthbar"), self.x, self.y)
 	end
 
 	return self

@@ -1,11 +1,17 @@
 local base = {}
 
-function base.get()
+function base.new()
 	local self = {}
 
-	self.test1 = "ja1"
-	local test2 = "ja2"
+	self.x = 0
+	self.y = 0
+	self.z = 0
 
+	self.boundingbox = {}
+	self.boundingbox.x = 0
+	self.boundingbox.y = 0
+	self.boundingbox.width = 0
+	self.boundingbox.height = 0
 	return self
 end
 

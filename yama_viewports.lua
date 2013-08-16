@@ -55,6 +55,8 @@ function viewports.new()
 			private.camera.x = x
 			private.camera.y = y
 		end
+		private.camera.x = math.floor(private.camera.x * private.camera.sx + 0.5) / private.camera.sx
+		private.camera.y = math.floor(private.camera.y * private.camera.sy + 0.5) / private.camera.sy
 		private.boundaries.apply()
 	end
 
@@ -275,7 +277,7 @@ function viewports.new()
 		love.graphics.draw(private.canvas, private.x, private.y, private.r, private.csx, private.csy)
 
 		-- DRAW GUI
-		--yama.gui.draw()
+		yama.gui.draw(public)
 
 		-- DRAW DEBUG TEXT
 		yama.hud.draw(public)

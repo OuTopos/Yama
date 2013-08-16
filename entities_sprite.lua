@@ -29,7 +29,7 @@ function entities_sprite.new(map, x, y, z)
 			-- Update the bounding box.
 			self.updateBoundingBox()
 		else
-			print("Sprite destroying itself because there was no gid in the parameters. Wasn't that stupid?")
+			print("[Entity_Sprite] Destroying myself because there was no gid in the parameters. Wasn't that stupid?")
 			self.destroy()
 		end
 	end

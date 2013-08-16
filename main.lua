@@ -46,7 +46,7 @@ function love.keypressed(key)
 
 	-- ARKANOS
 	if key == "1" then
-		arkanos = yama.maps.load("test/arkanos")
+		arkanos = yama.maps.load("test/start")
 		if arkanosPlayer == 0 then
 			local player1 = arkanos.spawn("player", "start")
 			vp1.view(arkanos, player1)
@@ -163,13 +163,23 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+	--local start_time = os.clock()
+
+
 	local timescale = 1 - love.joystick.getAxis(1, 3)
 	if not yama.g.paused then
 		yama.maps.update(dt * timescale)
 	end
+
+
+	--local end_time = os.clock()
+	--print("UPDATE: "..end_time - start_time)
 end
 
 function love.draw()
+	--local start_time = os.clock()
+
+
 	-- DRAW MAPS
 	yama.maps.draw()
 
@@ -181,4 +191,8 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.print("FPS: "..fps, yama.screen.width - 39, 2)
 	--]]
+
+
+	--local end_time = os.clock()
+	--print("DRAW: "..end_time - start_time)
 end
