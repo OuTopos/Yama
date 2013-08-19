@@ -13,6 +13,12 @@ function maps.load(path)
 		local private = {}
 		public.start_time = os.clock()
 
+		-- DEBUG
+		public.debug = {}
+		public.debug.numberOfTilesets = 0
+		public.debug.numberOfTileLayers = 0
+		public.debug.numberOfTiles = 0
+
 
 		-- MAP DATA
 		private.data = require("/maps/"..path)
@@ -183,6 +189,13 @@ function maps.load(path)
 			-- Create a visible entities table for the viewport.
 			--private.entities.visible[vp] = {}
 
+			-- Reset and create new spritebatches.
+			vp.spritebatches = {}
+
+			for i, spritebatch in pairs(private.spritebatches) do
+				vp.spritebatches[i] = yama.buffers.newDrawable(love.graphics.newSpriteBatch(spritebatch.image, spritebatch.size), 0, 0, spritebatch.z * private.data.tileheight)
+			end
+
 			-- Insert the viewport in the viewports table.
 			table.insert(private.viewports, vp)
 		end
@@ -241,8 +254,8 @@ function maps.load(path)
 
 		-- LOAD - Layers
 		function private.loadLayers()
-			private.spritebatches = {}
 			private.tiles = {}
+			private.spritebatches = {}
 
 			private.spawns = {}
 			private.patrols = {}
@@ -257,52 +270,33 @@ function maps.load(path)
 					
 
 					-- TILE LAYERS
+					local z = tonumber(layer.properties.z) or 0
+
 					if layer.properties.type == "spritebatch" then
-
-
-						-- SPRITE BATCH
 						local i = 1
+						-- Look for the first tile and pick it's tileset for the spritebatch.
 						while layer.data[i] < 1 do
 							i = i + 1
 						end
 						local tileset = public.getTileset(layer.data[i])
-						local spritebatch = love.graphics.newSpriteBatch(yama.assets.image(tileset.image), #layer.data)
-						
-						spritebatch:bind()
+						local spritebatch = {image = yama.assets.image(tileset.image), size = 10000, z = z}
 
-						local z = tonumber(layer.properties.z) or 0
+						private.spritebatches[layer.name] = spritebatch
+					end
 
-						for i, gid in ipairs(layer.data) do
-							if gid > 0 then
-								local x, y = public.index2xy(i)
-
-								x, y, z = private.getSpritePosition(x, y, z)
-
-								spritebatch:addq(public.getQuad(gid), x, y)
-							end
-						end
-						spritebatch:unbind()
-
-						table.insert(private.spritebatches, yama.buffers.newDrawable(spritebatch, 0, 0, z))
-
-
-					else
-
-
-						-- TILES
-						local z = tonumber(layer.properties.z) or 0
-						for i, gid in ipairs(layer.data) do
-							if not private.tiles[i] then
-								private.tiles[i] = {}
-							end
-
-							if gid > 0 then
-								local x, y = public.index2xy(i)
-								table.insert(private.tiles[i], public.getTileSprite(layer.data[i], x, y, z))
-							end
+					for i, gid in ipairs(layer.data) do
+						if not private.tiles[i] then
+							private.tiles[i] = {}
 						end
 
-
+						if gid > 0 then
+							local x, y = public.index2xy(i)
+							local sprite = public.getTileSprite(layer.data[i], x, y, z)
+							if layer.properties.type == "spritebatch" then
+								sprite.spritebatch = layer.name
+							end
+							table.insert(private.tiles[i], sprite)
+						end
 					end
 
 
@@ -590,8 +584,8 @@ function maps.load(path)
 		--]]
 
 		function public.addToBuffer(vp)
-			for i = 1, #private.spritebatches do
-				vp.addToBuffer(private.spritebatches[i])
+			for i = 1, #vp.spritebatches do
+				vp.spritebatches[i]:clear()
 			end
 			--for i = 1, #private.entities.visible[vp] do
 			--	private.entities.visible[vp][i].addToBuffer(vp)
@@ -647,17 +641,30 @@ function maps.load(path)
 						-- Iterate the layers
 						for i=1, #tile do
 							local sprite = tile[i]
-							local key = batchkey[private.sortmode](sprite.x, sprite.y, sprite.z)
-							if not batches[key] then
-								batches[key] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
-								vp.addToBuffer(batches[key])
+							if sprite.spritebatch then
+								--print("adding sprite to batch "..sprite.spritebatch)
+								--print(vp.spritebatches[sprite.spritebatch])
+								vp.spritebatches[sprite.spritebatch].drawable:addq(sprite.quad, sprite.x - sprite.ox, sprite.y - sprite.oy)
+								--sprite.spritebatch:addq(sprite.quad, sprite.x - sprite.ox, sprite.y - sprite.oy)
+							else
+								local key = batchkey[private.sortmode](sprite.x, sprite.y, sprite.z)
+								if not batches[key] then
+									batches[key] = yama.buffers.newBatch(sprite.x, sprite.y, sprite.z)
+									table.insert(vp.buffer, batches[key])
+								end
+								table.insert(batches[key].data, sprite)
+								public.tilesInView = public.tilesInView +1
 							end
-							table.insert(batches[key].data, sprite)
-							public.tilesInView = public.tilesInView +1
 						end
 					end
 				end
 			end
+
+
+
+			--for i = 1, #private.spritebatches do
+			--	table.insert(vp.buffer, yama.buffers.newDrawable(private.spritebatches[i], 0, 0, 0))
+			--end
 			--]]
 		end
 

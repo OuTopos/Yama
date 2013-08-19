@@ -122,7 +122,7 @@ function love.keypressed(key)
 			vp1.view(gravityfall, player1)
 			--vp1.setScale(4, 4)
 			gravityfallPlayer = 1
-
+		
 		elseif gravityfallPlayer == 1 then
 			local player2 = gravityfall.spawn("mplayer", "start2")
 			vp2 = yama.viewports.new()

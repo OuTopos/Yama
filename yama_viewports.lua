@@ -9,8 +9,8 @@ function viewports.new()
 	public.debug.drawcalls = 0
 	public.debug.redraws = 0
 
-
-	private.buffer = {}
+	public.spritebatches = {}
+	public.buffer = {}
 
 
 	private.map = nil
@@ -112,13 +112,14 @@ function viewports.new()
 	function public.reset()
 		print("Why reset?")
 		-- Set buffer to empty table.
-		--private.buffer = {}
+		--public.buffer = {}
 
 		public.debug.redraws = 0
 	end
 
 	function public.addToBuffer(object)
-		table.insert(private.buffer, object)
+		--print("Don't use add to buffer. Just insert in the table instead.")
+		table.insert(public.buffer, object)
 	end
 
 	-- SORTING
@@ -242,27 +243,37 @@ function viewports.new()
 		-- SET CANVAS
 		love.graphics.setCanvas(private.canvas)
 
+		-- ADD SPRITEBATCHES
+		for i, v in pairs(public.spritebatches) do
+			table.insert(public.buffer, v)
+		end
+
 		-- DRAW BUFFER
 		public.debug.redraws = public.debug.redraws + 1
 		public.debug.drawcalls = 0
 		public.debug.drawcalls = 0
 
-		private.bufferSize = #private.buffer
+		public.bufferSize = #public.buffer
 
-		public.debug.bufferSize = private.bufferSize
+		public.debug.bufferSize = public.bufferSize
 
-		table.sort(private.buffer, private.sortmodes[private.sortmode])
+		table.sort(public.buffer, private.sortmodes[private.sortmode])
 
-		for i = 1, private.bufferSize do
-			if private.buffer[i].type == "batch" then
-				private.drawBatch(private.buffer[i])
+		for i = 1, public.bufferSize do
+			if public.buffer[i].type == "batch" then
+				private.drawBatch(public.buffer[i])
 			else
-				private.drawObject(private.buffer[i])
+				private.drawObject(public.buffer[i])
 			end
 		end
 
 		-- EMPTY BUFFER
-		private.buffer = {}
+		public.buffer = {}
+
+		-- EMPTY SPRITEBATCHES
+		for i, v in pairs(public.spritebatches) do
+			v.drawable:clear()
+		end
 
 		-- DRAW DEBUG GRAPHICS
 		yama.hud.drawR(public)
@@ -426,7 +437,7 @@ function viewports.new()
 	end
 
 	function public.getBuffer()
-		return private.buffer
+		return public.buffer
 	end
 
 	function public.getMap()
