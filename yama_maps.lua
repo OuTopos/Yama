@@ -510,6 +510,18 @@ function maps.load(path)
 			return yama.buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky)
 		end
 		--]]
+		-- Fog of War
+
+		function public.setFow()
+			public.fow = {}
+			for i = 1, map.data.width * map.data.height do
+				public.fow[i] = 2
+			end
+		end
+
+		function public.defog(x, y, radius)
+			
+		end
 
 		function public.update(dt)
 			if #private.viewports > 0 then
