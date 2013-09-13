@@ -4,8 +4,6 @@ function entities_monster.new(map, x, y, z)
 	local self = {}
 	self.boundingbox = {}
 
-	self.world = map.getWorld()
-
 	self.type = "player"
 
 	self.userdata = {}
@@ -29,7 +27,7 @@ function entities_monster.new(map, x, y, z)
 	self.scale = (self.sx + self.sy) / 2
 
 	-- PHYSICS OBJECT
-	self.anchor = love.physics.newFixture(love.physics.newBody(self.world, self.x, self.y, "dynamic"), love.physics.newCircleShape(self.radius * self.scale), self.mass)
+	self.anchor = love.physics.newFixture(love.physics.newBody(map.world, self.x, self.y, "dynamic"), love.physics.newCircleShape(self.radius * self.scale), self.mass)
 	self.anchor:setRestitution(0.9)
 	self.anchor:getBody():setLinearDamping(1)
 	self.anchor:getBody():setFixedRotation(true)

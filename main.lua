@@ -29,18 +29,19 @@ function love.keypressed(key)
 			yama.hud.enabled = true
 		end
 	end
+	if key == "j" then
+		if yama.hud.physics then
+			yama.hud.physics = false
+		else
+			yama.hud.physics = true
+		end
+	end
+
 	if key == "p" then
 		if yama.g.paused then
 			yama.g.paused = false
 		else
 			yama.g.paused = true
-		end
-	end
-	if key == "l" then
-		if physics.enabled then
-			physics.enabled = false
-		else
-			physics.enabled = true
 		end
 	end
 

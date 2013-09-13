@@ -20,8 +20,8 @@ function patrols.new()
 
 	-- Public Functions
 	function public.set(name, map)
-		if map.getPatrol(name) then
-			private.current = map.getPatrol(name)
+		if map.patrols[name] then
+			private.current = map.patrols[name]
 			private.k = 0
 			public.next()
 		end

@@ -3,7 +3,7 @@ entities_player = {}
 function entities_player.new(map, x, y, z)
 	local self = {}
 
-	self.world = map.getWorld()
+	self.world = map.world
 
 	self.name = "Jonas"
 	self.type = "player"

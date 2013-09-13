@@ -24,11 +24,11 @@ function gui.draw(vp)
 	local top = vp.getY()
 	local bottom = vp.getY() + vp.getHeight()
 	
-	local camera = vp.getCamera()
-	local map = vp.getMap()
-	local buffer = vp.getBuffer()
-	local entities = map.getEntities()
-	local world = map.getWorld()
+	--local camera = vp.getCamera()
+	--local map = vp.getMap()
+	--local buffer = vp.getBuffer()
+	--local entities = map.getEntities()
+	--local world = map.getWorld()
 
 
 	yama.assets.image("gui/healthbar")

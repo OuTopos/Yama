@@ -9,23 +9,23 @@ function maps.load(path)
 		print("[Maps] "..path.." already loaded.")
 		return maps.list[path]
 	else
-		local public = {}
+		local self = {}
 		local private = {}
-		public.start_time = os.clock()
+		self.start_time = os.clock()
 
 		-- DEBUG
-		public.debug = {}
-		public.debug.numberOfTilesets = 0
-		public.debug.numberOfTileLayers = 0
-		public.debug.numberOfTiles = 0
+		self.debug = {}
+		self.debug.numberOfTilesets = 0
+		self.debug.numberOfTileLayers = 0
+		self.debug.numberOfTiles = 0
 
 
 		-- MAP DATA
-		private.data = require("/maps/"..path)
+		self.data = require("/maps/"..path)
 
 
 		-- PHYSICS WORLD
-		private.world = love.physics.newWorld()
+		self.world = love.physics.newWorld()
 
 		function private.beginContact(a, b, contact)
 			if a:getUserData() then
@@ -97,61 +97,39 @@ function maps.load(path)
 
 
 		-- ENTITIES
-		private.entities = {}
-		private.entities.list = {}
+		self.entities = {}
+		self.entities.list = {}
 
-		function private.entities.insert(entity)
+		function self.entities.insert(entity)
 			entity.visible = {}
-			table.insert(private.entities.list, entity)
+			table.insert(self.entities.list, entity)
 		end
 
-		function private.entities.update(dt)
-			for key=#private.entities.list, 1, -1 do
-				local entity = private.entities.list[key]
+		function self.entities.update(dt)
+			for key=#self.entities.list, 1, -1 do
+				local entity = self.entities.list[key]
 
 				if entity.destroyed then
-					table.remove(private.entities.list, key)
-					--public.resetViewports()
+					table.remove(self.entities.list, key)
 				else
 					entity.update(dt)
-					for i=1, #private.viewports do
-						--[[
-						local vp = private.viewports[i]
-						local wasVisible = entity.visible[vp] or false
-						local isVisible = vp.isEntityInside(entity)
-						
-						if wasVisible and isVisible then
-							table.insert(private.entities.visible[vp], entity)
-						elseif not wasVisible and isVisible then
-							table.insert(private.entities.visible[vp], entity)
-							entity.visible[vp] = true
-							vp.reset()
-						elseif wasVisible and not isVisible then
-							entity.visible[vp] = false
-							vp.reset()
-						end
-						--]]
-						local vp = private.viewports[i]
+					for i=1, #self.viewports do
+						local vp = self.viewports[i]
 						if vp.isEntityInside(entity) then
 							entity.addToBuffer(vp)
 						end
 					end
 				end
 			end
-			--public.updated = true
 		end
 
-		function public.getEntities()
-			return private.entities
-		end
-
-		function public.spawn(type, spawn, object)
-			if private.spawns[spawn] then
-				local entity = yama.entities.new(public, type, private.spawns[spawn].x, private.spawns[spawn].y, private.spawns[spawn].z)
+		function self.spawn(type, spawn, data)
+			if self.spawns[spawn] then
+				local entity = yama.entities.new(self, type, self.spawns[spawn].x, self.spawns[spawn].y, self.spawns[spawn].z)
 				if entity.initialize then
-					entity.initialize(object)
+					entity.initialize(data)
 				end
-				private.entities.insert(entity)	
+				self.entities.insert(entity)	
 				return entity
 			else
 				print("Spawn ["..spawn.."] not found. Nothing spawned.")
@@ -159,71 +137,62 @@ function maps.load(path)
 			end
 		end
 
-		function public.spawnXYZ(type, x, y, z, object)
-			local entity = yama.entities.new(public, type, x, y, z)
+		function self.spawnXYZ(type, x, y, z, data)
+			local entity = yama.entities.new(self, type, x, y, z)
 			if entity.initialize then
-				entity.initialize(object)
+				entity.initialize(data)
 			end
-			private.entities.insert(entity)	
+			self.entities.insert(entity)	
 			return entity
 		end
 
 
 		-- VIEWPORTS
-		private.viewports = {}
+		self.viewports = {}
 
-		function public.addViewport(vp)
-			-- Set the sort mode.
+		function self.addViewport(vp)
+			-- Set the map sort mode on the viewport.
 			vp.setSortMode(private.sortmode)
 
 			-- Set camera boundaries for the viewport.
-			if private.data.properties.boundaries == "false" then
+			if self.data.properties.boundaries == "false" then
 				vp.setBoundaries(0, 0, 0, 0)
 			else
-				vp.setBoundaries(0, 0, private.data.width * private.data.tilewidth, private.data.height * private.data.tileheight)
+				vp.setBoundaries(0, 0, self.data.width * self.data.tilewidth, self.data.height * self.data.tileheight)
 			end
 
 			-- Make the camera follow the player.
 			vp.getCamera().follow = private.player
 
 			-- Create a visible entities table for the viewport.
-			--private.entities.visible[vp] = {}
+			--self.entities.visible[vp] = {}
 
 			-- Reset and create new spritebatches.
 			vp.spritebatches = {}
 
 			for i, spritebatch in pairs(private.spritebatches) do
-				vp.spritebatches[i] = yama.buffers.newDrawable(love.graphics.newSpriteBatch(spritebatch.image, spritebatch.size), 0, 0, spritebatch.z * private.data.tileheight)
+				vp.spritebatches[i] = yama.buffers.newDrawable(love.graphics.newSpriteBatch(spritebatch.image, spritebatch.size), 0, 0, spritebatch.z * self.data.tileheight)
 			end
 
 			-- Insert the viewport in the viewports table.
-			table.insert(private.viewports, vp)
+			table.insert(self.viewports, vp)
 		end
 
-		function public.removeViewport(vp)
-			for i=#private.viewports, 1, -1 do
-				if private.viewports[i] == vp then
-					--private.entities.visible[private.viewports[i]] = nil
-					table.remove(private.viewports, i)
+		function self.removeViewport(vp)
+			for i=#self.viewports, 1, -1 do
+				if self.viewports[i] == vp then
+					--self.entities.visible[self.viewports[i]] = nil
+					table.remove(self.viewports, i)
 				end
 			end
 		end
 
-		function public.resetViewports()
+		function self.resetViewports()
 			print("Don't resetViewports")
-			--for i=1, #private.viewports do
-			--	private.viewports[i].reset()
+			--for i=1, #self.viewports do
+			--	self.viewports[i].reset()
 			--end
 		end
-
-
-		-- PATROLS
-		function public.getPatrol(i)
-			return private.patrols[i]
-		end
-
-
-		-- SPAWNS
 
 		-- MISC
 		private.cooldown = 0
@@ -231,21 +200,21 @@ function maps.load(path)
 
 		-- LOAD - Physics
 		function private.loadPhysics()
-			private.data.properties.xg = private.data.properties.xg or 0
-			private.data.properties.yg = private.data.properties.yg or 0
-			--private.data.properties.sleep = private.data.properties.sleep or true
-			private.data.properties.meter = private.data.properties.meter or private.data.tileheight
+			self.data.properties.xg = self.data.properties.xg or 0
+			self.data.properties.yg = self.data.properties.yg or 0
+			--self.data.properties.sleep = self.data.properties.sleep or true
+			self.data.properties.meter = self.data.properties.meter or self.data.tileheight
 
-			private.world:setGravity(private.data.properties.xg*private.data.properties.meter, private.data.properties.yg*private.data.properties.meter)
-			private.world:setCallbacks(private.beginContact, private.endContact, private.preSolve, private.postSolve)
-			love.physics.setMeter(private.data.properties.meter)
-			--physics.setWorld(private.world)
+			self.world:setGravity(self.data.properties.xg*self.data.properties.meter, self.data.properties.yg*self.data.properties.meter)
+			self.world:setCallbacks(private.beginContact, private.endContact, private.preSolve, private.postSolve)
+			love.physics.setMeter(self.data.properties.meter)
+			--physics.setWorld(self.world)
 		end
 
 
 		-- LOAD - Tilesets
 		function private.loadTilesets()
-			for i,tileset in ipairs(private.data.tilesets) do
+			for i,tileset in ipairs(self.data.tilesets) do
 				tileset.image = string.match(tileset.image, "../../images/(.*).png")
 				yama.assets.tileset(tileset.name, tileset.image, tileset.tilewidth, tileset.tileheight, tileset.spacing, tileset.margin)
 			end
@@ -257,14 +226,14 @@ function maps.load(path)
 			private.tiles = {}
 			private.spritebatches = {}
 
-			private.spawns = {}
-			private.patrols = {}
+			self.spawns = {}
+			self.patrols = {}
 
 
 			-- Itirate over.
-			for i = 1, #private.data.layers do
+			for i = 1, #self.data.layers do
 
-				local layer = private.data.layers[i]
+				local layer = self.data.layers[i]
 
 				if layer.type == "tilelayer" then
 					
@@ -278,7 +247,7 @@ function maps.load(path)
 						while layer.data[i] < 1 do
 							i = i + 1
 						end
-						local tileset = public.getTileset(layer.data[i])
+						local tileset = self.getTileset(layer.data[i])
 						local spritebatch = {image = yama.assets.image(tileset.image), size = 10000, z = z}
 
 						private.spritebatches[layer.name] = spritebatch
@@ -290,8 +259,8 @@ function maps.load(path)
 						end
 
 						if gid > 0 then
-							local x, y = public.index2xy(i)
-							local sprite = public.getTileSprite(layer.data[i], x, y, z)
+							local x, y = self.index2xy(i)
+							local sprite = self.getTileSprite(layer.data[i], x, y, z)
 							if layer.properties.type == "spritebatch" then
 								sprite.spritebatch = layer.name
 							end
@@ -311,7 +280,7 @@ function maps.load(path)
 						-- Block add to physics.
 						for i, object in ipairs(layer.objects) do
 							-- Creating a fixture from the object.
-							local fixture = public.createFixture(object, "static")
+							local fixture = self.createFixture(object, "static")
 
 							-- And setting the userdata from the object.
 							fixture:setUserData({name = object.name, type = object.type, properties = object.properties})
@@ -351,9 +320,9 @@ function maps.load(path)
 						for i, object in ipairs(layer.objects) do
 							if object.type and object.type ~= "" then
 								object.z = tonumber(object.properties.z) or 1
-								object.z = object.z * private.data.tileheight
+								object.z = object.z * self.data.tileheight
 								object.properties.z = nil
-								public.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.z, object)
+								self.spawnXYZ(object.type, object.x + object.width / 2, object.y + object.height / 2, object.z, object)
 							end
 						end
 
@@ -373,7 +342,7 @@ function maps.load(path)
 								for k, vertice in ipairs(object.polyline) do
 									table.insert(patrol.points, {x = object.polyline[k].x+object.x, y = object.polyline[k].y+object.y})
 								end
-								private.patrols[patrol.name] = patrol
+								self.patrols[patrol.name] = patrol
 							end
 						end
 
@@ -384,7 +353,7 @@ function maps.load(path)
 						-- PORTALS
 						-- Creating portal fixtures.
 						for i, object in ipairs(layer.objects) do
-							local fixture = public.createFixture(object, static)
+							local fixture = self.createFixture(object, static)
 							fixture:setUserData({name = object.name, type = "portal", properties = object.properties})
 							fixture:setSensor(true)
 						end
@@ -404,40 +373,40 @@ function maps.load(path)
 							spawn.x = object.x + object.width / 2
 							spawn.y = object.y + object.height / 2
 							spawn.z = tonumber(object.properties.z) or 1
-							spawn.z = spawn.z * private.data.tileheight
-							private.spawns[spawn.name] = spawn
+							spawn.z = spawn.z * self.data.tileheight
+							self.spawns[spawn.name] = spawn
 						end
 					end
 
 
 				end
 			end
-			private.data.layercount = #private.data.layers
+			self.data.layercount = #self.data.layers
 
 			-- Debug vars
-			public.tilesInMap = 0
-			public.tilesInView = 0
+			self.tilesInMap = 0
+			self.tilesInView = 0
 		end
 
 		function private.load()
-			--if private.data.orientation == "orthogonal" then
+			--if self.data.orientation == "orthogonal" then
 				-- PROPERTIES
-				if private.data.properties.sortmode then
-					private.sortmode = private.data.properties.sortmode
+				if self.data.properties.sortmode then
+					private.sortmode = self.data.properties.sortmode
 				else
 					private.sortmode = "z"
 				end
 
-				private.sx = tonumber(private.data.properties.sx) or 1
-				private.sy = tonumber(private.data.properties.sy) or 1
+				private.sx = tonumber(self.data.properties.sx) or 1
+				private.sy = tonumber(self.data.properties.sy) or 1
 
 				private.loadPhysics()
 				private.loadTilesets()
 				private.loadLayers()
 				
 				-- Create Boundaries
-				if private.data.properties.boundaries ~= "false" then
-					private.data.boundaries = love.physics.newFixture(love.physics.newBody(private.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, private.data.width * private.data.tilewidth + 1, -1, private.data.width * private.data.tilewidth + 1, private.data.height * private.data.tileheight + 1, -1, private.data.height * private.data.tileheight))
+				if self.data.properties.boundaries ~= "false" then
+					self.data.boundaries = love.physics.newFixture(love.physics.newBody(self.world, 0, 0, "static"), love.physics.newChainShape(true, -1, -1, self.data.width * self.data.tilewidth + 1, -1, self.data.width * self.data.tilewidth + 1, self.data.height * self.data.tileheight + 1, -1, self.data.height * self.data.tileheight))
 				end
 				
 			--else
@@ -446,38 +415,38 @@ function maps.load(path)
 
 			-- Scale the screen
 			--private.optimize()
-			print("[Maps] Optimized tiles: "..public.tilesInMap.." from "..private.data.width * private.data.height * private.data.layercount)
+			print("[Maps] Optimized tiles: "..self.tilesInMap.." from "..self.data.width * self.data.height * self.data.layercount)
 		end
 
 		--[[
-		function public.getQuad(quad)
-			i = #private.data.tilesets
-			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
+		function self.getQuad(quad)
+			i = #self.data.tilesets
+			while self.data.tilesets[i] and quad < self.data.tilesets[i].firstgid do
 				i = i - 1
 			end
-			local imagename = string.match(private.data.tilesets[i].image, "../../images/(.*).png")
-			local quadnumber = quad-(private.data.tilesets[i].firstgid-1)
+			local imagename = string.match(self.data.tilesets[i].image, "../../images/(.*).png")
+			local quadnumber = quad-(self.data.tilesets[i].firstgid-1)
 			local image = images.load(imagename)
 			local quad = images.quads.data[imagename][quadnumber]
 			return image, quad
 		end
 		--]]
-		function public.getQuad(gid)
-			local tileset = public.getTileset(gid)
+		function self.getQuad(gid)
+			local tileset = self.getTileset(gid)
 			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
 			return quad
 		end
 
-		function public.getTileSprite(gid, x, y, z)
+		function self.getTileSprite(gid, x, y, z)
 			x, y, z = private.getSpritePosition(x, y, z)
-			local sprite, width, height = public.getSprite(gid, x, y, z, true)
-			sprite.y = sprite.y + private.data.tileheight
+			local sprite, width, height = self.getSprite(gid, x, y, z, true)
+			sprite.y = sprite.y + self.data.tileheight
 			sprite.oy = height
 			return sprite
 		end
 
-		function public.getSprite(gid, x, y, z, returnsize)
-			local tileset = public.getTileset(gid)
+		function self.getSprite(gid, x, y, z, returnsize)
+			local tileset = self.getTileset(gid)
 			local image = yama.assets.tilesets[tileset.name].image
 			local quad = yama.assets.tilesets[tileset.name].tiles[gid - (tileset.firstgid - 1)]
 			local sprite = yama.buffers.newSprite(image, quad, x, y, z)
@@ -488,23 +457,23 @@ function maps.load(path)
 			end
 
 		end
-		function public.getTileset(gid)
-			i = #private.data.tilesets
-			while private.data.tilesets[i] and gid < private.data.tilesets[i].firstgid do
+		function self.getTileset(gid)
+			i = #self.data.tilesets
+			while self.data.tilesets[i] and gid < self.data.tilesets[i].firstgid do
 				i = i - 1
 			end
-			return private.data.tilesets[i]
+			return self.data.tilesets[i]
 		end
 
 
 		--[[
-		function public.getSprite(gid, x, y, z, r, sx, sy, ox, oy, kx, ky)
-			i = #private.data.tilesets
-			while private.data.tilesets[i] and quad < private.data.tilesets[i].firstgid do
+		function self.getSprite(gid, x, y, z, r, sx, sy, ox, oy, kx, ky)
+			i = #self.data.tilesets
+			while self.data.tilesets[i] and quad < self.data.tilesets[i].firstgid do
 				i = i - 1
 			end
-			local imagename = string.match(private.data.tilesets[i].image, "../../images/(.*).png")
-			local quadnumber = quad-(private.data.tilesets[i].firstgid-1)
+			local imagename = string.match(self.data.tilesets[i].image, "../../images/(.*).png")
+			local quadnumber = quad-(self.data.tilesets[i].firstgid-1)
 			local image = images.load(imagename)
 			local quad = images.quads.data[imagename][quadnumber]
 			return yama.buffers.newSprite(image, quad, x, y, z, r, sx, sy, ox, oy, kx, ky)
@@ -512,82 +481,82 @@ function maps.load(path)
 		--]]
 		-- Fog of War
 
-		function public.setFow()
-			public.fow = {}
+		function self.setFow()
+			self.fow = {}
 			for i = 1, map.data.width * map.data.height do
-				public.fow[i] = 2
+				self.fow[i] = 2
 			end
 		end
 
-		function public.defog(x, y, radius)
+		function self.defog(x, y, radius)
 			
 		end
 
-		function public.update(dt)
-			if #private.viewports > 0 then
+		function self.update(dt)
+			if #self.viewports > 0 then
 				private.cooldown = 10
 			end
 			if private.cooldown > 0 then
 				private.cooldown = private.cooldown - dt
 
 				-- Update physics world
-				private.world:update(dt)
+				self.world:update(dt)
 
-				-- Update swarm
-				private.entities.update(dt)
+				-- Update entities.
+				self.entities.update(dt)
 
 				-- Update viewports
-				for i=1, #private.viewports do
-					private.viewports[i].update(dt)
-					public.addToBuffer(private.viewports[i])
+				for i=1, #self.viewports do
+					self.viewports[i].update(dt)
+					self.addToBuffer(self.viewports[i])
 				end
 			end
 		end
 
-		function public.draw()
-			for i=1, #private.viewports do
+		function self.draw()
+			for i=1, #self.viewports do
 				--[[
 				-- Check if the buffer has been reset. 
-				if next(private.viewports[i].getBuffer()) == nil then
+				if next(self.viewports[i].getBuffer()) == nil then
 					-- Add tiles and entities to buffer.
-					public.addToBuffer(private.viewports[i])
+					self.addToBuffer(self.viewports[i])
 				end
 				--]]
 
 				-- Draw the viewport.
-				private.viewports[i].draw()
+				self.viewports[i].draw()
 
 				--[[
 				-- Reset the visible entities list.
-				private.entities.visible[private.viewports[i]]-- = {}
+				self.entities.visible[self.viewports[i]]-- = {}
 				--]]
 			end
 		end
 
 		--[[ OPTIMIZE
 		function private.optimize()
-			if private.data then
-				private.data.optimized = {}
-				public.tilesInMap = 0
+			if self.data then
+				self.data.optimized = {}
+				self.tilesInMap = 0
 				private.tilelayers = {} -- For odd size tiles maybe
 
 				private.tiles = {}
 
-				for i=1, private.data.width*private.data.height do
-					local x, y = public.index2xy(i)
+				for i=1, self.data.width*self.data.height do
+					local x, y = self.index2xy(i)
 					private.tiles[i] = nil
-					for li=1, #private.data.layers do
-						local layer = private.data.layers[li]
+					for li=1, #self.data.layers do
+						local layer = self.data.layers[li]
 						z = tonumber(layer.properties.z) or 0
 						if layer.type == "tilelayer" and layer.data[i] > 0 then
 							if not private.tiles[i] then
 								private.tiles[i] = {}
 							end
-							--local image, quad = public.getQuad(layer.data[i])
+							--local image, quad = self.getQuad(layer.data[i])
 							--local tiledata = private.getTileData(layer.data[i], x, y, z)
 							--local rx, ry, rz = private.getSpritePosition(x, y, z)
-							table.insert(private.tiles[i], public.getTileSprite(layer.data[i], x, y, z))
-							public.tilesInMap = public.tilesInMap + 1
+							table.insert(private.tiles[i], self.getTileSprite(layer.data[i], x, y, z))
+							self.tilesInMap = self.tilesInMap + 1
 						end
 					end
 				end
@@ -595,15 +564,15 @@ function maps.load(path)
 		end
 		--]]
 
-		function public.addToBuffer(vp)
+		function self.addToBuffer(vp)
 			for i = 1, #vp.spritebatches do
 				vp.spritebatches[i]:clear()
 			end
-			--for i = 1, #private.entities.visible[vp] do
-			--	private.entities.visible[vp][i].addToBuffer(vp)
+			--for i = 1, #self.entities.visible[vp] do
+			--	self.entities.visible[vp][i].addToBuffer(vp)
 			--end
 
-			public.tilesInView = 0
+			self.tilesInView = 0
 
 			local batchkey = {}
 
@@ -627,15 +596,15 @@ function maps.load(path)
 			if xmin < 0 then
 				xmin = 0
 			end
-			if xmax > private.data.width-1 then
-				xmax = private.data.width-1
+			if xmax > self.data.width-1 then
+				xmax = self.data.width-1
 			end
 
 			if ymin < 0 then
 				ymin = 0
 			end
-			if ymax > private.data.height-1 then
-				ymax = private.data.height-1
+			if ymax > self.data.height-1 then
+				ymax = self.data.height-1
 			end
 			---[[
 			-- Iterate the y-axis.
@@ -645,7 +614,7 @@ function maps.load(path)
 				for x=xmin, xmax do
 
 					-- Set the tile
-					local tile = private.tiles[public.xy2index(x, y)]
+					local tile = private.tiles[self.xy2index(x, y)]
 
 					-- Check so tile is not empty
 					if tile then
@@ -665,7 +634,7 @@ function maps.load(path)
 									table.insert(vp.buffer, batches[key])
 								end
 								table.insert(batches[key].data, sprite)
-								public.tilesInView = public.tilesInView +1
+								self.tilesInView = self.tilesInView +1
 							end
 						end
 					end
@@ -680,40 +649,40 @@ function maps.load(path)
 			--]]
 		end
 
-		function public.xy2index(x, y)
-			return y*private.data.width+x+1
+		function self.xy2index(x, y)
+			return y*self.data.width+x+1
 		end
 
-		function public.index2xy(index)
-			local x = (index-1) % private.data.width
-			local y = math.floor((index-1) / private.data.width)
+		function self.index2xy(index)
+			local x = (index-1) % self.data.width
+			local y = math.floor((index-1) / self.data.width)
 			return x, y
 		end
 
 		function private.getSpritePosition(x, y, z)
 			-- This function gives you a pixel position from a tile position.
-			if private.data.orientation == "orthogonal" then
-				return x * private.data.tilewidth, y * private.data.tileheight, z * private.data.tileheight
-			elseif private.data.orientation == "isometric" then
-				x, y = public.translatePosition(x * private.data.tileheight, y * private.data.tileheight)
+			if self.data.orientation == "orthogonal" then
+				return x * self.data.tilewidth, y * self.data.tileheight, z * self.data.tileheight
+			elseif self.data.orientation == "isometric" then
+				x, y = self.translatePosition(x * self.data.tileheight, y * self.data.tileheight)
 				return x, y, z
 			end
 		end
 
-		function public.translatePosition(x, y)
-			if private.data.orientation == "orthogonal" then
+		function self.translatePosition(x, y)
+			if self.data.orientation == "orthogonal" then
 				return x, y
-			elseif private.data.orientation == "isometric" then
-				return x - y, (y + x) * private.data.tileheight / private.data.tilewidth
+			elseif self.data.orientation == "isometric" then
+				return x - y, (y + x) * self.data.tileheight / self.data.tilewidth
 			end
 		end
 
-		function public.getXYZ(x, y, z)
-			if private.data.orientation == "orthogonal" then
-				return public.getX(x), public.getY(y), public.getZ(z)
-			elseif private.data.orientation == "isometric" then
-				nx = (x - y) * (private.data.tilewidth / 2)
-				ny = (y + x) * (private.data.tileheight / 2)
+		function self.getXYZ(x, y, z)
+			if self.data.orientation == "orthogonal" then
+				return self.getX(x), self.getY(y), self.getZ(z)
+			elseif self.data.orientation == "isometric" then
+				nx = (x - y) * (self.data.tilewidth / 2)
+				ny = (y + x) * (self.data.tileheight / 2)
 				nz = z
 
 				return nx, ny, nz
@@ -723,14 +692,14 @@ function maps.load(path)
 		private.getPosition = {}
 
 		function private.getPosition.orthogonal(x, y, z)
-			return public.getX(x), public.getY(y), public.getZ(z)
-			--if private.data.orientation == "orthogonal" then
+			return self.getX(x), self.getY(y), self.getZ(z)
+			--if self.data.orientation == "orthogonal" then
 			--	nx = 
 			--	ny = 
 			--	nz = 
-			--elseif private.data.orientation == "isometric" then
-			--	nx = (x - y) * (private.data.tilewidth / 2)
-			--	ny = (y + x) * (private.data.tileheight / 2)
+			--elseif self.data.orientation == "isometric" then
+			--	nx = (x - y) * (self.data.tilewidth / 2)
+			--	ny = (y + x) * (self.data.tileheight / 2)
 			--	nz = z
 			--end
 
@@ -738,53 +707,53 @@ function maps.load(path)
 		end
 
 		function private.getPosition.isometric(x, y, z)
-			nx = (x - y) * (private.data.tilewidth / 2)
-			ny = (y + x) * (private.data.tileheight / 2)
+			nx = (x - y) * (self.data.tilewidth / 2)
+			ny = (y + x) * (self.data.tileheight / 2)
 			nz = z
 
 			return nx, ny, nz
 
 		end
 
-		function public.getX(x)
-			return x * private.data.tilewidth
+		function self.getX(x)
+			return x * self.data.tilewidth
 		end
-		function public.getY(y)
-			return y * private.data.tileheight
+		function self.getY(y)
+			return y * self.data.tileheight
 		end
-		function public.getZ(z)
-			return z * private.data.tileheight
+		function self.getZ(z)
+			return z * self.data.tileheight
 		end
 		--]]
 
-		function public.index2X(x)
-			return x * private.data.tilewidth
+		function self.index2X(x)
+			return x * self.data.tilewidth
 		end
-		function public.index2Y(y)
-			return y * private.data.tileheight
+		function self.index2Y(y)
+			return y * self.data.tileheight
 		end
 
 
 
 
 
-		function public.shape(object)
+		function self.shape(object)
 			if object.shape == "rectangle" then
 				--Rectangle or Tile
 				if object.gid then
 					--Tile
-					local body = love.physics.newBody(private.world, object.x, object.y-private.data.tileheight, "static")
-					local shape = love.physics.newRectangleShape(private.data.tilewidth/2, private.data.tileheight/2, private.data.tilewidth, private.data.tileheight)
+					local body = love.physics.newBody(self.world, object.x, object.y-self.data.tileheight, "static")
+					local shape = love.physics.newRectangleShape(self.data.tilewidth/2, self.data.tileheight/2, self.data.tilewidth, self.data.tileheight)
 					return love.physics.newFixture(body, shape)
 				else
 					--Rectangle
-					local body = love.physics.newBody(private.world, object.x, object.y, "static")
+					local body = love.physics.newBody(self.world, object.x, object.y, "static")
 					local shape = love.physics.newRectangleShape(object.width/2, object.height/2, object.width, object.height)
 					return love.physics.newFixture(body, shape)
 				end
 			elseif object.shape == "ellipse" then
 				--Ellipse
-				local body = love.physics.newBody(private.world, object.x+object.width/2, object.y+object.height/2, "static")
+				local body = love.physics.newBody(self.world, object.x+object.width/2, object.y+object.height/2, "static")
 				local shape = love.physics.newCircleShape( (object.width + object.height) / 4 )
 				return love.physics.newFixture(body, shape)
 			elseif object.shape == "polygon" then
@@ -794,7 +763,7 @@ function maps.load(path)
 					table.insert(vertices, vertix.x)
 					table.insert(vertices, vertix.y)
 				end
-				local body = love.physics.newBody(private.world, object.x, object.y, "static")
+				local body = love.physics.newBody(self.world, object.x, object.y, "static")
 				local shape = love.physics.newPolygonShape(unpack(vertices))
 				return love.physics.newFixture(body, shape)
 			elseif object.shape == "polyline" then
@@ -804,7 +773,7 @@ function maps.load(path)
 					table.insert(vertices, vertix.x)
 					table.insert(vertices, vertix.y)
 				end
-				local body = love.physics.newBody(private.world, object.x, object.y, "static")
+				local body = love.physics.newBody(self.world, object.x, object.y, "static")
 				local shape = love.physics.newChainShape(false, unpack(vertices))
 				return love.physics.newFixture(body, shape)
 			else
@@ -812,23 +781,23 @@ function maps.load(path)
 			end
 		end
 
-		function public.createFixture(object, bodyType)
+		function self.createFixture(object, bodyType)
 			if object.shape == "rectangle" then
 				--Rectangle or Tile
 				if object.gid then
 					--Tile
-					local body = love.physics.newBody(private.world, object.x, object.y-private.data.tileheight, bodyType)
-					local shape = love.physics.newRectangleShape(private.data.tilewidth/2, private.data.tileheight/2, private.data.tilewidth, private.data.tileheight)
+					local body = love.physics.newBody(self.world, object.x, object.y-self.data.tileheight, bodyType)
+					local shape = love.physics.newRectangleShape(self.data.tilewidth/2, self.data.tileheight/2, self.data.tilewidth, self.data.tileheight)
 					return love.physics.newFixture(body, shape)
 				else
 					--Rectangle
-					local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
+					local body = love.physics.newBody(self.world, object.x, object.y, bodyType)
 					local shape = love.physics.newRectangleShape(object.width/2, object.height/2, object.width, object.height)
 					return love.physics.newFixture(body, shape)
 				end
 			elseif object.shape == "ellipse" then
 				--Ellipse
-				local body = love.physics.newBody(private.world, object.x+object.width/2, object.y+object.height/2, bodyType)
+				local body = love.physics.newBody(self.world, object.x+object.width/2, object.y+object.height/2, bodyType)
 				local shape = love.physics.newCircleShape( (object.width + object.height) / 4 )
 				return love.physics.newFixture(body, shape)
 			elseif object.shape == "polygon" then
@@ -838,7 +807,7 @@ function maps.load(path)
 					table.insert(vertices, vertix.x)
 					table.insert(vertices, vertix.y)
 				end
-				local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
+				local body = love.physics.newBody(self.world, object.x, object.y, bodyType)
 				local shape = love.physics.newPolygonShape(unpack(vertices))
 				return love.physics.newFixture(body, shape)
 			elseif object.shape == "polyline" then
@@ -848,7 +817,7 @@ function maps.load(path)
 					table.insert(vertices, vertix.x)
 					table.insert(vertices, vertix.y)
 				end
-				local body = love.physics.newBody(private.world, object.x, object.y, bodyType)
+				local body = love.physics.newBody(self.world, object.x, object.y, bodyType)
 				local shape = love.physics.newChainShape(false, unpack(vertices))
 				return love.physics.newFixture(body, shape)
 			else
@@ -856,38 +825,38 @@ function maps.load(path)
 			end
 		end
 
-		function public.getTilewidth()
-			return private.data.tilewidth
-		end
+		-- function self.getTilewidth()
+		-- 	return self.data.tilewidth
+		-- end
 
-		function public.getTileheight()
-			return private.data.tileheight
-		end
+		-- function self.getTileheight()
+		-- 	return self.data.tileheight
+		-- end
 
-		function public.getData()
-			return private.data
-		end
+		-- function self.getData()
+		-- 	return self.data
+		-- end
 
-		function public.getWorld()
-			return private.world
-		end
+		-- function self.getWorld()
+		-- 	return self.world
+		-- end
 
-		function public.getSwarm()
-			return private.swarm
-		end
+		-- function self.getSwarm()
+		-- 	return private.swarm
+		-- end
 
-		function public.getViewports()
-			return private.viewports
-		end
+		-- function self.getViewports()
+		-- 	return self.viewports
+		-- end
 
 		private.load()
 
-		maps.list[path] = public
+		maps.list[path] = self
 
-		public.end_time = os.clock()
-		public.load_time = public.end_time - public.start_time
-		print("[Maps] "..path.." loaded in "..public.load_time.." seconds.")
-		return public
+		self.end_time = os.clock()
+		self.load_time = self.end_time - self.start_time
+		print("[Maps] "..path.." loaded in "..self.load_time.." seconds.")
+		return self
 	end
 end
 

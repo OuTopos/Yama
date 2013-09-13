@@ -194,7 +194,7 @@ function viewports.new()
 
 		-- RESIZE MAP VIEW
 		-- Get the tilewidth and tileheight from the map.
-		private.mapview.tilewidth, private.mapview.tileheight = private.map.getTilewidth(), private.map.getTileheight()
+		private.mapview.tilewidth, private.mapview.tileheight = private.map.data.tilewidth, private.map.data.tileheight
 		-- Get the size of the the map view in tiles (not pixels).
 		private.mapview.width = math.ceil(private.camera.width / private.mapview.tilewidth) + 1
 		private.mapview.height = math.ceil(private.camera.height / private.mapview.tilewidth) + 1

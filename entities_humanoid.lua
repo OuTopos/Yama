@@ -4,8 +4,6 @@ function entities_humanoid.new(map, x, y, z)
 	local self = {}
 	self.boundingbox = {}
 
-	self.world = map.getWorld()
-
 	self.type = "humanoid"
 
 	self.userdata = {}
@@ -29,7 +27,7 @@ function entities_humanoid.new(map, x, y, z)
 	self.scale = (self.sx + self.sy) / 2
 
 	-- PHYSICS OBJECT
-	self.anchor = love.physics.newFixture(love.physics.newBody(self.world, self.x, self.y, "dynamic"), love.physics.newCircleShape(self.radius * self.scale), self.mass)
+	self.anchor = love.physics.newFixture(love.physics.newBody(map.world, self.x, self.y, "dynamic"), love.physics.newCircleShape(self.radius * self.scale), self.mass)
 	self.anchor:setRestitution(0)
 	self.anchor:getBody():setLinearDamping(10)
 	self.anchor:getBody():setFixedRotation(true)
