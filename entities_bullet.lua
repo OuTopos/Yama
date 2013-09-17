@@ -16,7 +16,7 @@ function entities_bullet.new( map, x, y, z )
 	local world = map.getWorld()
 
 	-- Common variables
-	local width, height = 8, 8
+	local width, height = 4, 4
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
@@ -33,13 +33,13 @@ function entities_bullet.new( map, x, y, z )
 	local bufferBatch = yama.buffers.newBatch( x, y, z )
 
 	-- SPRITE (PLAYER)	
-	images.quads.add( "bullet", 8, 8 )
+	images.quads.add( "bullet", 4, 4 )
 	local bulletsprite = yama.buffers.newSprite( images.load( "bullet" ), images.quads.data[ "bullet" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 
 	table.insert( bufferBatch.data, bulletsprite )
 
 	-- Physics
-	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 4 ) )
+	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 2 ) )
 	--local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
 	bullet:setGroupIndex( -1 )
 

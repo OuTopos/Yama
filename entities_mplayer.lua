@@ -64,6 +64,10 @@ function entities_mplayer.new( map, x, y, z )
 	local bulletImpulse = 900
 	local nAllowedBullets = 60
 
+	-- bullet types
+	local bulletStandardShieldDamage = 20
+	local bulletStandardBodyDamage = 10
+
 	-- vars for shield --
 	local shieldMaxHealth = 300
 	local shieldKilled = false
@@ -74,9 +78,11 @@ function entities_mplayer.new( map, x, y, z )
 
 	local shieldOffsetX = 0
 	local shieldOffsetY = 0
+	
 	-- vars for body --
 	local bodyHealth = 100
 
+	
 	local allowjump = true
 
 	-- BUFFER BATCH
@@ -98,10 +104,10 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- shield hit effect --
 	local ptcSpark = love.graphics.newParticleSystem( images.load( "spark" ), 1000)
-	ptcSpark:setEmissionRate( 1000 )
+	ptcSpark:setEmissionRate( 2000 )
 	ptcSpark:setSpeed( 100, 200 )
 	ptcSpark:setSizes( 0, 1 )
-	ptcSpark:setColors( 100, 255, 100, 255, 200, 255, 200, 0 )
+	ptcSpark:setColors( 200, 200, 255, 255, 200, 200, 255, 0 )
 	ptcSpark:setPosition( x, y )
 	ptcSpark:setLifetime(0.15)
 	ptcSpark:setParticleLife(0.25)
@@ -237,11 +243,11 @@ function entities_mplayer.new( map, x, y, z )
 		if love.keyboard.isDown("left") or relativeDirection == "left" then
 			direction = 4.71238898
 			if yv == 0 then
-				fx = -xForce
+				fx = - xForce
 			else	
-				fx = -xJumpForce
+				fx = - xJumpForce
 			end
-			if xv >= -maxSpeed then
+			if xv >= - maxSpeed then
 				self.applyForce( fx, fy )
 			end
 		end
@@ -326,7 +332,7 @@ function entities_mplayer.new( map, x, y, z )
 
 	function self.shieldPower( bulletType )		
 		if bulletType == 'bullet' then
-			 shieldHealth = shieldHealth -10
+			 shieldHealth = shieldHealth - bulletStandardShieldDamage
 			 spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) } 
 			 shieldTimer = 0
 			 if shieldHealth <= 0 and shieldOn then
@@ -351,7 +357,7 @@ function entities_mplayer.new( map, x, y, z )
 		--shield:setUserData( shieldUserdata )
 		shield:setMask( )
 		shieldHealth = health
-		spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) }
+		spriteShield.color = { 255, 255, 255, math.floor( 255 * ( shieldHealth/shieldMaxHealth ) + 0.5 ) }
 		shieldOn = true
 		self.refreshBufferBatch()
 		shieldKilled = killed
@@ -443,7 +449,7 @@ function entities_mplayer.new( map, x, y, z )
 			end
 			if userdata2 then
 				if userdata2.type == 'mplayer' and userdata.type == 'bullet' then
-					self.bodyEnergy( 10 )
+					self.bodyEnergy( bulletStandardBodyDamage )
 				end
 			end
 		end
