@@ -3,6 +3,8 @@ entities_bullet = {}
 function entities_bullet.new( map, x, y, z )
 	local self = yama.entities.base.new()
 
+	self.boundingbox = {}
+
 	local userdata = {}
 	userdata.name = "Unnamed"
 	userdata.type = "bullet"
@@ -13,7 +15,7 @@ function entities_bullet.new( map, x, y, z )
 	--local buffer = vp.getBuffer()
 	--local map = vp.getMap()
 	--local swarm = vp.getSwarm()
-	local world = map.getWorld()
+	
 
 	-- Common variables
 	local width, height = 4, 4
@@ -27,7 +29,9 @@ function entities_bullet.new( map, x, y, z )
 	local remove = false
 	local speed = 0
 	local bulletImpulse = 2
-
+	local maxSpeed = 100
+	local bulletTimer = 0
+	local bulletMaxTimer = 3.5
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch( x, y, z )
@@ -39,8 +43,8 @@ function entities_bullet.new( map, x, y, z )
 	table.insert( bufferBatch.data, bulletsprite )
 
 	-- Physics
-	local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 2 ) )
-	--local bullet = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
+	local bullet = love.physics.newFixture(love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newCircleShape( 2 ) )
+	--local bullet = love.physics.newFixture(love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newRectangleShape( 8, 8 ) )
 	bullet:setGroupIndex( -1 )
 
 	bullet:setUserData( userdata )
@@ -52,6 +56,22 @@ function entities_bullet.new( map, x, y, z )
 	bullet:getBody( ):setGravityScale( 1 )
 	bullet:getBody( ):setBullet( true )
 
+	local ptcTrail = love.graphics.newParticleSystem( images.load( "bullet" ), 1000)
+	ptcTrail:setEmissionRate( 100 )
+	ptcTrail:setSpeed( 100, 200 )
+	ptcTrail:setSizes( 1, 1 )
+	ptcTrail:setColors( 200, 200, 255, 255, 200, 200, 255, 0 )
+	ptcTrail:setPosition( x, y )
+	ptcTrail:setLifetime(0.5)
+	ptcTrail:setParticleLife(0.25)
+	ptcTrail:setDirection(0)
+	ptcTrail:setSpread( math.rad( 0 ) )
+	ptcTrail:setTangentialAcceleration(0.001)
+	ptcTrail:setRadialAcceleration(0.001)
+	--ptcTrail:stop()
+	local trail = yama.buffers.newDrawable( ptcTrail, 0, 0, 24 )
+	table.insert( bufferBatch.data, trail )
+
 	function self.update( dt )
 		self.updatePosition( )
 
@@ -59,6 +79,22 @@ function entities_bullet.new( map, x, y, z )
 		self.y = y
 		self.z = z
 		self.setBoundingBox()
+
+		speed =	bullet:getBody():getLinearVelocity()
+		
+		if bulletTimer <= bulletMaxTimer then
+			bulletTimer = bulletTimer + dt
+		else
+			self.destroy()
+		end
+
+		
+		if speed <= maxSpeed then
+			--self.destroy()
+		end
+
+		ptcTrail:setPosition( x, y )
+		ptcTrail:update(dt)
 	end
 	
 	function self.shoot( fx, fy )
@@ -154,6 +190,5 @@ function entities_bullet.new( map, x, y, z )
 		self.boundingbox.width = width * sx
 		self.boundingbox.height = height * sy
 	end
-
 	return self
 end

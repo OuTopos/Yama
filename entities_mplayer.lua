@@ -2,7 +2,8 @@ entities_mplayer = {}
 
 
 function entities_mplayer.new( map, x, y, z )
-	local self = yama.entities.base.new()
+	local self = {}
+	self.boundingbox = {}
 
 	local userdata = {}
 	userdata.name = "Unnamed"
@@ -20,7 +21,6 @@ function entities_mplayer.new( map, x, y, z )
 	--local buffer = vp.addToBuffer()
 	--local map = vp.getMap()
 	--local swarm = vp.getSwarm()
-	local world = map.getWorld()
 
 	-- Common variables
 	local width, height = 32, 32
@@ -62,14 +62,14 @@ function entities_mplayer.new( map, x, y, z )
 	local bullet = nil
 	local bullets = {}
 	local bulletImpulse = 900
-	local nAllowedBullets = 60
+	local nAllowedBullets = 45
 
 	-- bullet types
 	local bulletStandardShieldDamage = 20
 	local bulletStandardBodyDamage = 10
 
 	-- vars for shield --
-	local shieldMaxHealth = 300
+	local shieldMaxHealth = 400
 	local shieldKilled = false
 	local shieldHealth = shieldMaxHealth
 	local shieldOn = true
@@ -118,6 +118,8 @@ function entities_mplayer.new( map, x, y, z )
 	ptcSpark:stop()
 	local sparks = yama.buffers.newDrawable( ptcSpark, 0, 0, 24 )
 	sparks.blendmode = "additive"
+	local distSparkX = 0
+	local distSparkY = 0
 
 	table.insert( bufferBatch.data, spriteJumper )
 	table.insert( bufferBatch.data, spriteArrow )
@@ -125,7 +127,7 @@ function entities_mplayer.new( map, x, y, z )
 	table.insert( bufferBatch.data, sparks )
 	
 	-- Physics
-	local anchor = love.physics.newFixture( love.physics.newBody( world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
+	local anchor = love.physics.newFixture( love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
 	anchor:setGroupIndex( 1 )
 	anchor:setUserData( userdata )
 	anchor:setRestitution( 0 )	
@@ -139,7 +141,7 @@ function entities_mplayer.new( map, x, y, z )
 	local shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 32 ), 0 )
 	shield:setUserData( shieldUserdata )
 	--shield:setSensor(true)
-	--local shield = love.physics.newFixture(love.physics.newBody( world, x, y, "dynamic"), love.physics.newCircleShape( 38 ) )
+	--local shield = love.physics.newFixture(love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newCircleShape( 38 ) )
 	shield:setGroupIndex( -2 )
 	shield:setUserData( shieldUserdata )
 	--shieldJoint = love.physics.newWeldJoint( shield:getBody(), anchor:getBody(), x, y, false )
@@ -154,7 +156,7 @@ function entities_mplayer.new( map, x, y, z )
 	--shield:getBody( ):setGravityScale( 0.9 )
 
 	--[[
-	local canon = love.physics.newFixture(love.physics.newBody( world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
+	local canon = love.physics.newFixture(love.physics.newBody( map.world, x+14, y+3, "dynamic"), love.physics.newRectangleShape( 32, 6 ) )
 	canon:setGroupIndex( -1 )
 	canonJoint = love.physics.newRevoluteJoint( canon:getBody(), anchor:getBody(), x, y, false )
 	canonJoint:enableMotor( true )
@@ -188,8 +190,8 @@ function entities_mplayer.new( map, x, y, z )
 		end
 
 		--ptcSpark:start()
+		ptcSpark:setPosition( x+distSparkX, y+distSparkY )
 		ptcSpark:update(dt)
-
 		self.x = x
 		self.y = y
 		self.z = z
@@ -296,7 +298,8 @@ function entities_mplayer.new( map, x, y, z )
 
 		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
-		if yv < 0.1 and yv > -0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, buttonShoulderR ) ) then
+		math.abs( yv )
+		if yv < 0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, buttonShoulderR ) ) then
 			shieldOffsetX = 0
 			shieldOffsetY = 0
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
@@ -378,7 +381,6 @@ function entities_mplayer.new( map, x, y, z )
 		if shieldOn then
 			table.insert( bufferBatch.data, spriteShield )
 		end
-		map.resetViewports()
 	end
 
 	function self.updatePosition(xn, yn)		
@@ -441,7 +443,10 @@ function entities_mplayer.new( map, x, y, z )
 				local hitDirection = math.rad( contact:getNormal() )
 				local shieldOffsetX = math.cos( hitDirection )
 				local shieldOffsetY = math.sin( hitDirection )
-				local sparkx1, sparky1, sparkx2, sparky2 = contact:getPositions()
+				local sparkx1, sparky1, xxx, yyy = contact:getPositions()
+				
+				distSparkX = sparkx1 - x				
+				distSparkY = sparky1 - y
 				
 				ptcSpark:setPosition( sparkx1, sparky1 )
 				--ptcSpark:setDirection(hitDirection)
@@ -535,6 +540,19 @@ function entities_mplayer.new( map, x, y, z )
 		self.destroyed = true
 	end
 
+	-- GET
+	function self.getType()
+		return type
+	end
+	function self.getPosition()
+		return x, y, z
+	end
+	function self.getBoundingBox()
+		local bx = x - ox * sx
+		local by = y - oy * sy
+
+		return bx, by, width * sx, height * sy
+	end
 	function self.setBoundingBox()
 		self.boundingbox.x = x - ox * sx
 		self.boundingbox.y = y - oy * sy
@@ -542,6 +560,5 @@ function entities_mplayer.new( map, x, y, z )
 		self.boundingbox.width = width * sx
 		self.boundingbox.height = height * sy
 	end
-
 	return self
 end

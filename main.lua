@@ -119,13 +119,13 @@ function love.keypressed(key)
 		gravityfall = yama.maps.load("test/gravityfall")
 
 		if gravityfallPlayer == 0 then
-			local player1 = gravityfall.spawn("mplayer", "start")
+			player1 = gravityfall.spawn("mplayer", "start")
 			vp1.view(gravityfall, player1)
 			--vp1.setScale(4, 4)
 			gravityfallPlayer = 1
 		
 		elseif gravityfallPlayer == 1 then
-			local player2 = gravityfall.spawn("mplayer", "start2")
+			player2 = gravityfall.spawn("mplayer", "start2")
 			vp2 = yama.viewports.new()
 			vp2.view(gravityfall, player2)
 
@@ -140,6 +140,19 @@ function love.keypressed(key)
 		end
 
 	end
+
+	if key == 'v' then
+		if player1.destroyed then
+			player1 = gravityfall.spawn("mplayer", "start")
+			vp1.view(gravityfall, player1)
+		end
+		if player2.destroyed then
+			player2 = gravityfall.spawn("mplayer", "start2")
+			vp2.view(gravityfall, player2)
+			player2.joystick = 2
+		end
+	end
+
 	if key == "a" then
 		spaceMap = yama.maps.load("space/planets")
 		vp1.view(spaceMap)
