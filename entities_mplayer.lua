@@ -62,7 +62,7 @@ function entities_mplayer.new( map, x, y, z )
 	local bullet = nil
 	local bullets = {}
 	local bulletImpulse = 900
-	local nAllowedBullets = 45
+	local nAllowedBullets = 75
 
 	-- bullet types
 	local bulletStandardShieldDamage = 20
@@ -180,7 +180,7 @@ function entities_mplayer.new( map, x, y, z )
 			elseif not shieldOn and shieldKilled then
 				local nxx = love.joystick.getAxis( self.joystick, 5 )
 				local nyy = love.joystick.getAxis( self.joystick, 4 )
-				if yama.g.getDistance( 0, 0, nxx, nyy ) < 0.22 then
+				if yama.g.getDistance( 0, 0, nxx, nyy ) < 0.26 then
 					self.createShield( shieldMaxHealth, false )
 				end
 			else
@@ -199,7 +199,7 @@ function entities_mplayer.new( map, x, y, z )
 	end
 
 	function self.updateInput( dt )
-		xv, yv = anchor:getBody():getLinearVelocity()
+		xv, yv = anchor:getBody( ):getLinearVelocity( )
 		if yv < 0.1 and yv > -0.1 then
 			--print( 'resetJumpUpdateInput' )
 			jumpTimer = 0
@@ -218,13 +218,13 @@ function entities_mplayer.new( map, x, y, z )
 		if yama.g.getDistance( 0, 0, love.joystick.getAxis( self.joystick, 1 ), love.joystick.getAxis( self.joystick, 2 ) ) > 0.22 then
 			shieldOffsetX = 0
 			shieldOffsetY = 0
-			xv, yv = anchor:getBody():getLinearVelocity()
+			xv, yv = anchor:getBody( ):getLinearVelocity( )
 			if pContact then
 				pContact:setFriction( friction )
 			end
 			nx = love.joystick.getAxis( self.joystick, 1 )
 			ny = love.joystick.getAxis( self.joystick, 2 )
-			relativeDirection = yama.g.getRelativeDirection( math.atan2( ny, nx ))
+			relativeDirection = yama.g.getRelativeDirection( math.atan2( ny, nx ) )
 		else
 			if pContact then
 				pContact:setFriction( stopFriction )
@@ -260,7 +260,7 @@ function entities_mplayer.new( map, x, y, z )
 		-- BULLETS --
 		local nx = love.joystick.getAxis( self.joystick, 5 )
 		local ny = love.joystick.getAxis( self.joystick, 4 )
-		if yama.g.getDistance( 0, 0, nx, ny ) > 0.22 then	
+		if yama.g.getDistance( 0, 0, nx, ny ) > 0.26 then	
 			spawntimer = spawntimer - dt
 			if spawntimer <= 0 then
 				local leftover = math.abs( spawntimer )
@@ -271,6 +271,7 @@ function entities_mplayer.new( map, x, y, z )
 				end
 
 				aim = math.atan2( ny, nx )
+				invaim = math.atan2( -ny, -nx )
 				xrad = math.cos( aim )
 				yrad = math.sin( aim )
 				
@@ -281,7 +282,7 @@ function entities_mplayer.new( map, x, y, z )
 				fxbullet = bulletImpulse * nx
 				fybullet = bulletImpulse * ny				
 				
-				bullet.shoot( fxbullet, fybullet )
+				bullet.shoot( fxbullet, fybullet, invaim )
 				table.insert( bullets, bullet )
 				lenBullets = #bullets				
 				if lenBullets >= nAllowedBullets then

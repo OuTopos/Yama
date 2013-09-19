@@ -18,8 +18,9 @@ function entities_bullet.new( map, x, y, z )
 	
 
 	-- Common variables
-	local width, height = 4, 4
-	local ox, oy = width/2, height/2
+	local width, height = 1600, 1600
+	local width2, height2 = 4, 4
+	local ox, oy = width2/2, height2/2
 	local sx, sy = 1, 1
 	local r = 0
 	self.type = "brick"
@@ -31,7 +32,7 @@ function entities_bullet.new( map, x, y, z )
 	local bulletImpulse = 2
 	local maxSpeed = 100
 	local bulletTimer = 0
-	local bulletMaxTimer = 3.5
+	local bulletMaxTimer = 4.5
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch( x, y, z )
@@ -58,16 +59,15 @@ function entities_bullet.new( map, x, y, z )
 
 	local ptcTrail = love.graphics.newParticleSystem( images.load( "bullet" ), 1000)
 	ptcTrail:setEmissionRate( 100 )
-	ptcTrail:setSpeed( 100, 200 )
-	ptcTrail:setSizes( 1, 1 )
-	ptcTrail:setColors( 200, 200, 255, 255, 200, 200, 255, 0 )
+	ptcTrail:setSpeed( 30, 60 )
+	ptcTrail:setSizes( 1, 1.3 )
+	ptcTrail:setColors( 255, 255, 255, 255, 255, 255, 255, 0 )
 	ptcTrail:setPosition( x, y )
-	ptcTrail:setLifetime(0.5)
-	ptcTrail:setParticleLife(0.25)
-	ptcTrail:setDirection(0)
-	ptcTrail:setSpread( math.rad( 0 ) )
-	ptcTrail:setTangentialAcceleration(0.001)
-	ptcTrail:setRadialAcceleration(0.001)
+	ptcTrail:setLifetime(0.9)
+	ptcTrail:setParticleLife(0.9)
+	ptcTrail:setSpread( math.rad( 30 ) )
+	ptcTrail:setTangentialAcceleration(0.01)
+	ptcTrail:setRadialAcceleration(0.01)
 	--ptcTrail:stop()
 	local trail = yama.buffers.newDrawable( ptcTrail, 0, 0, 24 )
 	table.insert( bufferBatch.data, trail )
@@ -97,8 +97,9 @@ function entities_bullet.new( map, x, y, z )
 		ptcTrail:update(dt)
 	end
 	
-	function self.shoot( fx, fy )
+	function self.shoot( fx, fy, aim )
 		bullet:getBody( ):applyLinearImpulse( fx, fy )
+		ptcTrail:setDirection( aim )
 	end
 
 	function self.updatePosition( xn, yn )
