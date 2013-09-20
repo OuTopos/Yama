@@ -63,16 +63,16 @@ function maps.load(path)
 
 		function private.preSolve(a, b, contact)
 			if a:getUserData() then
-				if a:getUserData().entity then
-					if a:getUserData().entity.preSolve then
-						a:getUserData().entity.preSolve(a, b, contact)
+				if a:getUserData().callback then
+					if a:getUserData().callback.preSolve then
+						a:getUserData().callback.preSolve(a, b, contact)
 					end
 				end
 			end
 			if b:getUserData() then
-				if b:getUserData().entity then
-					if b:getUserData().entity.preSolve then
-						b:getUserData().entity.preSolve(b, a, contact)
+				if b:getUserData().callback then
+					if b:getUserData().callback.preSolve then
+						b:getUserData().callback.preSolve(b, a, contact)
 					end
 				end
 			end

@@ -75,9 +75,6 @@ function entities_mplayer.new( map, x, y, z )
 	local shieldOn = true
 	local shieldTimer = 0
 	local shieldMaxTimer = 3.5
-
-	local shieldOffsetX = 0
-	local shieldOffsetY = 0
 	
 	-- vars for body --
 	local bodyHealth = 100
@@ -109,10 +106,10 @@ function entities_mplayer.new( map, x, y, z )
 	ptcSpark:setSizes( 0, 1 )
 	ptcSpark:setColors( 200, 200, 255, 255, 200, 200, 255, 0 )
 	ptcSpark:setPosition( x, y )
-	ptcSpark:setLifetime(0.15)
+	ptcSpark:setLifetime(0.09)
 	ptcSpark:setParticleLife(0.25)
-	ptcSpark:setDirection(10)
-	ptcSpark:setSpread( math.rad( 360 ) )
+	--ptcSpark:setDirection(10)
+	ptcSpark:setSpread( math.rad( 90 ) )
 	ptcSpark:setTangentialAcceleration(200)
 	ptcSpark:setRadialAcceleration(200)
 	ptcSpark:stop()
@@ -216,8 +213,6 @@ function entities_mplayer.new( map, x, y, z )
 		relativeDirection = ""
 		
 		if yama.g.getDistance( 0, 0, love.joystick.getAxis( self.joystick, 1 ), love.joystick.getAxis( self.joystick, 2 ) ) > 0.22 then
-			shieldOffsetX = 0
-			shieldOffsetY = 0
 			xv, yv = anchor:getBody( ):getLinearVelocity( )
 			if pContact then
 				pContact:setFriction( friction )
@@ -301,8 +296,6 @@ function entities_mplayer.new( map, x, y, z )
 		xv, yv = anchor:getBody():getLinearVelocity()
 		math.abs( yv )
 		if yv < 0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, buttonShoulderR ) ) then
-			shieldOffsetX = 0
-			shieldOffsetY = 0
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
@@ -395,8 +388,8 @@ function entities_mplayer.new( map, x, y, z )
 		spriteJumper.z = 100
 		spriteJumper.r = r
 		
-		spriteShield.x = x + shieldOffsetX * 1.35
-		spriteShield.y = y + shieldOffsetY * 1.35
+		spriteShield.x = x
+		spriteShield.y = y
 		spriteShield.z = 100
 
 		spriteArrow.x = x --math.floor(x + 0.5)
@@ -441,17 +434,16 @@ function entities_mplayer.new( map, x, y, z )
 				--xrad = math.cos( aim )
 				--yrad = math.sin( aim )
 
-				local hitDirection = math.rad( contact:getNormal() )
-				local shieldOffsetX = math.cos( hitDirection )
-				local shieldOffsetY = math.sin( hitDirection )
-				local sparkx1, sparky1, xxx, yyy = contact:getPositions()
+				local sparkx1, sparky1, xxx, yyy = contact:getPositions()		
 				
 				distSparkX = sparkx1 - x				
 				distSparkY = sparky1 - y
+
+				local hitDirection = math.atan2( distSparkY, distSparkX )
 				
 				ptcSpark:setPosition( sparkx1, sparky1 )
-				--ptcSpark:setDirection(hitDirection)
-				ptcSpark:start()
+				ptcSpark:setDirection( hitDirection )
+				ptcSpark:start( )
 			end
 			if userdata2 then
 				if userdata2.type == 'mplayer' and userdata.type == 'bullet' then

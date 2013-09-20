@@ -32,7 +32,9 @@ function entities_bullet.new( map, x, y, z )
 	local bulletImpulse = 2
 	local maxSpeed = 100
 	local bulletTimer = 0
-	local bulletMaxTimer = 4.5
+	local bulletMaxTimer = 6.5
+	local xvb = 0
+	local yvb = 0
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch( x, y, z )
@@ -58,12 +60,12 @@ function entities_bullet.new( map, x, y, z )
 	bullet:getBody( ):setBullet( true )
 
 	local ptcTrail = love.graphics.newParticleSystem( images.load( "bullet" ), 1000)
-	ptcTrail:setEmissionRate( 100 )
+	ptcTrail:setEmissionRate( 300 )
 	ptcTrail:setSpeed( 30, 60 )
 	ptcTrail:setSizes( 1, 1.3 )
-	ptcTrail:setColors( 255, 255, 255, 255, 255, 255, 255, 0 )
+	ptcTrail:setColors( 255, 255, 255, 170, 255, 255, 255, 20, 255, 255, 255, 0 )
 	ptcTrail:setPosition( x, y )
-	ptcTrail:setLifetime(0.9)
+	ptcTrail:setLifetime(200)
 	ptcTrail:setParticleLife(0.9)
 	ptcTrail:setSpread( math.rad( 30 ) )
 	ptcTrail:setTangentialAcceleration(0.01)
@@ -73,6 +75,7 @@ function entities_bullet.new( map, x, y, z )
 	table.insert( bufferBatch.data, trail )
 
 	function self.update( dt )
+
 		self.updatePosition( )
 
 		self.x = x
@@ -80,17 +83,15 @@ function entities_bullet.new( map, x, y, z )
 		self.z = z
 		self.setBoundingBox()
 
-		speed =	bullet:getBody():getLinearVelocity()
+		xvb, yvb = bullet:getBody():getLinearVelocity()
+		invaim = math.atan2( -yvb, -xvb )
+		ptcTrail:setEmissionRate( 0.5*math.abs(xvb) )
+		ptcTrail:setDirection( invaim )
 		
 		if bulletTimer <= bulletMaxTimer then
 			bulletTimer = bulletTimer + dt
 		else
 			self.destroy()
-		end
-
-		
-		if speed <= maxSpeed then
-			--self.destroy()
 		end
 
 		ptcTrail:setPosition( x, y )
@@ -99,7 +100,7 @@ function entities_bullet.new( map, x, y, z )
 	
 	function self.shoot( fx, fy, aim )
 		bullet:getBody( ):applyLinearImpulse( fx, fy )
-		ptcTrail:setDirection( aim )
+		--ptcTrail:setDirection( aim )
 	end
 
 	function self.updatePosition( xn, yn )
