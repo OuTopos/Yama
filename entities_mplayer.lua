@@ -43,7 +43,6 @@ function entities_mplayer.new( map, x, y, z )
 	buttunFaceA = 1
 	buttunTriggerR = 3
 
-
 	local xvel, yvel = 0, 0
 	local speed = 0
 	local direction = 0
@@ -58,6 +57,9 @@ function entities_mplayer.new( map, x, y, z )
 	local maxSpeed = 600
 	local friction = 0.2
 	local stopFriction = 0.7
+	local allowjump = true
+
+	-- SHOOTING --
 	local spawntimer = 0
 	local bullet = nil
 	local bullets = {}
@@ -68,19 +70,23 @@ function entities_mplayer.new( map, x, y, z )
 	local bulletStandardShieldDamage = 20
 	local bulletStandardBodyDamage = 10
 
-	-- vars for shield --
-	local shieldMaxHealth = 400
+	-- MELEE --
+	local meleeStandardShieldDamage = 1
+	local meleeStandardBodyDamage = 100
+
+	-- SHIELD--
+	local shieldMaxHealth = 5
 	local shieldKilled = false
 	local shieldHealth = shieldMaxHealth
 	local shieldOn = true
 	local shieldTimer = 0
-	local shieldMaxTimer = 3.5
+	local shieldMaxTimer = 1
 	
 	-- vars for body --
 	local bodyHealth = 100
 
 	
-	local allowjump = true
+	
 
 	-- BUFFER BATCH
 	local bufferBatch = yama.buffers.newBatch(x, y, z)
@@ -100,7 +106,7 @@ function entities_mplayer.new( map, x, y, z )
 	spriteShield.blendmode = "additive"
 
 	-- shield hit effect --
-	local ptcSpark = love.graphics.newParticleSystem( images.load( "spark" ), 1000)
+	local ptcSpark = love.graphics.newParticleSystem( images.load( "spark" ), 1000 )
 	ptcSpark:setEmissionRate( 2000 )
 	ptcSpark:setSpeed( 100, 200 )
 	ptcSpark:setSizes( 0, 1 )
@@ -112,16 +118,35 @@ function entities_mplayer.new( map, x, y, z )
 	ptcSpark:setSpread( math.rad( 90 ) )
 	ptcSpark:setTangentialAcceleration(200)
 	ptcSpark:setRadialAcceleration(200)
-	ptcSpark:stop()
+	--ptcSpark:stop()
 	local sparks = yama.buffers.newDrawable( ptcSpark, 0, 0, 24 )
 	sparks.blendmode = "additive"
 	local distSparkX = 0
 	local distSparkY = 0
 
+
+	local ptcShieldDestroyed = love.graphics.newParticleSystem( images.load( "spark" ), 1000 )
+	ptcShieldDestroyed:setEmissionRate( 2000 )
+	ptcShieldDestroyed:setSpeed( 1, 2 )
+	ptcShieldDestroyed:setSizes( 0, 1 )
+	ptcShieldDestroyed:setColors( 200, 200, 255, 255, 200, 200, 255, 0 )
+	ptcShieldDestroyed:setPosition( x, y )
+	ptcShieldDestroyed:setLifetime(0.3)
+	ptcShieldDestroyed:setParticleLife(0.2)
+	ptcShieldDestroyed:setDirection(10)
+	ptcShieldDestroyed:setSpread( math.rad( 0 ) )
+	ptcShieldDestroyed:setTangentialAcceleration(200)
+	ptcShieldDestroyed:setRadialAcceleration(200)
+	--ptcShieldDestroyed:stop()
+	local ShieldDestroyed = yama.buffers.newDrawable( ptcShieldDestroyed, 0, 0, 24 )
+	ShieldDestroyed.blendmode = "additive"
+	
+
 	table.insert( bufferBatch.data, spriteJumper )
 	table.insert( bufferBatch.data, spriteArrow )
 	table.insert( bufferBatch.data, spriteShield )
 	table.insert( bufferBatch.data, sparks )
+	table.insert( bufferBatch.data, ShieldDestroyed )
 	
 	-- Physics
 	local anchor = love.physics.newFixture( love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newRectangleShape( width, height ) )
@@ -167,6 +192,10 @@ function entities_mplayer.new( map, x, y, z )
 	function self.update( dt )
 		self.updateInput( dt )
 		self.updatePosition( )
+		self.x = x
+		self.y = y
+		self.z = z
+		self.setBoundingBox()
 		
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
@@ -188,11 +217,13 @@ function entities_mplayer.new( map, x, y, z )
 
 		--ptcSpark:start()
 		ptcSpark:setPosition( x+distSparkX, y+distSparkY )
-		ptcSpark:update(dt)
-		self.x = x
-		self.y = y
-		self.z = z
-		self.setBoundingBox()
+		ptcSpark:update( dt )
+
+		--ptcSpark:start()
+		randOffsetX = math.random( -32, 32 )
+		randOffsetY = math.random( -32, 32 )
+		ptcShieldDestroyed:setPosition( x+randOffsetX, y+randOffsetY )
+		ptcShieldDestroyed:update( dt )
 	end
 
 	function self.updateInput( dt )
@@ -344,6 +375,10 @@ function entities_mplayer.new( map, x, y, z )
 		shieldOn = false
 		self.refreshBufferBatch()
 		shieldKilled = killed
+		if killed == true then
+			ptcShieldDestroyed:start( )
+		end
+
 		--self.destroy()
 	end
 
@@ -372,6 +407,7 @@ function entities_mplayer.new( map, x, y, z )
 		table.insert( bufferBatch.data, spriteJumper )
 		table.insert( bufferBatch.data, spriteArrow )
 		table.insert( bufferBatch.data, sparks )
+		table.insert( bufferBatch.data, ShieldDestroyed )
 		if shieldOn then
 			table.insert( bufferBatch.data, spriteShield )
 		end
@@ -438,7 +474,6 @@ function entities_mplayer.new( map, x, y, z )
 				
 				distSparkX = sparkx1 - x				
 				distSparkY = sparky1 - y
-
 				local hitDirection = math.atan2( distSparkY, distSparkX )
 				
 				ptcSpark:setPosition( sparkx1, sparky1 )

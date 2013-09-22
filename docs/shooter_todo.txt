@@ -1,0 +1,9 @@
+- melee
+- stamina
+- lives
+- respawn
+- scoress/winning condition
+- weapon types
+- feedback pass
+- sound
+- animations
