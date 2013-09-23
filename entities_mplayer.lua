@@ -39,9 +39,18 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- BUTTONS --
 
+	--[[
 	buttonShoulderR = 6
 	buttunFaceA = 1
 	buttunTriggerR = 3
+	--]]
+
+	-- temp switch
+	buttunFaceA = 6
+	buttonShoulderR = 1
+	buttunTriggerR = 3
+	buttonFaceB = 5
+
 
 	local xvel, yvel = 0, 0
 	local speed = 0
@@ -68,14 +77,14 @@ function entities_mplayer.new( map, x, y, z )
 
 	-- bullet types
 	local bulletStandardShieldDamage = 20
-	local bulletStandardBodyDamage = 10
+	local bulletStandardBodyDamage = 3
 
 	-- MELEE --
 	local meleeStandardShieldDamage = 1
 	local meleeStandardBodyDamage = 100
 
 	-- SHIELD--
-	local shieldMaxHealth = 5
+	local shieldMaxHealth = 140
 	local shieldKilled = false
 	local shieldHealth = shieldMaxHealth
 	local shieldOn = true
@@ -99,6 +108,10 @@ function entities_mplayer.new( map, x, y, z )
 	tilesetArrow = images.load( "directionarrowshootah" )
 	tilesetArrow:setFilter( "linear", "linear" )
 	local spriteArrow = yama.buffers.newDrawable( tilesetArrow, x, y, 900, 1, sx, sy, 3, 3 )
+
+	weapon_melee = images.load( "melee_weapon" )
+	weapon_melee:setFilter( "linear", "linear" )
+	local weapon_meleeSprite = yama.buffers.newDrawable( weapon_melee, x, y, 900, 1, sx, sy, 3, 3 )
 
 	-- SHIELD --
 	images.load( "shield" ):setFilter( "linear", "linear" )
@@ -144,6 +157,7 @@ function entities_mplayer.new( map, x, y, z )
 
 	table.insert( bufferBatch.data, spriteJumper )
 	table.insert( bufferBatch.data, spriteArrow )
+	table.insert( bufferBatch.data, weapon_meleeSprite )
 	table.insert( bufferBatch.data, spriteShield )
 	table.insert( bufferBatch.data, sparks )
 	table.insert( bufferBatch.data, ShieldDestroyed )
@@ -406,6 +420,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		table.insert( bufferBatch.data, spriteJumper )
 		table.insert( bufferBatch.data, spriteArrow )
+		table.insert( bufferBatch.data, weapon_meleeSprite )
 		table.insert( bufferBatch.data, sparks )
 		table.insert( bufferBatch.data, ShieldDestroyed )
 		if shieldOn then
@@ -431,6 +446,10 @@ function entities_mplayer.new( map, x, y, z )
 		spriteArrow.x = x --math.floor(x + 0.5)
 		spriteArrow.y = y --math.floor(y-16 + 0.5)
 		spriteArrow.r = aim
+
+		weapon_meleeSprite.x = x --math.floor(x + 0.5)
+		weapon_meleeSprite.y = y --math.floor(y-16 + 0.5)
+		weapon_meleeSprite.r = aim
 
 		
 		bufferBatch.x = x
