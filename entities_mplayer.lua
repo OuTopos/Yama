@@ -23,7 +23,7 @@ function entities_mplayer.new( map, x, y, z )
 	--local swarm = vp.getSwarm()
 
 	-- Common variables
-	local width, height = 32, 32
+	local width, height = 26, 32
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
@@ -37,20 +37,14 @@ function entities_mplayer.new( map, x, y, z )
 	local remove = false
 	local doLeg = 1
 
-	-- BUTTONS --
-
-	--[[
+	-- BUTTONS --	
 	buttonShoulderR = 6
 	buttunFaceA = 1
 	buttunTriggerR = 3
-	--]]
 
-	-- temp switch
-	buttunFaceA = 6
-	buttonShoulderR = 1
-	buttunTriggerR = 3
-	buttonFaceB = 5
-
+	ctrlJumpButtom = buttunFaceA
+	ctrlMelee = buttonShoulderR
+	ctrlAimShoot = 1
 
 	local xvel, yvel = 0, 0
 	local speed = 0
@@ -82,6 +76,8 @@ function entities_mplayer.new( map, x, y, z )
 	-- MELEE --
 	local meleeStandardShieldDamage = 1
 	local meleeStandardBodyDamage = 100
+	local meleeing = false
+	local allowMelee = true
 
 	-- SHIELD--
 	local shieldMaxHealth = 140
@@ -103,7 +99,7 @@ function entities_mplayer.new( map, x, y, z )
 	-- SPRITE (PLAYER)
 	images.quads.add( "jumper", width, height )
 	images.load( "jumper" ):setFilter( "linear", "linear" )
-	local spriteJumper = yama.buffers.newSprite( images.load( "jumper" ), images.quads.data[ "jumper" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
+	local spriteJumper = yama.buffers.newSprite( images.load( "jumper_dude" ), images.quads.data[ "jumper" ] [ 1 ], x, y, z, r, sx, sy, ox, oy )
 	
 	tilesetArrow = images.load( "directionarrowshootah" )
 	tilesetArrow:setFilter( "linear", "linear" )
@@ -157,7 +153,7 @@ function entities_mplayer.new( map, x, y, z )
 
 	table.insert( bufferBatch.data, spriteJumper )
 	table.insert( bufferBatch.data, spriteArrow )
-	table.insert( bufferBatch.data, weapon_meleeSprite )
+	--table.insert( bufferBatch.data, weapon_meleeSprite )
 	table.insert( bufferBatch.data, spriteShield )
 	table.insert( bufferBatch.data, sparks )
 	table.insert( bufferBatch.data, ShieldDestroyed )
@@ -204,30 +200,16 @@ function entities_mplayer.new( map, x, y, z )
 	--]]
 
 	function self.update( dt )
-		self.updateInput( dt )
-		self.updatePosition( )
 		self.x = x
 		self.y = y
 		self.z = z
-		self.setBoundingBox()
+		self.updateInput( dt )
+		self.updatePosition( )
+		self.setBoundingBox( )
+		self.updateShield( dt )
 		
 		self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
 		self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy )
-
-		if shieldHealth < shieldMaxHealth then
-			if shieldTimer <= shieldMaxTimer then
-				shieldTimer = shieldTimer + dt
-			elseif not shieldOn and shieldKilled then
-				local nxx = love.joystick.getAxis( self.joystick, 5 )
-				local nyy = love.joystick.getAxis( self.joystick, 4 )
-				if yama.g.getDistance( 0, 0, nxx, nyy ) < 0.26 then
-					self.createShield( shieldMaxHealth, false )
-				end
-			else
-				shieldHealth = shieldMaxHealth
-				spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) }
-			end
-		end
 
 		--ptcSpark:start()
 		ptcSpark:setPosition( x+distSparkX, y+distSparkY )
@@ -249,8 +231,26 @@ function entities_mplayer.new( map, x, y, z )
 
 		self.movement( dt )
 		self.bulletSpawn( dt )
+		self.melee( dt )
 		self.jumping( dt )
 
+	end
+
+	function self.updateShield( dt )
+		if shieldHealth < shieldMaxHealth then
+			if shieldTimer <= shieldMaxTimer then
+			shieldTimer = shieldTimer + dt
+			elseif not shieldOn and shieldKilled then
+				local nxx = love.joystick.getAxis( self.joystick, 5 )
+				local nyy = love.joystick.getAxis( self.joystick, 4 )
+				if yama.g.getDistance( 0, 0, nxx, nyy ) < 0.26 then
+					self.createShield( shieldMaxHealth, false )
+				end
+			end
+		else
+			shieldHealth = shieldMaxHealth
+			spriteShield.color = { 255, 255, 255, math.floor( 255*( shieldHealth/shieldMaxHealth )+0.5 ) }
+		end
 	end
 
 	function self.movement( dt )
@@ -273,6 +273,7 @@ function entities_mplayer.new( map, x, y, z )
 		
 		if love.keyboard.isDown( "right" ) or relativeDirection == "right" then
 			direction = 1.570796327
+			spriteJumper.sx = 1
 			if yv == 0 then				
 				fx = xForce
 			else
@@ -284,6 +285,7 @@ function entities_mplayer.new( map, x, y, z )
 		end
 		if love.keyboard.isDown("left") or relativeDirection == "left" then
 			direction = 4.71238898
+			spriteJumper.sx = -1
 			if yv == 0 then
 				fx = - xForce
 			else	
@@ -295,8 +297,7 @@ function entities_mplayer.new( map, x, y, z )
 		end
 	end
 
-
-	function self.bulletSpawn(dt)
+	function self.bulletSpawn( dt )
 		-- BULLETS --
 		local nx = love.joystick.getAxis( self.joystick, 5 )
 		local ny = love.joystick.getAxis( self.joystick, 4 )
@@ -335,19 +336,32 @@ function entities_mplayer.new( map, x, y, z )
 		end
 	end
 
+	function self.melee( dt )
+		--print( 'FUNC MELEE' )
+		if allowMelee and love.joystick.isDown( self.joystick, ctrlMelee ) then
+			print( 'MELEE' )
+			meleeing = true
+			self.refreshBufferBatch()
+		else
+			meleeing = false
+			self.refreshBufferBatch()
+		end
+
+	end
+
 	function self.jumping(dt)
 
 		-- JUMPING --
 		xv, yv = anchor:getBody():getLinearVelocity()
 		math.abs( yv )
-		if yv < 0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, buttonShoulderR ) ) then
+		if yv < 0.1 and allowjump and ( love.keyboard.isDown( " " ) or love.joystick.isDown( self.joystick, ctrlJumpButtom ) ) then
 			anchor:getBody():applyLinearImpulse( 0, -jumpForce )
 			allowjump = false
 		end
 
-		self.jumpAccelerator( dt, buttonShoulderR, jumpMaxTimer, jumpIncreaser )
+		self.jumpAccelerator( dt, ctrlJumpButtom, jumpMaxTimer, jumpIncreaser )
 
-		if not love.keyboard.isDown(" ") and not love.joystick.isDown( self.joystick, buttonShoulderR ) and yv == 0 then
+		if not love.keyboard.isDown(" ") and not love.joystick.isDown( self.joystick, ctrlJumpButtom ) and yv == 0 then
 			allowjump = true
 		end
 	end
@@ -420,11 +434,14 @@ function entities_mplayer.new( map, x, y, z )
 
 		table.insert( bufferBatch.data, spriteJumper )
 		table.insert( bufferBatch.data, spriteArrow )
-		table.insert( bufferBatch.data, weapon_meleeSprite )
+		
 		table.insert( bufferBatch.data, sparks )
 		table.insert( bufferBatch.data, ShieldDestroyed )
 		if shieldOn then
 			table.insert( bufferBatch.data, spriteShield )
+		end
+		if meleeing then
+			table.insert( bufferBatch.data, weapon_meleeSprite )
 		end
 	end
 
@@ -432,7 +449,6 @@ function entities_mplayer.new( map, x, y, z )
 		x = anchor:getBody():getX()
 		y = anchor:getBody():getY()
 		r = anchor:getBody():getAngle()
-
 
 		spriteJumper.x = x
 		spriteJumper.y = y
@@ -449,8 +465,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		weapon_meleeSprite.x = x --math.floor(x + 0.5)
 		weapon_meleeSprite.y = y --math.floor(y-16 + 0.5)
-		weapon_meleeSprite.r = aim
-
+		weapon_meleeSprite.r = r
 		
 		bufferBatch.x = x
 		bufferBatch.y = y
