@@ -23,12 +23,12 @@ function entities_mplayer.new( map, x, y, z )
 	--local swarm = vp.getSwarm()
 
 	-- Common variables
-	local width, height = 26, 32
+	local width, height = 32, 32
 	local ox, oy = width/2, height/2
 	local sx, sy = 1, 1
 	local r = 0
 	self.cx, self.cy = x - ox + width / 2, y - oy + height / 2
-	self.radius = yama.g.getDistance(self.cx, self.cy, x - ox, y - oy)
+	self.radius = yama.g.getDistance( self.cx, self.cy, x - ox, y - oy)
 	self.type = "player"
 	self.joystick = 1
 	
@@ -170,7 +170,7 @@ function entities_mplayer.new( map, x, y, z )
 	anchor:getBody():setGravityScale( 9 )
 	anchor:getBody():setBullet( true )
 
-	local shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 32 ), 0 )
+	local shield = love.physics.newFixture( anchor:getBody(), love.physics.newCircleShape( 26 ), 0 )
 	shield:setUserData( shieldUserdata )
 	--shield:setSensor(true)
 	--local shield = love.physics.newFixture(love.physics.newBody( map.world, x, y, "dynamic"), love.physics.newCircleShape( 38 ) )
@@ -224,7 +224,7 @@ function entities_mplayer.new( map, x, y, z )
 
 	function self.updateInput( dt )
 		xv, yv = anchor:getBody( ):getLinearVelocity( )
-		if yv < 0.1 and yv > -0.1 then
+		if yv < 0.1 and yv > - 0.1 then
 			--print( 'resetJumpUpdateInput' )
 			jumpTimer = 0
 		end
@@ -461,6 +461,7 @@ function entities_mplayer.new( map, x, y, z )
 
 		spriteArrow.x = x --math.floor(x + 0.5)
 		spriteArrow.y = y --math.floor(y-16 + 0.5)
+		spriteArrow.z = 10
 		spriteArrow.r = aim
 
 		weapon_meleeSprite.x = x --math.floor(x + 0.5)
