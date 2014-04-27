@@ -1,4 +1,4 @@
-yama_dev
+山 - Yama
 ========
 
-yama for love 0.9.0
+Yama for love 0.9.1
