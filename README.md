@@ -1,6 +1,4 @@
-山 - Yama
-==========
+yama_dev
+========
 
-A Löve2D game engine/framework.
-Basically I'm just playing around.
-Most likely you should just move along.
+yama for love 0.9.0
